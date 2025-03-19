@@ -186,9 +186,9 @@ fi
 if [ -z $CRON_AI_REDIS_PORT ]; then
  $ReplaceCommand  "s,^CRON_AI_REDIS_PORT=.*,CRON_AI_REDIS_PORT=${AI_REDIS_PORT}," "$ENV"
 fi
-if [ -z $CRON_AI_REDIS_PASSWORD ]; then
+#if [ -z $CRON_AI_REDIS_PASSWORD ]; then
  #$ReplaceCommand  "s,^CRON_AI_REDIS_PASSWORD=.*,CRON_AI_REDIS_PASSWORD=${}," "$ENV"
-fi
+#fi
 if [ -z $CRON_AI_SCP_GO_AI_HOST ]; then
  $ReplaceCommand  "s,^CRON_AI_SCP_GO_AI_HOST=.*,CRON_AI_SCP_GO_AI_HOST=${AI_SCP_HOST}," "$ENV"
 fi
