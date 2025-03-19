@@ -1,12 +1,12 @@
 version: '3.7'
 services:
   redis:
-    image: redis:${REDIS_IMAGE_VERSION} # 你的redis版本
+    image: redis:${AI_REDIS_IMAGE_VERSION} # 你的redis版本
     restart: always
-    container_name: ${REDIS_HOST}
+    container_name: ${AI_REDIS_HOST}
     privileged: true
     ports:
-      - ${REDIS_EXPOSED_PORT}:${REDIS_START_PORT}
+      - ${AI_REDIS_EXPOSED_PORT}:${AI_REDIS_START_PORT}
     environment:
       TZ: Asia/Shanghai
     volumes:
@@ -18,8 +18,8 @@ services:
       - intranet
 
   es:
-    container_name: ${ES_HOST}
-    image: docker.elastic.co/elasticsearch/elasticsearch:${ES_IMAGE_VERSION}
+    container_name: ${AI_ES_HOST}
+    image: docker.elastic.co/elasticsearch/elasticsearch:${AI_ES_IMAGE_VERSION}
     restart: always
     env_file:
       - ${ACTUAL_ENV}
@@ -50,14 +50,14 @@ services:
       timeout: 3s
       retries: 10
     ports:
-      - ${ES_START_PORT}
+      - ${AI_ES_START_PORT}
     networks:
       - intranet # - 9300:9300
 
   fb:
-    container_name: ${FB_HOST}
+    container_name: ${AI_FB_HOST}
     entrypoint: "filebeat -e -strict.perms=false"
-    image: docker.elastic.co/beats/filebeat:${FB_IMAGE_VERSION}
+    image: docker.elastic.co/beats/filebeat:${AI_FB_IMAGE_VERSION}
     restart: always
     env_file:
       - ${ACTUAL_ENV}
@@ -72,7 +72,7 @@ services:
 
   kibana:
     container_name: ${KIBANA_HOST}
-    image: docker.elastic.co/kibana/kibana:${KIBANA_IMAGE_VERSION}
+    image: docker.elastic.co/kibana/kibana:${AI_KIBANA_IMAGE_VERSION}
     restart: always
     env_file:
       - ${ACTUAL_ENV}
@@ -80,7 +80,7 @@ services:
     volumes:
       - ./resources/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
     environment:
-      ELASTICSEARCH_URL: http://${ES_HOST}:${ES_START_PORT}
+      ELASTICSEARCH_URL: http://${AI_ES_HOST}:${AI_ES_START_PORT}
     depends_on:
       - es
     #        condition: service_healthy
@@ -97,17 +97,17 @@ services:
       timeout: 3s
       retries: 50
     ports:
-      - ${KIBANA_EXPOSED_PORT}:${KIBANA_START_PORT}
+      - ${AI_KIBANA_EXPOSED_PORT}:${AI_KIBANA_START_PORT}
     networks:
       - intranet
 
   comm-cron-ai:
-    image: ${CRON_IMAGE_NAME}:${CRON_IMAGE_VERSION}
-    container_name: ${CRON_HOST}
+    image: ${CRON_AI_IMAGE_NAME}:${CRON_AI_IMAGE_VERSION}
+    container_name: ${AI_CRON_HOST}
     restart: always
     ports:
-      - ${CRON_START_HTTP_PORT}
-      - ${CRON_START_GRPC_PORT}
+      - ${CRON_AI_START_HTTP_PORT}
+      - ${CRON_AI_START_GRPC_PORT}
     env_file:
       - ${ACTUAL_ENV}
     volumes:
@@ -116,8 +116,8 @@ services:
       - intranet
 
   consul:
-    image: hashicorp/consul:${CONSUL_IMAGE_VERSION}
-    container_name: ${CONSUL_HOST}
+    image: hashicorp/consul:${AI_CONSUL_IMAGE_VERSION}
+    container_name: ${AI_CONSUL_HOST}
     restart: always
     volumes:
       - ./consul/config-${ENV}:/consul/config
