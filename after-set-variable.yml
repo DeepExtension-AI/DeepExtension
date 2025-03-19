@@ -70,7 +70,7 @@ services:
       - intranet
 
   kibana:
-    container_name: ${KIBANA_HOST}
+    container_name: ${AI_KIBANA_HOST}
     image: docker.elastic.co/kibana/kibana:${AI_KIBANA_IMAGE_VERSION}
     restart: always
     env_file:
@@ -124,8 +124,8 @@ services:
       - ./consul/logs-${ENV}:/consul/logs
     command: consul agent -server -bootstrap-expect=1 -client=0.0.0.0 -ui -bind='{{ GetPrivateIP }}' -data-dir=/consul/data -node=consul-node -datacenter=dc1 -log-level=debug -enable-script-checks=true -config-dir=/consul/config
     ports:
-      - ${CONSUL_HTTP_EXPOSED_PORT}:${CONSUL_HTTP_START_PORT}
-      - ${CONSUL_HTTP2_START_PORT}/udp
+      - ${AI_CONSUL_HTTP_EXPOSED_PORT}:${AI_CONSUL_HTTP_START_PORT}
+      - ${AI_CONSUL_HTTP2_START_PORT}/udp
     networks:
       - intranet
 
