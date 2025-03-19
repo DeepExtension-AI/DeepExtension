@@ -148,56 +148,56 @@ $ReplaceCommand  "s,^DOCKER_NETWORK_NAME=.*,DOCKER_NETWORK_NAME=${DOCKER_NETWORK
 ## ENV=./environment/local.env
 # 处理服务之间环境变量：非空则将environment.env文件变量替换给environment.env文件指定变量
 if [ -z $SCP_GO_AI_REDIS_HOST ]; then
- $ReplaceCommand  "s,^SCP_GO_AI_REDIS_HOST=.*,SCP_GO_AI_REDIS_HOST=${}," "$ENV"
+ $ReplaceCommand  "s,^SCP_GO_AI_REDIS_HOST=.*,SCP_GO_AI_REDIS_HOST=${AI_REDIS_HOST}," "$ENV"
 fi
 if [ -z $SCP_GO_AI_REDIS_HOST ]; then
- $ReplaceCommand  "s,^SCP_GO_AI_REDIS_PORT=.*,SCP_GO_AI_REDIS_PORT=${}," "$ENV"
+ $ReplaceCommand  "s,^SCP_GO_AI_REDIS_PORT=.*,SCP_GO_AI_REDIS_PORT=${AI_REDIS_START_PORT}," "$ENV"
 fi
-if [ -z $SCP_GO_AI_REDIS_PASSWORD ]; then
- $ReplaceCommand  "s,^SCP_GO_AI_REDIS_PASSWORD=.*,SCP_GO_AI_REDIS_PASSWORD=${}," "$ENV"
-fi
+#if [ -z $SCP_GO_AI_REDIS_PASSWORD ]; then
+ #$ReplaceCommand  "s,^SCP_GO_AI_REDIS_PASSWORD=.*,SCP_GO_AI_REDIS_PASSWORD=${}," "$ENV"
+#fi
 if [ -z $SCP_GO_AI_CRON_HOST ]; then
- $ReplaceCommand  "s,^SCP_GO_AI_CRON_HOST=.*,SCP_GO_AI_CRON_HOST=${}," "$ENV"
+ $ReplaceCommand  "s,^SCP_GO_AI_CRON_HOST=.*,SCP_GO_AI_CRON_HOST=${AI_CRON_HOST}," "$ENV"
 fi
 if [ -z $SCP_GO_AI_CRON_PORT ]; then
- $ReplaceCommand  "s,^SCP_GO_AI_CRON_PORT=.*,SCP_GO_AI_CRON_PORT=${}," "$ENV"
+ $ReplaceCommand  "s,^SCP_GO_AI_CRON_PORT=.*,SCP_GO_AI_CRON_PORT=${CRON_AI_START_HTTP_PORT}," "$ENV"
 fi
 if [ -z $SCP_GO_AI_ES_HOST ]; then
- $ReplaceCommand  "s,^SCP_GO_AI_ES_HOST=.*,SCP_GO_AI_ES_HOST=${}," "$ENV"
+ $ReplaceCommand  "s,^SCP_GO_AI_ES_HOST=.*,SCP_GO_AI_ES_HOST=${AI_ES_HOST}," "$ENV"
 fi
 if [ -z $SCP_GO_AI_ES_PORT ]; then
- $ReplaceCommand  "s,^SCP_GO_AI_ES_PORT=.*,SCP_GO_AI_ES_PORT=${}," "$ENV"
+ $ReplaceCommand  "s,^SCP_GO_AI_ES_PORT=.*,SCP_GO_AI_ES_PORT=${AI_ES_START_PORT}," "$ENV"
 fi
 if [ -z $SCP_GO_AI_TRAINING_HOST ]; then
- $ReplaceCommand  "s,^SCP_GO_AI_TRAINING_HOST=.*,SCP_GO_AI_TRAINING_HOST=${}," "$ENV"
+ $ReplaceCommand  "s,^SCP_GO_AI_TRAINING_HOST=.*,SCP_GO_AI_TRAINING_HOST=${AI_TRAINING_HOST}," "$ENV"
 fi
 if [ -z $SCP_GO_AI_TRAINING_PORT ]; then
- $ReplaceCommand  "s,^SCP_GO_AI_TRAINING_PORT=.*,SCP_GO_AI_TRAINING_PORT=${}," "$ENV"
+ $ReplaceCommand  "s,^SCP_GO_AI_TRAINING_PORT=.*,SCP_GO_AI_TRAINING_PORT=${TRAINING_START_PORT}," "$ENV"
 fi
 if [ -z $CRON_AI_CONSUL_PORT ]; then
- $ReplaceCommand  "s,^CRON_AI_CONSUL_PORT=.*,CRON_AI_CONSUL_PORT=${}," "$ENV"
+ $ReplaceCommand  "s,^CRON_AI_CONSUL_PORT=.*,CRON_AI_CONSUL_PORT=${AI_CONSUL_HOST}," "$ENV"
 fi
 if [ -z $CRON_AI_CONSUL_HOST ]; then
- $ReplaceCommand  "s,^CRON_AI_CONSUL_HOST=.*,CRON_AI_CONSUL_HOST=${}," "$ENV"
+ $ReplaceCommand  "s,^CRON_AI_CONSUL_HOST=.*,CRON_AI_CONSUL_HOST=${AI_CONSUL_HTTP_START_PORT}," "$ENV"
 fi
 if [ -z $CRON_AI_REDIS_HOST ]; then
- $ReplaceCommand  "s,^CRON_AI_REDIS_HOST=.*,CRON_AI_REDIS_HOST=${}," "$ENV"
+ $ReplaceCommand  "s,^CRON_AI_REDIS_HOST=.*,CRON_AI_REDIS_HOST=${AI_REDIS_HOST}," "$ENV"
 fi
 if [ -z $CRON_AI_REDIS_PORT ]; then
- $ReplaceCommand  "s,^CRON_AI_REDIS_PORT=.*,CRON_AI_REDIS_PORT=${}," "$ENV"
+ $ReplaceCommand  "s,^CRON_AI_REDIS_PORT=.*,CRON_AI_REDIS_PORT=${AI_REDIS_PORT}," "$ENV"
 fi
 if [ -z $CRON_AI_REDIS_PASSWORD ]; then
- $ReplaceCommand  "s,^CRON_AI_REDIS_PASSWORD=.*,CRON_AI_REDIS_PASSWORD=${}," "$ENV"
+ #$ReplaceCommand  "s,^CRON_AI_REDIS_PASSWORD=.*,CRON_AI_REDIS_PASSWORD=${}," "$ENV"
 fi
 if [ -z $CRON_AI_SCP_GO_AI_HOST ]; then
- $ReplaceCommand  "s,^CRON_AI_SCP_GO_AI_HOST=.*,CRON_AI_SCP_GO_AI_HOST=${}," "$ENV"
+ $ReplaceCommand  "s,^CRON_AI_SCP_GO_AI_HOST=.*,CRON_AI_SCP_GO_AI_HOST=${AI_SCP_HOST}," "$ENV"
 fi
 if [ -z $CRON_AI_SCP_GO_AI_PORT ]; then
- $ReplaceCommand  "s,^CRON_AI_SCP_GO_AI_PORT=.*,CRON_AI_SCP_GO_AI_PORT=${}," "$ENV"
+ $ReplaceCommand  "s,^CRON_AI_SCP_GO_AI_PORT=.*,CRON_AI_SCP_GO_AI_PORT=${SCP_AI_START_PORT}," "$ENV"
 fi
 if [ -z $UI_SCP_GO_AI_HOST ]; then
- $ReplaceCommand  "s,^UI_SCP_GO_AI_HOST=.*,UI_SCP_GO_AI_HOST=${}," "$ENV"
+ $ReplaceCommand  "s,^UI_SCP_GO_AI_HOST=.*,UI_SCP_GO_AI_HOST=${AI_SCP_HOST}," "$ENV"
 fi
 if [ -z $UI_SCP_GO_AI_PORT ]; then
- $ReplaceCommand  "s,^UI_SCP_GO_AI_PORT=.*,UI_SCP_GO_AI_PORT=${}," "$ENV"
+ $ReplaceCommand  "s,^UI_SCP_GO_AI_PORT=.*,UI_SCP_GO_AI_PORT=${SCP_AI_START_PORT}," "$ENV"
 fi
