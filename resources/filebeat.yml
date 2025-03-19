@@ -1,0 +1,12 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+  - ./logs/*.log
+  json.add_error_key: true
+
+# output.logstash:
+#   hosts: ["logstash:5044"]
+
+output.elasticsearch:
+  hosts:  ["http://${ES_HOST}:${ES_START_PORT}"]
