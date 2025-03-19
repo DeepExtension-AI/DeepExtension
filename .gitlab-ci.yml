@@ -20,7 +20,7 @@ pull_image:
 # 3、替换为最新的镜像，改变镜像的tag和name
 change_image_env:
   tags:
-    - scp-devpre
+    - scpe-devpre
   only:
     variables:
       - $IMAGE_NAME
