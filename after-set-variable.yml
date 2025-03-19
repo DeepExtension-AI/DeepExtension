@@ -16,7 +16,6 @@ services:
     command: [ "redis-server", "/usr/local/redis/conf/redis.conf" ]
     networks:
       - intranet
-
   es:
     container_name: ${AI_ES_HOST}
     image: docker.elastic.co/elasticsearch/elasticsearch:${AI_ES_IMAGE_VERSION}
