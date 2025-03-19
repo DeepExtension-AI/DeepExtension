@@ -8,6 +8,8 @@ variables:
 # 1、找出那个镜像是最新的
 # 2、将最新的镜像拉取到本地
 pull_image:
+  tags:
+    - scpe-devpre
   stage: pull_image
   before_script:
     - docker login -u admin -p Harbor12345 jianweisoft.cn
