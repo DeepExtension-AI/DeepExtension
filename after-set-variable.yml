@@ -127,6 +127,7 @@ services:
       - ./resources/scp-go:/data/conf
     networks:
       - intranet
+
   comm-cron-ai:
     image: ${CRON_AI_IMAGE_NAME}:${CRON_AI_IMAGE_VERSION}
     container_name: ${AI_CRON_HOST}

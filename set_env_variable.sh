@@ -99,7 +99,7 @@ fi
 if [ -z $CUSTOM_CRON_AI_IMAGE_VERSION ]; then
 	$ReplaceCommand  "s,^CRON_AI_IMAGE_VERSION=.*,CRON_AI_IMAGE_VERSION=${CRON_AI_IMAGE_VERSION}," "$PracticalEnv"
 else
-	$ReplaceCommand  "s,^CRON_AI_IMAGE_VERSION=.*,CRON_AI_IMAGE_VERSION=${CUSTOM_CRON_IMAGE_VERSION}," "$PracticalEnv"
+	$ReplaceCommand  "s,^CRON_AI_IMAGE_VERSION=.*,CRON_AI_IMAGE_VERSION=${CUSTOM_CRON_AI_IMAGE_VERSION}," "$PracticalEnv"
 fi
 if [ -z $CUSTOM_CRON_AI_IMAGE_NAME ]; then
 	$ReplaceCommand  "s,^CRON_AI_IMAGE_NAME=.*,CRON_AI_IMAGE_NAME=${CRON_AI_IMAGE_NAME}," "$PracticalEnv"
