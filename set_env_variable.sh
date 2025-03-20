@@ -81,7 +81,7 @@ fi
 if [ -z $CUSTOM_SCP_AI_IMAGE_NAME ]; then
 	$ReplaceCommand  "s,^SCP_AI_IMAGE_NAME=.*,SCP_AI_IMAGE_NAME=${SCP_AI_IMAGE_NAME}," "$PracticalEnv"
 else
-	$ReplaceCommand  "s,^SCP_AI_IMAGE_NAME=.*,SCP_AI_IMAGE_NAME=${CUSTOM_SCP_IMAGE_NAME}," "$PracticalEnv"
+	$ReplaceCommand  "s,^SCP_AI_IMAGE_NAME=.*,SCP_AI_IMAGE_NAME=${CUSTOM_SCP_AI_IMAGE_NAME}," "$PracticalEnv"
 fi
 
 if [ -z $CUSTOM_UI_AI_IMAGE_VERSION ]; then

@@ -75,7 +75,7 @@ services:
     restart: always
     env_file:
       - ${ACTUAL_ENV}
-   ## profiles: [ "dbvis" ]
+    ## profiles: [ "dbvis" ]
     volumes:
       - ./resources/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
     environment:
@@ -100,20 +100,6 @@ services:
     networks:
       - intranet
 
-  comm-cron-ai:
-    image: ${CRON_AI_IMAGE_NAME}:${CRON_AI_IMAGE_VERSION}
-    container_name: ${AI_CRON_HOST}
-    restart: always
-    ports:
-      - ${CRON_AI_START_HTTP_PORT}
-      - ${CRON_AI_START_GRPC_PORT}
-    env_file:
-      - ${ACTUAL_ENV}
-    volumes:
-      - ./resources/comm-cron:/data/conf
-    networks:
-      - intranet
-
   consul:
     image: hashicorp/consul:${AI_CONSUL_IMAGE_VERSION}
     container_name: ${AI_CONSUL_HOST}
@@ -126,6 +112,19 @@ services:
     ports:
       - ${AI_CONSUL_HTTP_EXPOSED_PORT}:${AI_CONSUL_HTTP_START_PORT}
       - ${AI_CONSUL_HTTP2_START_PORT}/udp
+    networks:
+      - intranet
+
+  scp-go-ai:
+    image: ${SCP_AI_IMAGE_NAME}:${SCP_AI_IMAGE_VERSION}
+    container_name: ${AI_SCP_HOST}
+    restart: always
+    ports:
+      - ${SCP_AI_EXPOSED_PORT}:${SCP_AI_START_PORT}
+    env_file:
+      - ${ACTUAL_ENV}
+    volumes:
+      - ./resources/scp-go:/data/conf
     networks:
       - intranet
 
