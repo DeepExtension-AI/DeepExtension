@@ -124,7 +124,8 @@ services:
     env_file:
       - ${ACTUAL_ENV}
     volumes:
-      - ./resources/scp-go:/data/conf
+      - ./resources/scp-go:/opt/scpx/resources/
+      - ./logs/:/opt/scpx/logs/
     networks:
       - intranet
 
