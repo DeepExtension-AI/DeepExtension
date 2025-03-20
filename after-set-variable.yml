@@ -127,6 +127,19 @@ services:
       - ./resources/scp-go:/data/conf
     networks:
       - intranet
+  comm-cron-ai:
+    image: ${CRON_AI_IMAGE_NAME}:${CRON_AI_IMAGE_VERSION}
+    container_name: ${AI_CRON_HOST}
+    restart: always
+    ports:
+      - ${CRON_AI_EXPOSED_HTTP_PORT}:${CRON_AI_START_HTTP_PORT}
+      - ${CRON_AI_EXPOSED_GRPC_PORT}:${CRON_AI_START_GRPC_PORT}
+    env_file:
+      - ${ACTUAL_ENV}
+    volumes:
+      - ./resources/comm-cron:/data/conf
+    networks:
+      - intranet
 
 networks:
   intranet:
