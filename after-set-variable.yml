@@ -142,6 +142,16 @@ services:
     networks:
       - intranet
 
+  deep-e:
+    image: ${UI_AI_IMAGE_NAME}:${UI_AI_IMAGE_VERSION}
+    container_name: ${AI_UI_HOST}
+    restart: always
+    ports:
+      - ${UI_AI_EXPOSED_PORT}:${UI_AI_START_PORT}
+    env_file:
+      - ${ACTUAL_ENV}
+    networks:
+      - intranet
 networks:
   intranet:
     driver: bridge
