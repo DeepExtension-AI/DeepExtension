@@ -87,13 +87,13 @@ fi
 if [ -z $CUSTOM_UI_AI_IMAGE_VERSION ]; then
 	$ReplaceCommand  "s,^UI_AI_IMAGE_VERSION=.*,UI_AI_IMAGE_VERSION=${UI_AI_IMAGE_VERSION}," "$PracticalEnv"
 else
-	$ReplaceCommand  "s,^UI_AI_IMAGE_VERSION=.*,UI_AI_IMAGE_VERSION=${CUSTOM_ENGINE_IMAGE_VERSION}," "$PracticalEnv"
+	$ReplaceCommand  "s,^UI_AI_IMAGE_VERSION=.*,UI_AI_IMAGE_VERSION=${CUSTOM_UI_AI_IMAGE_VERSION}," "$PracticalEnv"
 fi
 
 if [ -z $CUSTOM_UI_AI_IMAGE_NAME ]; then
 	$ReplaceCommand  "s,^UI_AI_IMAGE_NAME=.*,UI_AI_IMAGE_NAME=${UI_AI_IMAGE_NAME}," "$PracticalEnv"
 else
-	$ReplaceCommand  "s,^UI_AI_IMAGE_NAME=.*,UI_AI_IMAGE_NAME=${CUSTOM_UI_IMAGE_VERSION}," "$PracticalEnv"
+	$ReplaceCommand  "s,^UI_AI_IMAGE_NAME=.*,UI_AI_IMAGE_NAME=${CUSTOM_UI_AI_IMAGE_NAME}," "$PracticalEnv"
 fi
 
 if [ -z $CUSTOM_CRON_AI_IMAGE_VERSION ]; then
@@ -184,7 +184,7 @@ if [ -z $CRON_AI_REDIS_HOST ]; then
  $ReplaceCommand  "s,^CRON_AI_REDIS_HOST=.*,CRON_AI_REDIS_HOST=${AI_REDIS_HOST}," "$ENV"
 fi
 if [ -z $CRON_AI_REDIS_PORT ]; then
- $ReplaceCommand  "s,^CRON_AI_REDIS_PORT=.*,CRON_AI_REDIS_PORT=${AI_REDIS_PORT}," "$ENV"
+ $ReplaceCommand  "s,^CRON_AI_REDIS_PORT=.*,CRON_AI_REDIS_PORT=${AI_REDIS_START_PORT}," "$ENV"
 fi
 #if [ -z $CRON_AI_REDIS_PASSWORD ]; then
  #$ReplaceCommand  "s,^CRON_AI_REDIS_PASSWORD=.*,CRON_AI_REDIS_PASSWORD=${}," "$ENV"

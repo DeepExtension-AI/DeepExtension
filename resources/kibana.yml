@@ -1,4 +1,4 @@
 server.host: "0.0.0.0"
 server.shutdownTimeout: "5s"
-elasticsearch.hosts: ["http://${ES_HOST}:${ES_START_PORT}"]
+elasticsearch.hosts: ["http://${AI_ES_HOST}:${AI_ES_START_PORT}"]
 

@@ -8,7 +8,7 @@ server:
 data:
   database:
     driver: postgres
-    source: postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_START_PORT}/postgres?sslmode=disable&TimeZone=Asia/Shanghai&search_path=public
+    source: postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/postgres?sslmode=disable&TimeZone=Asia/Shanghai&search_path=public
   redis:
     db: 0
     addr: ${REDIS_HOST}:${REDIS_PORT}
@@ -22,5 +22,5 @@ trace:
   token:
 scp:
   http:
-    host: "${SCP_GO_HOST}"
-    port: "${SCP_GO_HTTP_PORT}"
+    host: "${SCP_GO_AI_HOST}"
+    port: "${SCP_GO_AI_PORT}"
