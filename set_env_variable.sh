@@ -158,6 +158,7 @@ $ReplaceCommand  "s,^AI_TRAINING_HOST=.*,AI_TRAINING_HOST=${AI_TRAINING_HOST}," 
 # 处理网络名称：非空则将environment.env文件变量替换给.env文件指定变量
 $ReplaceCommand  "s,^DOCKER_NETWORK_NAME=.*,DOCKER_NETWORK_NAME=${DOCKER_NETWORK_NAME}," "$PracticalEnv"
 
+
 ## ENV=./environment/local.env
 # 处理服务之间环境变量：非空则将environment.env文件变量替换给environment.env文件指定变量
 if [ -z $SCP_GO_AI_REDIS_HOST ]; then
