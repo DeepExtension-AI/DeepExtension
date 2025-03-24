@@ -166,7 +166,6 @@ services:
         reservations:
           devices:
             - capabilities: [ gpu ]  # 启用 GPU 支持
-    command: nvidia-smi  # 运行 nvidia-smi 命令
     volumes:
       - ./models:/app/models
       - ./datasets:/app/datasets
