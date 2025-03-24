@@ -159,7 +159,7 @@ services:
     container_name: ${AI_TRAINING_HOST}
     restart: always
     ports:
-      - ${TRAINING_EXPOSED_PORT}:${TRAINING_TART_PORT}
+      - ${TRAINING_EXPOSED_PORT}:${TRAINING_START_PORT}
     env_file:
       - ${ACTUAL_ENV}
     networks:
