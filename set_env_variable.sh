@@ -106,7 +106,7 @@ if [ -z $CUSTOM_CRON_AI_IMAGE_NAME ]; then
 else
 	$ReplaceCommand  "s,^CRON_AI_IMAGE_NAME=.*,CRON_AI_IMAGE_NAME=${CUSTOM_CRON_AI_IMAGE_NAME}," "$PracticalEnv"
 fi
-if [ -z $CUSTOM_TRAINING_AI_IMAGE_NAME]; then
+if [ -z $CUSTOM_TRAINING_AI_IMAGE_NAME ]; then
 	$ReplaceCommand  "s,^TRAINING_AI_IMAGE_NAME=.*,TRAINING_AI_IMAGE_NAME=${TRAINING_AI_IMAGE_NAME}," "$PracticalEnv"
 else
 	$ReplaceCommand  "s,^TRAINING_AI_IMAGE_NAME=.*,TRAINING_AI_IMAGE_NAME=${CUSTOM_TRAINING_AI_IMAGE_NAME}," "$PracticalEnv"
