@@ -162,6 +162,9 @@ services:
       - ${TRAINING_EXPOSED_PORT}:${TRAINING_START_PORT}
     env_file:
       - ${ACTUAL_ENV}
+    volumes:
+      - ./models:/app/models
+      - ./datasets:/app/datasets
     networks:
       - intranet
 
