@@ -154,7 +154,6 @@ services:
       - ${ACTUAL_ENV}
     networks:
       - intranet
-
   training-py:
     image: ${TRAINING_AI_IMAGE_NAME}:${TRAINING_AI_IMAGE_VERSION}
     container_name: ${AI_TRAINING_HOST}
