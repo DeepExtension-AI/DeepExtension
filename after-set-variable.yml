@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 services:
   redis:
     image: redis:${AI_REDIS_IMAGE_VERSION} # 你的redis版本
@@ -168,7 +168,14 @@ services:
       - ./training-data/:/app/training-data/
     networks:
       - intranet
-
+  gpu-service:
+    image: nvidia/cuda:11.0-base  # 使用支持 GPU 的镜像
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]  # 启用 GPU 支持
+    command: nvidia-smi  # 运行 nvidia-smi 命令
 networks:
   intranet:
     driver: bridge
