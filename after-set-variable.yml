@@ -165,8 +165,7 @@ services:
       resources:
         reservations:
           devices:
-            - driver: nvidia
-              capabilities: [gpu, utility]  # 添加utility能力以访问管理库
+            - capabilities: [ gpu ]  # 启用 GPU 支持
     volumes:
       - ./models:/app/models
       - ./datasets:/app/datasets
