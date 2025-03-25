@@ -167,8 +167,8 @@ services:
           devices:
             - capabilities: [ gpu ]  # 启用 GPU 支持
     volumes:
-      - ./models:/app/models
-      - ./datasets:/app/datasets
+      - /home/cicd/workspace/qianyun/models:/app/models
+      - /home/cicd/workspace/qianyun/datasets:/app/datasets
       - ./training-data/:/app/training-data/
     networks:
       - intranet
