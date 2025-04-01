@@ -126,7 +126,7 @@ services:
     volumes:
       - ./resources/scp-go:/opt/scpx/resources/
       - ./logs/:/opt/scpx/logs/
-      - /etc/.deepE/datasets/${ENV}:/data/${ENV}
+      - /home/gitlab-runner/.deepE/datasets/${ENV}:/data/${ENV}
       - ./training-data/:/opt/scpx/training-data/
     networks:
       - intranet
@@ -168,8 +168,8 @@ services:
           devices:
             - capabilities: [ gpu ]  # 启用 GPU 支持
     volumes:
-      - /etc/.deepE/models:/app/models
-      - /etc/.deepE/datasets:/app/datasets
+      - /home/gitlab-runner/.deepE/models:/app/models
+      - /home/gitlab-runner/.deepE/datasets:/app/datasets
       - ./training-data/:/app/training-data/
     networks:
       - intranet
