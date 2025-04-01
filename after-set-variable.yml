@@ -126,7 +126,7 @@ services:
     volumes:
       - ./resources/scp-go:/opt/scpx/resources/
       - ./logs/:/opt/scpx/logs/
-      - ./scpx-datasets:/data/${ENV}
+      - /home/cicd/workspace/qianyun/datasets/${ENV}:/data/${ENV}
       - ./training-data/:/opt/scpx/training-data/
       - /home/cicd/workspace/fine-tuning/test.csv:/opt/scpx/test.csv
     networks:
