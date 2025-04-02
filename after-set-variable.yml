@@ -158,6 +158,7 @@ services:
   training-py:
     image: ${TRAINING_AI_IMAGE_NAME}:${TRAINING_AI_IMAGE_VERSION}
     container_name: ${AI_TRAINING_HOST}
+    restart: always
     ports:
       - ${TRAINING_EXPOSED_PORT}:${TRAINING_START_PORT}
     env_file:
