@@ -9,7 +9,7 @@ variables:
 # 2、将最新的镜像拉取到本地
 pull_image:
   tags:
-    - scpe-devpre
+    - deepE-dev
   stage: pull_image
   before_script:
     - docker login -u admin -p Harbor12345 jianweisoft.cn
@@ -22,7 +22,7 @@ pull_image:
 # 3、替换为最新的镜像，改变镜像的tag和name
 change_image_env:
   tags:
-    - scpe-devpre
+    - deepE-dev
   only:
     variables:
       - $IMAGE_NAME
