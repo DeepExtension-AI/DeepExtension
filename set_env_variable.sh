@@ -216,6 +216,6 @@ if [ -z $UI_SCP_GO_AI_PORT ]; then
  $ReplaceCommand  "s,^UI_SCP_GO_AI_PORT=.*,UI_SCP_GO_AI_PORT=${SCP_AI_START_PORT}," "$ENV"
 fi
 
-
+$ReplaceCommand "s,^ACTUAL_ENV=.*,ACTUAL_ENV=${ENV}," "$PracticalEnv"
 
 $ReplaceCommand "s,^ENV=.*,ENV=${EE}," "$PracticalEnv"
