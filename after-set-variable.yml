@@ -167,7 +167,9 @@ services:
       resources:
         reservations:
           devices:
-            - capabilities: [ gpu ]  # 启用 GPU 支持
+            - driver: nvidia
+            - count: all
+            - capabilities: [ gpu ]  # 允许GPU访问但不会立即使用
     volumes:
       - /home/gitlab-runner/.deepE/models:/app/models
       - /home/gitlab-runner/.deepE/datasets:/app/datasets
