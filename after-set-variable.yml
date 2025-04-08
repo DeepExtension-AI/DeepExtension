@@ -167,8 +167,6 @@ services:
       resources:
         reservations:
           devices:
-            - driver: nvidia
-            - count: all
             - capabilities: [ gpu ]  # 允许GPU访问但不会立即使用
     volumes:
       - /home/gitlab-runner/.deepE/models:/app/models
