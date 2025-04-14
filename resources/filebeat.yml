@@ -3,6 +3,7 @@ filebeat.inputs:
   enabled: true
   paths:
   - ./logs/*.log
+  - ./logs/*.jsonl
   json.add_error_key: true
 
 # output.logstash:
