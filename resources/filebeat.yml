@@ -2,8 +2,7 @@ filebeat.inputs:
 - type: log
   enabled: true
   paths:
-  - ./logs/*.log
-  - ./logs/*.jsonl
+  - ./logs/*
   json.add_error_key: true
 
 # output.logstash:
