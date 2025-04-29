@@ -25,5 +25,8 @@ dist-ssr
 /pg-data
 /redis
 /consul
+/app
+/knowledgeBase
+/training-data
 
 standalone-logs
