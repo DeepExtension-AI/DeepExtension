@@ -116,6 +116,17 @@ if [ -z $CUSTOM_TRAINING_AI_IMAGE_VERSION ]; then
 else
 	$ReplaceCommand  "s,^TRAINING_AI_IMAGE_VERSION=.*,TRAINING_AI_IMAGE_VERSION=${CUSTOM_TRAINING_AI_IMAGE_VERSION}," "$PracticalEnv"
 fi
+if [ -z $CUSTOM_RAG_IMAGE_VERSION ]; then
+	$ReplaceCommand  "s,^RAG_IMAGE_VERSION=.*,RAG_IMAGE_VERSION=${RAG_IMAGE_VERSION}," "$PracticalEnv"
+else
+	$ReplaceCommand  "s,^RAG_IMAGE_VERSION=.*,RAG_IMAGE_VERSION=${CUSTOM_RAG_IMAGE_VERSION}," "$PracticalEnv"
+fi
+if [ -z $CUSTOM_RAG_IMAGE_NAME ]; then
+	$ReplaceCommand  "s,^RAG_IMAGE_NAME=.*,RAG_IMAGE_NAME=${RAG_IMAGE_NAME}," "$PracticalEnv"
+else
+  $ReplaceCommand  "s,^RAG_IMAGE_NAME=.*,RAG_IMAGE_NAME=${CUSTOM_RAG_IMAGE_NAME}," "$PracticalEnv"
+fi
+
 # 处理第三方镜像名称和版本：非空则将environment.env文件变量替换给.env文件指定变量
 $ReplaceCommand  "s,^AI_CONSUL_IMAGE_VERSION=.*,AI_CONSUL_IMAGE_VERSION=${AI_CONSUL_IMAGE_VERSION}," "$PracticalEnv"
 $ReplaceCommand  "s,^AI_REDIS_IMAGE_VERSION=.*,AI_REDIS_IMAGE_VERSION=${AI_REDIS_IMAGE_VERSION}," "$PracticalEnv"
@@ -144,6 +155,8 @@ $ReplaceCommand  "s,^CRON_AI_START_GRPC_PORT=.*,CRON_AI_START_GRPC_PORT=${CRON_A
 $ReplaceCommand  "s,^SCP_AI_START_PORT=.*,SCP_AI_START_PORT=${SCP_AI_START_PORT}," "$PracticalEnv"
 $ReplaceCommand  "s,^UI_AI_START_PORT=.*,UI_AI_START_PORT=${UI_AI_START_PORT}," "$PracticalEnv"
 $ReplaceCommand  "s,^TRAINING_START_PORT=.*,TRAINING_START_PORT=${TRAINING_START_PORT}," "$PracticalEnv"
+$ReplaceCommand  "s,^RAG_START_HTTP_PORT=.*,RAG_START_HTTP_PORT=${RAG_START_HTTP_PORT}," "$PracticalEnv"
+$ReplaceCommand  "s,^RAG_START_GRPC_PORT=.*,RAG_START_GRPC_PORT=${RAG_START_GRPC_PORT}," "$PracticalEnv"
 # 处理容器名：非空则将environment.env文件变量替换给.env文件指定变量
 $ReplaceCommand  "s,^AI_CONSUL_HOST=.*,AI_CONSUL_HOST=${AI_CONSUL_HOST}," "$PracticalEnv"
 $ReplaceCommand  "s,^AI_REDIS_HOST=.*,AI_REDIS_HOST=${AI_REDIS_HOST}," "$PracticalEnv"
@@ -155,6 +168,7 @@ $ReplaceCommand  "s,^AI_SCP_HOST=.*,AI_SCP_HOST=${AI_SCP_HOST}," "$PracticalEnv"
 $ReplaceCommand  "s,^AI_UI_HOST=.*,AI_UI_HOST=${AI_UI_HOST}," "$PracticalEnv"
 $ReplaceCommand  "s,^AI_UI_HOST=.*,AI_UI_HOST=${AI_UI_HOST}," "$PracticalEnv"
 $ReplaceCommand  "s,^AI_TRAINING_HOST=.*,AI_TRAINING_HOST=${AI_TRAINING_HOST}," "$PracticalEnv"
+$ReplaceCommand  "s,^RAG_HOST=.*,RAG_HOST=${RAG_HOST}," "$PracticalEnv"
 # 处理网络名称：非空则将environment.env文件变量替换给.env文件指定变量
 $ReplaceCommand  "s,^DOCKER_NETWORK_NAME=.*,DOCKER_NETWORK_NAME=${DOCKER_NETWORK_NAME}," "$PracticalEnv"
 
@@ -216,6 +230,10 @@ if [ -z $UI_SCP_GO_AI_PORT ]; then
  $ReplaceCommand  "s,^UI_SCP_GO_AI_PORT=.*,UI_SCP_GO_AI_PORT=${SCP_AI_START_PORT}," "$ENV"
 fi
 
-
-
+if [ -z $DEEPE_RAG_HOST ]; then
+ $ReplaceCommand  "s,^DEEPE_RAG_HOST=.*,DEEPE_RAG_HOST=${RAG_HOST}," "$ENV"
+fi
+if [ -z $DEEPE_RAG_HTTP_PORT ]; then
+ $ReplaceCommand  "s,^DEEPE_RAG_HTTP_PORT=.*,DEEPE_RAG_HTTP_PORT=${RAG_START_HTTP_PORT}," "$ENV"
+fi
 $ReplaceCommand "s,^ENV=.*,ENV=${EE}," "$PracticalEnv"

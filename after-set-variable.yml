@@ -176,7 +176,20 @@ services:
       - ./logs/:/app/logs/
     networks:
       - intranet
-
+  deep-e-rag:
+    image: ${RAG_IMAGE_NAME}:${RAG_IMAGE_VERSION}
+    container_name: ${RAG_HOST}
+    restart: always
+    ports:
+      - ${RAG_START_HTTP_PORT}
+      - ${RAG_START_GRPC_PORT}
+    env_file:
+      - ${ACTUAL_ENV}
+    volumes:
+      - ./resources/rag:/data/conf
+      - /home/gitlab-runner/.deepE/knowledgeBase:/data/fileData
+    networks:
+      - intranet
 networks:
   intranet:
     driver: bridge
