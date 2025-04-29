@@ -16,5 +16,5 @@ data:
     write_timeout: 10s
 rag:
   milvus:
-    host: "{MILVUS_HOST}"
-    port: "{MILVUS_PORT}"
+    host: "${MILVUS_HOST}"
+    port: "${MILVUS_PORT}"
