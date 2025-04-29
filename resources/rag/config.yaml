@@ -1,0 +1,20 @@
+server:
+  http:
+    addr: "0.0.0.0:${START_HTTP_PORT}"
+    timeout: 1s
+  grpc:
+    addr: "0.0.0.0:${START_GRPC_PORT}"
+    timeout: 1s
+data:
+  database:
+    driver: postgres
+    source: postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/postgres?sslmode=disable&TimeZone=Asia/Shanghai&search_path=public
+  redis:
+    db: 0
+    addr: ${REDIS_HOST}:${REDIS_PORT}
+    read_timeout: 10s
+    write_timeout: 10s
+rag:
+  milvus:
+    host: "{MILVUS_HOST}"
+    port: "{MILVUS_PORT}"

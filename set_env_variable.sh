@@ -214,6 +214,12 @@ fi
 if [ -z $CRON_AI_REDIS_PORT ]; then
  $ReplaceCommand  "s,^CRON_AI_REDIS_PORT=.*,CRON_AI_REDIS_PORT=${AI_REDIS_START_PORT}," "$ENV"
 fi
+if [ -z $DEEPE_RAG_REDIS_HOST ]; then
+ $ReplaceCommand  "s,^DEEPE_RAG_REDIS_HOST=.*,DEEPE_RAG_REDIS_HOST=${AI_REDIS_HOST}," "$ENV"
+fi
+if [ -z $DEEPE_RAG_REDIS_PORT ]; then
+ $ReplaceCommand  "s,^DEEPE_RAG_REDIS_PORT=.*,DEEPE_RAG_REDIS_PORT=${AI_REDIS_START_PORT}," "$ENV"
+fi
 #if [ -z $CRON_AI_REDIS_PASSWORD ]; then
  #$ReplaceCommand  "s,^CRON_AI_REDIS_PASSWORD=.*,CRON_AI_REDIS_PASSWORD=${}," "$ENV"
 #fi
