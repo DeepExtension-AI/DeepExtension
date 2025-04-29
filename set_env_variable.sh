@@ -242,4 +242,7 @@ fi
 if [ -z $DEEPE_RAG_HTTP_PORT ]; then
  $ReplaceCommand  "s,^DEEPE_RAG_HTTP_PORT=.*,DEEPE_RAG_HTTP_PORT=${RAG_START_HTTP_PORT}," "$ENV"
 fi
+
+
+$ReplaceCommand "s,^ACTUAL_ENV=.*,ACTUAL_ENV=${ENV}," "$PracticalEnv"
 $ReplaceCommand "s,^ENV=.*,ENV=${EE}," "$PracticalEnv"
