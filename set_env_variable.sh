@@ -144,6 +144,10 @@ $ReplaceCommand  "s,^CRON_AI_EXPOSED_GRPC_PORT=.*,CRON_AI_EXPOSED_GRPC_PORT=${CR
 $ReplaceCommand  "s,^SCP_AI_EXPOSED_PORT=.*,SCP_AI_EXPOSED_PORT=${SCP_AI_EXPOSED_PORT}," "$PracticalEnv"
 $ReplaceCommand  "s,^UI_AI_EXPOSED_PORT=.*,UI_AI_EXPOSED_PORT=${UI_AI_EXPOSED_PORT}," "$PracticalEnv"
 $ReplaceCommand  "s,^TRAINING_EXPOSED_PORT=.*,TRAINING_EXPOSED_PORT=${TRAINING_EXPOSED_PORT}," "$PracticalEnv"
+$ReplaceCommand  "s,^MILVUS_STANDALONE_EXPOSED_PORT_FIRST=.*,MILVUS_STANDALONE_EXPOSED_PORT_FIRST=${MILVUS_STANDALONE_EXPOSED_PORT_FIRST}," "$PracticalEnv"
+$ReplaceCommand  "s,^MILVUS_STANDALONE_EXPOSED_PORT_SECOND=.*,MILVUS_STANDALONE_EXPOSED_PORT_SECOND=${MILVUS_STANDALONE_EXPOSED_PORT_SECOND}," "$PracticalEnv"
+$ReplaceCommand  "s,^MILVUS_MINIO_EXPOSED_PORT_FIRST=.*,MILVUS_MINIO_EXPOSED_PORT_FIRST=${MILVUS_MINIO_EXPOSED_PORT_FIRST}," "$PracticalEnv"
+$ReplaceCommand  "s,^MILVUS_MINIO_EXPOSED_PORT_SECOND=.*,MILVUS_MINIO_EXPOSED_PORT_SECOND=${MILVUS_MINIO_EXPOSED_PORT_SECOND}," "$PracticalEnv"
 # 处理启动端口：非空则将environment.env文件变量替换给.env文件指定变量
 $ReplaceCommand  "s,^AI_REDIS_START_PORT=.*,AI_REDIS_START_PORT=${AI_REDIS_START_PORT}," "$PracticalEnv"
 $ReplaceCommand  "s,^AI_ES_START_PORT=.*,AI_ES_START_PORT=${AI_ES_START_PORT}," "$PracticalEnv"
@@ -157,6 +161,10 @@ $ReplaceCommand  "s,^UI_AI_START_PORT=.*,UI_AI_START_PORT=${UI_AI_START_PORT}," 
 $ReplaceCommand  "s,^TRAINING_START_PORT=.*,TRAINING_START_PORT=${TRAINING_START_PORT}," "$PracticalEnv"
 $ReplaceCommand  "s,^RAG_START_HTTP_PORT=.*,RAG_START_HTTP_PORT=${RAG_START_HTTP_PORT}," "$PracticalEnv"
 $ReplaceCommand  "s,^RAG_START_GRPC_PORT=.*,RAG_START_GRPC_PORT=${RAG_START_GRPC_PORT}," "$PracticalEnv"
+$ReplaceCommand  "s,^MILVUS_STANDALONE_PORT_FIRST=.*,MILVUS_STANDALONE_PORT_FIRST=${MILVUS_STANDALONE_PORT_FIRST}," "$PracticalEnv"
+$ReplaceCommand  "s,^MILVUS_STANDALONE_PORT_SECOND=.*,MILVUS_STANDALONE_PORT_SECOND=${MILVUS_STANDALONE_PORT_SECOND}," "$PracticalEnv"
+$ReplaceCommand  "s,^MILVUS_MINIO_PORT_FIRST=.*,MILVUS_MINIO_PORT_FIRST=${MILVUS_MINIO_PORT_FIRST}," "$PracticalEnv"
+$ReplaceCommand  "s,^MILVUS_MINIO_PORT_SECOND=.*,MILVUS_MINIO_PORT_SECOND=${MILVUS_MINIO_PORT_SECOND}," "$PracticalEnv"
 # 处理容器名：非空则将environment.env文件变量替换给.env文件指定变量
 $ReplaceCommand  "s,^AI_CONSUL_HOST=.*,AI_CONSUL_HOST=${AI_CONSUL_HOST}," "$PracticalEnv"
 $ReplaceCommand  "s,^AI_REDIS_HOST=.*,AI_REDIS_HOST=${AI_REDIS_HOST}," "$PracticalEnv"
@@ -169,10 +177,13 @@ $ReplaceCommand  "s,^AI_UI_HOST=.*,AI_UI_HOST=${AI_UI_HOST}," "$PracticalEnv"
 $ReplaceCommand  "s,^AI_UI_HOST=.*,AI_UI_HOST=${AI_UI_HOST}," "$PracticalEnv"
 $ReplaceCommand  "s,^AI_TRAINING_HOST=.*,AI_TRAINING_HOST=${AI_TRAINING_HOST}," "$PracticalEnv"
 $ReplaceCommand  "s,^RAG_HOST=.*,RAG_HOST=${RAG_HOST}," "$PracticalEnv"
+$ReplaceCommand  "s,^MILVUS_STANDALONE_NAME=.*,MILVUS_STANDALONE_NAME=${MILVUS_STANDALONE_NAME}," "$PracticalEnv"
+$ReplaceCommand  "s,^MILVUS_MINIO_NAME=.*,MILVUS_MINIO_NAME=${MILVUS_MINIO_NAME}," "$PracticalEnv"
+$ReplaceCommand  "s,^MILVUS_ETCD_NAME=.*,MILVUS_ETCD_NAME=${MILVUS_ETCD_NAME}," "$PracticalEnv"
 # 处理网络名称：非空则将environment.env文件变量替换给.env文件指定变量
 $ReplaceCommand  "s,^DOCKER_NETWORK_NAME=.*,DOCKER_NETWORK_NAME=${DOCKER_NETWORK_NAME}," "$PracticalEnv"
-
-
+# 处理容器挂载地址
+$ReplaceCommand  "s,^DOCKER_VOLUME_DIRECTORY=.*,DOCKER_VOLUME_DIRECTORY=${DOCKER_VOLUME_DIRECTORY}," "$PracticalEnv"
 ## ENV=./environment/local.env
 # 处理服务之间环境变量：非空则将environment.env文件变量替换给environment.env文件指定变量
 if [ -z $SCP_GO_AI_REDIS_HOST ]; then
