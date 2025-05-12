@@ -9,7 +9,7 @@ services:
       - ETCD_QUOTA_BACKEND_BYTES=4294967296
       - ETCD_SNAPSHOT_COUNT=50000
     volumes:
-      - ${DOCKER_VOLUME_DIRECTORY:-.}/milvus/${ENV}/volumes/etcd:/etcd
+      - ./milvus/${ENV}/volumes/etcd:/etcd
     command: etcd -advertise-client-urls=http://etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
     healthcheck:
       test: [ "CMD", "etcdctl", "endpoint", "health" ]
@@ -27,7 +27,7 @@ services:
       - ${MILVUS_MINIO_EXPOSED_PORT_FIRST}:${MILVUS_MINIO_PORT_FIRST}
       - ${MILVUS_MINIO_EXPOSED_PORT_SECOND}:${MILVUS_MINIO_PORT_SECOND}
     volumes:
-      - ${DOCKER_VOLUME_DIRECTORY:-.}/milvus/${ENV}/volumes/minio:/minio_data
+      - ./milvus/${ENV}/volumes/minio:/minio_data
     command: minio server /minio_data --console-address ":${MILVUS_MINIO_PORT_FIRST}"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${MILVUS_MINIO_PORT_SECOND}/minio/health/live" ]
@@ -45,7 +45,7 @@ services:
       ETCD_ENDPOINTS: etcd:2379
       MINIO_ADDRESS: minio:9000
     volumes:
-      - ${DOCKER_VOLUME_DIRECTORY:-.}/milvus/${ENV}/volumes/milvus:/var/lib/milvus
+      - ./milvus/${ENV}/volumes/milvus:/var/lib/milvus
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${MILVUS_STANDALONE_PORT_SECOND}/healthz" ]
       interval: 30s
@@ -230,8 +230,6 @@ services:
       - ./knowledgeBase:/data/fileData
     networks:
       - intranet
-
-
 networks:
   intranet:
     driver: bridge

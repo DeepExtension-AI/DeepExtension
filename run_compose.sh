@@ -8,9 +8,23 @@ if [ "$SYSTEM" = "Darwin" ];then
   ReplaceCommand="sed_-i_\'\'"
   ./set_env_variable.sh $ReplaceCommand $FileLocation
   docker-compose -p ${PROJECT_NAME} -f ./after-set-variable-mac.yml --env-file ./.env up -d --remove-orphans
+  APP_NAME="training-py"
+  APP_SCRIPT=$PYTHON_CODE_PATH
+  ## 需要提前安装pm2: npm install pm2 -g
+  ## 查看Python容器日志 pm2 logs training-py
+  # 检查服务是否存在
+  if pm2 id $APP_NAME > /dev/null 2>&1; then
+      echo "🔄 Restarting $APP_NAME..."
+      pm2 restart $APP_NAME
+  else
+      echo "🚀 Starting $APP_NAME..."
+      pm2 start $APP_SCRIPT --name $APP_NAME
+  fi
+  pm2 save
 else if [ "$SYSTEM" = "Linux" ];then
     ReplaceCommand='sed_-i'
     ./set_env_variable.sh $ReplaceCommand $FileLocation
      docker-compose -p ${PROJECT_NAME} -f ./after-set-variable.yml --env-file ./.env up  -d --remove-orphans
     fi
 fi
+

@@ -1,50 +1,50 @@
 
 
-GLOBAL_ENV=devpre.env
+GLOBAL_ENV=local.env
 
-ACTUAL_ENV=./environment/devpre.env
-ENV=devpre
+ACTUAL_ENV=./environment/local.env
+ENV=local
 #####################与环境有关#######################
 ## 即以下内容会根据使用脚本将当前部署环境信息自动替换环境有关标识
 ## 替换逻辑为：当前字段不为空时
 
 ########网络名称#########
-DOCKER_NETWORK_NAME=scpx-devpre-internet
+DOCKER_NETWORK_NAME=scpx-local-internet
 ########REDIS#########
-AI_REDIS_HOST=scpx-redis-devpre
+AI_REDIS_HOST=scpx-redis-local
 ########CONSUL#########
-AI_CONSUL_HOST=scpx-consul-devpre
+AI_CONSUL_HOST=scpx-consul-local
 ########ES#########
-AI_ES_HOST=scpx-es-devpre
+AI_ES_HOST=scpx-es-local
 ########FB#########
-AI_FB_HOST=scpx-fb-devpre
+AI_FB_HOST=scpx-fb-local
 ########KIBANA#########
-AI_KIBANA_HOST=scpx-kibana-devpre
+AI_KIBANA_HOST=scpx-kibana-local
 ########CRON#########
-AI_CRON_HOST=scpx-cron-devpre
+AI_CRON_HOST=scpx-cron-local
 ########UI#########
-AI_UI_HOST=scpx-ui-devpre
+AI_UI_HOST=scpx-ui-local
 ########SCP#########
-AI_SCP_HOST=scpx-go-devpre
+AI_SCP_HOST=scpx-go-local
 ########TRAINING#########
 AI_TRAINING_HOST=scpx-training-devpre
 ########TRAINING#########
-RAG_HOST=scpx-rag-devpre
+RAG_HOST=scpx-rag-local
 #####################镜像名称-版本#######################
-SCP_AI_IMAGE_VERSION=7635a3ba
+SCP_AI_IMAGE_VERSION=447162bd
 SCP_AI_IMAGE_NAME=jianweisoft.cn/scpe/scp-go-ai
 
-UI_AI_IMAGE_VERSION=24553b23
+UI_AI_IMAGE_VERSION=d1a3bd3d
 UI_AI_IMAGE_NAME=jianweisoft.cn/deep_e/deep_e_ui_image
 
-CRON_AI_IMAGE_VERSION=dc78db57
+CRON_AI_IMAGE_VERSION=58281b8d
 CRON_AI_IMAGE_NAME=jianweisoft.cn/scpe/comm-cron-ai
 
-TRAINING_AI_IMAGE_VERSION=afcdebb4
+TRAINING_AI_IMAGE_VERSION=1defde21
 TRAINING_AI_IMAGE_NAME=jianweisoft.cn/scpe/training-py
 
 RAG_IMAGE_NAME=jianweisoft.cn/scpe/deep-e-rag
-RAG_IMAGE_VERSION=ff6fba53
+RAG_IMAGE_VERSION=1b2aa681
 #####################一般默认内置#######################
 ## 非特殊情况 以下字段无需更改
 ########REDIS#########
@@ -69,7 +69,7 @@ AI_ES_START_PORT=9200
 ## ES对外暴露端口
 AI_ES_EXPOSED_PORT=9287
 ## ES镜像版本
-AI_ES_IMAGE_VERSION=8.5.0
+AI_ES_IMAGE_VERSION=9.0.0
 ########FB#########
 ## FB镜像版本
 AI_FB_IMAGE_VERSION=8.5.0
@@ -106,3 +106,18 @@ TRAINING_EXPOSED_PORT=5000
 RAG_START_HTTP_PORT=8000
 RAG_START_GRPC_PORT=9000
 
+# milvus相关
+MILVUS_STANDALONE_NAME=milvus-standalone-local
+MILVUS_MINIO_NAME=milvus-minio-local
+MILVUS_ETCD_NAME=milvus-etcd-local
+MILVUS_STANDALONE_EXPOSED_PORT_FIRST=
+MILVUS_STANDALONE_PORT_FIRST=19530
+MILVUS_STANDALONE_EXPOSED_PORT_SECOND=
+MILVUS_STANDALONE_PORT_SECOND=9091
+MILVUS_MINIO_EXPOSED_PORT_FIRST=
+MILVUS_MINIO_PORT_FIRST=9001
+MILVUS_MINIO_EXPOSED_PORT_SECOND=
+MILVUS_MINIO_PORT_SECOND=9000
+DOCKER_VOLUME_DIRECTORY=/home/gitlab-runner/.deepE
+
+PYTHON_CODE_PATH="/Users/qianyun/workspace/deep-py/deep-e-python/app.py"
