@@ -95,3 +95,12 @@ else
     echo "${file_path}不存在，无需删除"
 fi
 
+file_path="image.env.template"  # 替换为你的文件路径
+
+if [ -f "$file_path" ]; then
+    echo "${file_path}存在，正在删除..."
+    rm -f "$file_path"
+    echo "${file_path}已删除"
+else
+    echo "${file_path}不存在，无需删除"
+fi
