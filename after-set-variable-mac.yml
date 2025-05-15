@@ -185,6 +185,7 @@ services:
     volumes:
       - ./resources/scp-go:/opt/scpx/resources/
       - ./logs/:/opt/scpx/logs/
+      - ./models:/app/models
       - ./app/datasets/${ENV}:/app/datasets/${ENV}
       - ./knowledgeBase/${ENV}:/app/knowledgeBase/${ENV}
       - ./training-data/:/opt/scpx/training-data/
