@@ -13,6 +13,7 @@ if [ "$SYSTEM" = "Darwin" ];then
   ## 需要提前安装pm2: npm install pm2 -g
   ## 查看Python容器日志 pm2 logs training-py
   # 检查服务是否存在
+  cd deep-e-python
   if pm2 list | grep -q $APP_NAME; then
       echo "🔄 Restarting $APP_NAME..."
       pm2 restart $APP_NAME
