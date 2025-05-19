@@ -234,7 +234,7 @@ services:
       - /home/gitlab-runner/.deepE/models:/app/deep-e-python/models
       - /home/gitlab-runner/.deepE/datasets:/app/datasets
       - /home/gitlab-runner/.deepE/knowledgeBase:/app/deep-e-python/knowledgeBase
-      - ./logs/:/app/logs/
+      - ./logs/:/app/deep-e-python/logs/
     networks:
       - intranet
   deep-e-rag:
