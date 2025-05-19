@@ -185,9 +185,9 @@ services:
     volumes:
       - ./resources/scp-go:/opt/scpx/resources/
       - ./logs/:/opt/scpx/logs/
-      - /home/gitlab-runner/.deepE/models:/app/models
-      - /home/gitlab-runner/.deepE/datasets/${ENV}:/app/datasets/${ENV}
-      - /home/gitlab-runner/.deepE/knowledgeBase/${ENV}:/app/knowledgeBase/${ENV}
+      - /home/gitlab-runner/.deepE/models:/app/deep-e-python/models
+      - /home/gitlab-runner/.deepE/datasets/${ENV}:/app/deep-e-python/datasets/${ENV}
+      - /home/gitlab-runner/.deepE/knowledgeBase/${ENV}:/app/deep-e-python/knowledgeBase/${ENV}
       - ./training-data/:/opt/scpx/training-data/
     networks:
       - intranet
