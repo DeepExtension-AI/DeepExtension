@@ -189,6 +189,7 @@ services:
       - /home/gitlab-runner/.deepE/datasets/${ENV}:/app/datasets/${ENV}
       - /home/gitlab-runner/.deepE/knowledgeBase/${ENV}:/app/knowledgeBase/${ENV}
       - ./training-data/:/opt/scpx/training-data/
+      - ./adminPassword/:/opt/scpx/adminPassword/
     networks:
       - intranet
 
