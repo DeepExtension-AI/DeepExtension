@@ -9,7 +9,7 @@ services:
       - ETCD_QUOTA_BACKEND_BYTES=4294967296
       - ETCD_SNAPSHOT_COUNT=50000
     volumes:
-      - ${DOCKER_VOLUME_DIRECTORY:-.}/milvus/${ENV}/volumes/etcd:/etcd
+      - ./milvus/${ENV}/volumes/etcd:/etcd
     command: etcd -advertise-client-urls=http://etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
     healthcheck:
       test: [ "CMD", "etcdctl", "endpoint", "health" ]
@@ -24,10 +24,10 @@ services:
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
     ports:
-      - ${MILVUS_MINIO_EXPOSED_PORT_FIRST}:${MILVUS_MINIO_PORT_FIRST}
-      - ${MILVUS_MINIO_EXPOSED_PORT_SECOND}:${MILVUS_MINIO_PORT_SECOND}
+      - ${MILVUS_MINIO_PORT_FIRST}
+      - ${MILVUS_MINIO_PORT_SECOND}
     volumes:
-      - ${DOCKER_VOLUME_DIRECTORY:-.}/milvus/${ENV}/volumes/minio:/minio_data
+      - ./milvus/${ENV}/volumes/minio:/minio_data
     command: minio server /minio_data --console-address ":${MILVUS_MINIO_PORT_FIRST}"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${MILVUS_MINIO_PORT_SECOND}/minio/health/live" ]
@@ -45,7 +45,7 @@ services:
       ETCD_ENDPOINTS: etcd:2379
       MINIO_ADDRESS: minio:9000
     volumes:
-      - ${DOCKER_VOLUME_DIRECTORY:-.}/milvus/${ENV}/volumes/milvus:/var/lib/milvus
+      - ./milvus/${ENV}/volumes/milvus:/var/lib/milvus
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${MILVUS_STANDALONE_PORT_SECOND}/healthz" ]
       interval: 30s
@@ -53,8 +53,8 @@ services:
       timeout: 20s
       retries: 3
     ports:
-      - ${MILVUS_STANDALONE_EXPOSED_PORT_FIRST}:${MILVUS_STANDALONE_PORT_FIRST}
-      - ${MILVUS_STANDALONE_EXPOSED_PORT_SECOND}:${MILVUS_STANDALONE_PORT_SECOND}
+      - ${MILVUS_STANDALONE_PORT_FIRST}
+      - ${MILVUS_STANDALONE_PORT_SECOND}
     depends_on:
       - "etcd"
       - "minio"
@@ -65,7 +65,7 @@ services:
     container_name: ${AI_REDIS_HOST}
     privileged: true
     ports:
-      - ${AI_REDIS_EXPOSED_PORT}:${AI_REDIS_START_PORT}
+      - ${AI_REDIS_START_PORT}
     environment:
       TZ: Asia/Shanghai
     volumes:
@@ -80,7 +80,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:${AI_ES_IMAGE_VERSION}
     restart: always
     env_file:
-      - ${ACTUAL_ENV}
+      - .env
     volumes:
       - ./resources/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
     environment:
@@ -118,44 +118,13 @@ services:
     image: docker.elastic.co/beats/filebeat:${AI_FB_IMAGE_VERSION}
     restart: always
     env_file:
-      - ${ACTUAL_ENV}
+      - .env
     depends_on:
       - es
     #        condition: service_healthy
     volumes:
       - ./resources/filebeat.yml:/usr/share/filebeat/filebeat.yml
       - ./logs/:/usr/share/filebeat/logs
-    networks:
-      - intranet
-
-  kibana:
-    container_name: ${AI_KIBANA_HOST}
-    image: docker.elastic.co/kibana/kibana:${AI_KIBANA_IMAGE_VERSION}
-    restart: always
-    env_file:
-      - ${ACTUAL_ENV}
-    ## profiles: [ "dbvis" ]
-    volumes:
-      - ./resources/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
-    environment:
-      ELASTICSEARCH_URL: http://${AI_ES_HOST}:${AI_ES_START_PORT}
-    depends_on:
-      - es
-    #        condition: service_healthy
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-s",
-          "-f",
-          "http://localhost:5601/api/status"
-        ]
-      interval: 3s
-      timeout: 3s
-      retries: 50
-    ports:
-      - ${AI_KIBANA_EXPOSED_PORT}:${AI_KIBANA_START_PORT}
     networks:
       - intranet
 
@@ -169,7 +138,7 @@ services:
       - ./consul/logs-${ENV}:/consul/logs
     command: consul agent -server -bootstrap-expect=1 -client=0.0.0.0 -ui -bind='{{ GetPrivateIP }}' -data-dir=/consul/data -node=consul-node -datacenter=dc1 -log-level=debug -enable-script-checks=true -config-dir=/consul/config
     ports:
-      - ${AI_CONSUL_HTTP_EXPOSED_PORT}:${AI_CONSUL_HTTP_START_PORT}
+      - ${AI_CONSUL_HTTP_START_PORT}
       - ${AI_CONSUL_HTTP2_START_PORT}/udp
     networks:
       - intranet
@@ -179,16 +148,15 @@ services:
     container_name: ${AI_SCP_HOST}
     restart: always
     ports:
-      - ${SCP_AI_EXPOSED_PORT}:${SCP_AI_START_PORT}
+      - ${SCP_AI_START_PORT}
     env_file:
-      - ${ACTUAL_ENV}
+      - .env
     volumes:
       - ./resources/scp-go:/opt/scpx/resources/
       - ./logs/:/opt/scpx/logs/
-      - /home/gitlab-runner/.deepE/models:/app/models
-      - /home/gitlab-runner/.deepE/datasets/${ENV}:/app/datasets/${ENV}
-      - /home/gitlab-runner/.deepE/knowledgeBase/${ENV}:/app/knowledgeBase/${ENV}
-      - ./training-data/:/opt/scpx/training-data/
+      - ./models:/opt/scpx/models
+      - ./datasets/${ENV}:/opt/scpx/datasets/${ENV}
+      - ./knowledgeBase/${ENV}:/opt/scpx/knowledgeBase/${ENV}
       - ./adminPassword/:/opt/scpx/adminPassword/
     networks:
       - intranet
@@ -198,10 +166,10 @@ services:
     container_name: ${AI_CRON_HOST}
     restart: always
     ports:
-      - ${CRON_AI_EXPOSED_HTTP_PORT}:${CRON_AI_START_HTTP_PORT}
-      - ${CRON_AI_EXPOSED_GRPC_PORT}:${CRON_AI_START_GRPC_PORT}
+      - ${CRON_AI_START_HTTP_PORT}
+      - ${CRON_AI_START_GRPC_PORT}
     env_file:
-      - ${ACTUAL_ENV}
+      - .env
     volumes:
       - ./resources/comm-cron:/data/conf
     networks:
@@ -214,27 +182,35 @@ services:
     ports:
       - ${UI_AI_EXPOSED_PORT}:${UI_AI_START_PORT}
     env_file:
-      - ${ACTUAL_ENV}
+      - .env
     networks:
       - intranet
+
   training-py:
     image: ${TRAINING_AI_IMAGE_NAME}:${TRAINING_AI_IMAGE_VERSION}
     container_name: ${AI_TRAINING_HOST}
     restart: always
     ports:
-      - ${TRAINING_EXPOSED_PORT}:${TRAINING_START_PORT}
+      - ${TRAINING_START_PORT}
     env_file:
-      - ${ACTUAL_ENV}
+      - .env
     deploy:
       resources:
         reservations:
           devices:
             - capabilities: [ gpu ]  # 启用 GPU 支持
     volumes:
-      - /home/gitlab-runner/.deepE/models:/app/deep-e-python/models
-      - /home/gitlab-runner/.deepE/datasets:/app/datasets
-      - /home/gitlab-runner/.deepE/knowledgeBase:/app/deep-e-python/knowledgeBase
+      - ./models:/app/deep-e-python/models
+      - ./datasets:/app/deep-e-python/datasets
+      - ./knowledgeBase:/app/deep-e-python/knowledgeBase
       - ./logs/:/app/deep-e-python/logs/
+    profiles: ["gpu"]
+    healthcheck:
+      test: ["CMD", "nvidia-smi"]  # 健康检查执行 nvidia-smi
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
     networks:
       - intranet
   deep-e-rag:
@@ -245,10 +221,10 @@ services:
       - ${RAG_START_HTTP_PORT}
       - ${RAG_START_GRPC_PORT}
     env_file:
-      - ${ACTUAL_ENV}
+      - .env
     volumes:
       - ./resources/rag:/data/conf
-      - /home/gitlab-runner/.deepE/knowledgeBase:/data/fileData
+      - ./knowledgeBase:/data/fileData
     networks:
       - intranet
 networks:
@@ -256,21 +232,3 @@ networks:
     driver: bridge
     name: ${DOCKER_NETWORK_NAME}
 
-# build ui-js
-#scp-ui $ docker build -t ui-js-i:1.0 .
-
-# build appl-go
-#scp-go $ docker build -t appl-go-i:1.0 .
-
-# load image engine-cpp
-#anywhere $ docker load -i <path to image tar file>, e.g., engine-cpp-i-20231208.tar.gz (Nextcloud, Onboarding_Files)
-
-
-# build scp-int
-#scp-int $ docker build -t scp-data:1.0 .
-
-# build scp-inbound
-#scp-inbound $ docker build -t scp-inbound:1.0 .
-
-# start the full solution
-#currentdir $ docker-compose --profile dev up -d

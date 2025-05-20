@@ -1,15 +1,19 @@
 # 运行准备脚本
+> .env
+cat prod.env > .env
+echo "" >> .env
+cat custom.conf >> .env
+echo "" >> .env
+cat image.env >> .env
 SYSTEM=$(uname -s)
 source ./.env
-echo "Environment: $GLOBAL_ENV"
 FileLocation="./"
-PROJECT_NAME=scp-ai-$(echo $GLOBAL_ENV | cut -d '.' -f 1)
+PROJECT_NAME=scp-ai-prod
 if [ "$SYSTEM" = "Darwin" ];then
   ReplaceCommand="sed_-i_\'\'"
-  ./set_env_variable.sh $ReplaceCommand $FileLocation
-  docker-compose -p ${PROJECT_NAME} -f ./after-set-variable-mac.yml --env-file ./.env up -d --remove-orphans
+  docker-compose -p ${PROJECT_NAME} -f ./after-set-variable.yml --env-file ./.env up -d --remove-orphans
   APP_NAME="training-py"
-  APP_SCRIPT=$PYTHON_CODE_PATH
+  APP_SCRIPT="./app.py"
   ## 需要提前安装pm2: npm install pm2 -g
   ## 查看Python容器日志 pm2 logs training-py
   # 检查服务是否存在
@@ -24,7 +28,7 @@ if [ "$SYSTEM" = "Darwin" ];then
   pm2 save
 else if [ "$SYSTEM" = "Linux" ];then
     ReplaceCommand='sed_-i'
-    ./set_env_variable.sh $ReplaceCommand $FileLocation
+    ## 如果读到字段
      docker-compose -p ${PROJECT_NAME} -f ./after-set-variable.yml --env-file ./.env up  -d --remove-orphans
     fi
 fi
