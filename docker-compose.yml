@@ -200,10 +200,10 @@ services:
           devices:
             - capabilities: [ gpu ]  # 启用 GPU 支持
     volumes:
-      - ./models:/app/deep-e-python/models
-      - ./datasets:/app/deep-e-python/datasets
-      - ./knowledgeBase:/app/deep-e-python/knowledgeBase
-      - ./logs/:/app/deep-e-python/logs/
+      - ./models:/app/models
+      - ./datasets:/app/datasets
+      - ./knowledgeBase:/app/knowledgeBase
+      - ./logs/:/app/logs/
     profiles: ["gpu"]
     healthcheck:
       test: ["CMD", "nvidia-smi"]  # 健康检查执行 nvidia-smi
