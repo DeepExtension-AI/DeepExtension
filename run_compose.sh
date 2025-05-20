@@ -6,12 +6,12 @@ cat custom.conf >> .env
 echo "" >> .env
 cat image.env >> .env
 SYSTEM=$(uname -s)
-source ./.env
+source .env
 FileLocation="./"
 PROJECT_NAME=scp-ai-prod
 if [ "$SYSTEM" = "Darwin" ];then
   ReplaceCommand="sed_-i_\'\'"
-  docker-compose -p ${PROJECT_NAME} -f ./after-set-variable.yml --env-file ./.env up -d --remove-orphans
+  docker-compose -p ${PROJECT_NAME} -f ./docker-compose.yml --env-file ./.env up -d --remove-orphans
   APP_NAME="training-py"
   APP_SCRIPT="./app.py"
   ## 需要提前安装pm2: npm install pm2 -g
@@ -29,7 +29,11 @@ if [ "$SYSTEM" = "Darwin" ];then
 else if [ "$SYSTEM" = "Linux" ];then
     ReplaceCommand='sed_-i'
     ## 如果读到字段
-     docker-compose -p ${PROJECT_NAME} -f ./after-set-variable.yml --env-file ./.env up  -d --remove-orphans
+      if [ "$WITH_AI_IMAGE" = "true"];then
+        docker-compose -p ${PROJECT_NAME} -f ./docker-compose.yml  up  -d --remove-orphans --profile gpu
+      else
+         docker-compose -p ${PROJECT_NAME} -f ./docker-compose.yml  up  -d --remove-orphans
+      fi
     fi
 fi
 
