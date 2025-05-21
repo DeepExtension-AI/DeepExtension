@@ -155,7 +155,7 @@ services:
       - ./resources/scp-go:/opt/scpx/resources/
       - ./logs/:/opt/scpx/logs/
       - ./models:/opt/scpx/models
-      - ./datasets/${ENV}:/opt/datasets/${ENV}
+      - ./datasets/${ENV}:/opt/scpx/datasets/${ENV}
       - ./knowledgeBase/${ENV}:/opt/scpx/knowledgeBase/${ENV}
       - ./adminPassword/:/opt/scpx/adminPassword/
     networks:
