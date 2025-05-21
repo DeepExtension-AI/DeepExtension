@@ -16,6 +16,8 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    networks:
+      - intranet
 
   minio:
     container_name: ${MILVUS_MINIO_NAME}
@@ -34,6 +36,8 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    networks:
+      - intranet
 
   standalone:
     container_name: ${MILVUS_STANDALONE_NAME}
@@ -58,6 +62,8 @@ services:
     depends_on:
       - "etcd"
       - "minio"
+    networks:
+      - intranet
 
   redis:
     image: redis:${AI_REDIS_IMAGE_VERSION} # 你的redis版本
