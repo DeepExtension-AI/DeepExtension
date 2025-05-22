@@ -78,6 +78,7 @@ if [ -f "image.env" ]; then
   replace_var "RAG_IMAGE_VERSION" "$RAG_IMAGE_VERSION" "$CUSTOM_DEEP_E_RAG_IMAGE_VERSION"
   replace_var "RAG_IMAGE_NAME" "$RAG_IMAGE_NAME" "$CUSTOM_DEEP_E_RAG_IMAGE_NAME"
 fi
+$ReplaceCommand  "s,^TRAINING_START_PORT=.*,TRAINING_START_PORT=${SCP_GO_AI_TRAINING_PORT}," "$PracticalEnv"
 
 echo "" >> "$ENV_FILE"
 source "$ENV_FILE"
