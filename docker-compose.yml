@@ -219,6 +219,22 @@ services:
       start_period: 10s
     networks:
       - intranet
+  redis-py:
+    image: redis:${AI_PY_REDIS_IMAGE_VERSION} # 你的redis版本
+    restart: always
+    container_name: ${AI_PY_REDIS_HOST}
+    privileged: true
+    ports:
+      - ${AI_PY_REDIS_EXPOSED_PORT}:${AI_PY_REDIS_START_PORT}
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      - ./redis-py/data-${ENV}:/usr/local/redis/data
+      - ./redis-py/conf-${ENV}/redis.conf:/usr/local/redis/conf/redis.conf
+      - ./redis-py/logs-${ENV}:/usr/local/redis/logs
+    command: [ "redis-server", "/usr/local/redis/conf/redis.conf" ]
+    networks:
+      - intranet
   deep-e-rag:
     image: ${RAG_IMAGE_NAME}:${RAG_IMAGE_VERSION}
     container_name: ${RAG_HOST}
