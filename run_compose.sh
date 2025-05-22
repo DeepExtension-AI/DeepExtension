@@ -12,7 +12,8 @@ fi
 CONF_FILE="custom.conf"
 ENV_FILE=".env"
 > "$ENV_FILE"
-
+source prod.env
+$ReplaceCommand  "s,^SCP_GO_AI_TRAINING_PORT=.*,SCP_GO_AI_TRAINING_PORT=${TRAINING_START_PORT}," "prod.env"
 ## 复制prod文件给env (包括image.env的内容)
 cat prod.env > "$ENV_FILE"
 echo "" >> "$ENV_FILE"
@@ -78,7 +79,7 @@ if [ -f "image.env" ]; then
   replace_var "RAG_IMAGE_VERSION" "$RAG_IMAGE_VERSION" "$CUSTOM_DEEP_E_RAG_IMAGE_VERSION"
   replace_var "RAG_IMAGE_NAME" "$RAG_IMAGE_NAME" "$CUSTOM_DEEP_E_RAG_IMAGE_NAME"
 fi
-$ReplaceCommand  "s,^TRAINING_START_PORT=.*,TRAINING_START_PORT=${SCP_GO_AI_TRAINING_PORT}," "$PracticalEnv"
+
 
 echo "" >> "$ENV_FILE"
 source "$ENV_FILE"
