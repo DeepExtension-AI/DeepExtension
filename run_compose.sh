@@ -76,7 +76,7 @@ cat "$CONF_FILE" >> "$ENV_FILE"
   echo "CRON_AI_DB_NAME=$db_name"
   echo "DEEPE_RAG_DB_NAME=$db_name"
   echo "UI_AI_EXPOSED_PORT=$ui_port"
-  echo "SCP_GO_AI_TRAINING_HOST=${MacTrainingHost}"
+  echo "SCP_GO_AI_TRAINING_PORT=${TRAINING_START_PORT}"
 } >> "$ENV_FILE"
 
 if [ -f "image.env" ]; then
