@@ -183,6 +183,9 @@ services:
       - ./resources/comm-cron:/data/conf
     networks:
       - intranet
+      - host_access  # 用于访问宿主机
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   deep-e:
     image: ${UI_AI_IMAGE_NAME}:${UI_AI_IMAGE_VERSION}
@@ -252,6 +255,9 @@ services:
       - ./knowledgeBase:/data/fileData
     networks:
       - intranet
+      - host_access  # 用于访问宿主机
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 networks:
   intranet:
     driver: bridge
