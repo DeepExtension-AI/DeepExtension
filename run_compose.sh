@@ -114,22 +114,23 @@ FileLocation="./"
 PROJECT_NAME=scp-ai-prod
 
 if [ "$SYSTEM" = "Darwin" ]; then
-  docker-compose -p "${PROJECT_NAME}" -f ./docker-compose.yml --env-file ./.env up -d --remove-orphans
+  docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml --env-file ./.env up -d --remove-orphans
   APP_NAME="training-py"
   APP_SCRIPT="./app.py"
 
   ## 需要提前安装pm2: npm install pm2 -g
   ## 查看Python容器日志 pm2 logs training-py
   # 检查服务是否存在
+  export TRAINING_START_PORT=$TRAINING_START_PORT
+  export AI_PY_REDIS_EXPOSED_PORT=$AI_PY_REDIS_EXPOSED_PORT
   cd deep-e-python || exit 1
   if pm2 list | grep -q "$APP_NAME"; then
       echo "🔄 Restarting $APP_NAME..."
-      pm2 restart "$APP_NAME"  --env TRAINING_START_PORT=$TRAINING_START_PORT \
-                                          --env AI_PY_REDIS_EXPOSED_PORT=$AI_PY_REDIS_EXPOSED_PORT
+      pm2 delete "$APP_NAME"
+      pm2 start "$APP_SCRIPT" --name "$APP_NAME"
   else
       echo "🚀 Starting $APP_NAME..."
-      pm2 start "$APP_SCRIPT" --name "$APP_NAME" --env TRAINING_START_PORT=$TRAINING_START_PORT \
-            --env AI_PY_REDIS_EXPOSED_PORT=$AI_PY_REDIS_EXPOSED_PORT
+      pm2 start "$APP_SCRIPT" --name "$APP_NAME"
   fi
   pm2 save
 elif [ "$SYSTEM" = "Linux" ]; then
