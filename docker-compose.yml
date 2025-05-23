@@ -166,6 +166,9 @@ services:
       - ./adminPassword/:/opt/scpx/adminPassword/
     networks:
       - intranet
+      - host_access  # 用于访问宿主机
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   comm-cron-ai:
     image: ${CRON_AI_IMAGE_NAME}:${CRON_AI_IMAGE_VERSION}
@@ -253,4 +256,6 @@ networks:
   intranet:
     driver: bridge
     name: ${DOCKER_NETWORK_NAME}
+  host_access:
+    driver: bridge
 
