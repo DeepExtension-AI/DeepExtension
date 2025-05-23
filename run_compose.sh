@@ -135,7 +135,7 @@ if [ "$SYSTEM" = "Darwin" ]; then
   pm2 save
 elif [ "$SYSTEM" = "Linux" ]; then
   if [ "$with_ai_image" = "true" ]; then
-    docker compose --profile gpu -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans --profile gpu
+    docker compose --profile gpu -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans
   else
     docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans
   fi
