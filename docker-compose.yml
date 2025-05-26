@@ -225,7 +225,10 @@ services:
       retries: 3
       start_period: 10s
     working_dir: /app/deep-e-python
-    command: python3 app.py
+    environment:
+      - TRAINING_START_PORT=${TRAINING_START_PORT}
+      - FLASK_ENV=production
+    command: gunicorn -w 4 -k gevent -b 0.0.0.0:${TRAINING_START_PORT} app:app
     networks:
       - intranet
   redis-py:
