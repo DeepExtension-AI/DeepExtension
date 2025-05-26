@@ -9,3 +9,4 @@
 /redis
 image.env
 custom.conf
+.env
