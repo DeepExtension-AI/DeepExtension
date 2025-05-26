@@ -112,7 +112,7 @@ $ReplaceCommand  "s,^AI_PY_REDIS_EXPOSED_PORT=.*,AI_PY_REDIS_EXPOSED_PORT=$redis
 source "$ENV_FILE"
 
 FileLocation="./"
-PROJECT_NAME=scp-ai-prod
+PROJECT_NAME=deepe-prod
 
 if [ "$SYSTEM" = "Darwin" ]; then
   docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml --env-file ./.env up -d --remove-orphans
