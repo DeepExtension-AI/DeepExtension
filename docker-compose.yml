@@ -216,6 +216,7 @@ services:
       - ./datasets:/app/datasets
       - ./knowledgeBase:/app/knowledgeBase
       - ./logs/:/app/logs/
+      - ./deep-e-python:/app/deep-e-python
     profiles: ["gpu"]
     healthcheck:
       test: ["CMD", "nvidia-smi"]  # 健康检查执行 nvidia-smi
@@ -223,6 +224,8 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    working_dir: /app/deep-e-python
+    command: python3 app.py
     networks:
       - intranet
   redis-py:
