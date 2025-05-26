@@ -80,7 +80,7 @@ CREATE TABLE public.deploy_models_tasks (
     server_url text NOT NULL,
     quantize public."quantize_enum" DEFAULT 'None'::quantize_enum NOT NULL,
     save_task_uuid uuid NULL,
-    CONSTRAINT deploy_models_tasks_unique UNIQUE (id)
+    CONSTRAINT deploy_model_tasks_pkey PRIMARY KEY (id)
 );
 
 
@@ -183,24 +183,6 @@ CREATE TABLE public.model (
     CONSTRAINT model_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX model_model_name_task_uuid_idx ON public.model USING btree (model_name, task_uuid);
-
-
-CREATE TABLE public.model_card (
-    id bigserial NOT NULL,
-    created_at int8 NOT NULL,
-    created_by int4 NOT NULL,
-    updated_at int8 NOT NULL,
-    updated_by int4 NOT NULL,
-    model_name text NOT NULL,
-    co_id int4 NULL,
-    stage public."model_stage" NULL,
-    model_card_uuid uuid NOT NULL,
-    parent_id uuid NULL,
-    fields jsonb NULL,
-    CONSTRAINT model_card_model_card_uuid_key UNIQUE (model_card_uuid),
-    CONSTRAINT model_card_pkey PRIMARY KEY (id),
-    CONSTRAINT model_card_parent_id_fkey FOREIGN KEY (parent_id) REFERENCES public.model_card(model_card_uuid) ON DELETE SET NULL
-);
 
 
 CREATE TABLE public.model_comparison_results (
