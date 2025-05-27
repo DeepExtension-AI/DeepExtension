@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 运行准备脚本
+# Run preparation script
 SYSTEM=$(uname -s)
 source prod.env
 if [ "$SYSTEM" = "Darwin" ]; then
@@ -11,21 +11,22 @@ elif [ "$SYSTEM" = "Linux" ]; then
   MacTrainingHost=${SCP_GO_AI_TRAINING_HOST}
 fi
 
-# 配置文件路径
+# Configuration file paths
 CONF_FILE="custom.conf"
 ENV_FILE=".env"
 > "$ENV_FILE"
 
-## 复制prod文件给env (包括image.env的内容)
+## Copy prod.env content to .env (including image.env content)
 cat prod.env > "$ENV_FILE"
 echo "" >> "$ENV_FILE"
 
-# 1. 检查 custom.conf 是否存在
+# 1. Check if custom.conf exists
 if [ ! -f "$CONF_FILE" ]; then
-    echo "错误：配置文件 $CONF_FILE 不存在"
+    echo "Error: Configuration file $CONF_FILE not found"
     exit 1
 fi
 
+# Extract configuration values
 db_host=$(grep -E '^DB_HOST=' "$CONF_FILE" | cut -d'=' -f2-)
 db_port=$(grep -E '^DB_PORT=' "$CONF_FILE" | cut -d'=' -f2-)
 db_user=$(grep -E '^DB_USER=' "$CONF_FILE" | cut -d'=' -f2-)
@@ -35,30 +36,33 @@ with_ai_image=$(grep -E '^WITH_AI_IMAGE=' "$CONF_FILE" | cut -d'=' -f2-)
 ui_port=$(grep -E '^UI_AI_EXPOSED_PORT=' "$CONF_FILE" | cut -d'=' -f2-)
 redis_used_by_py=$(grep -E '^AI_PY_REDIS_EXPOSED_PORT=' "$CONF_FILE" | cut -d'=' -f2-)
 
+# Set default values if empty
 if [ -z "$db_host" ]; then
     db_host="host.docker.internal"
 fi
 if [ -z "$with_ai_image" ]; then
-    echo "WITH_AI_IMAGE Linux环境下 使用默认值 TRUE"
+    echo "WITH_AI_IMAGE Using default value TRUE for Linux environment"
     with_ai_image="true"
 fi
 if [ -z "$ui_port" ]; then
-    echo "UI_AI_EXPOSED_PORT 使用默认值 88"
+    echo "UI_AI_EXPOSED_PORT Using default value 88"
     ui_port=88
 fi
 if [ -z "$redis_used_by_py" ]; then
-    echo "AI_PY_REDIS_EXPOSED_PORT 使用默认值 6490"
+    echo "AI_PY_REDIS_EXPOSED_PORT Using default value 6490"
     redis_used_by_py=6490
 fi
 
-if [ -z "$db_port" ] ||  [ -z "$db_user" ] ||  [ -z "$db_pass" ] ||  [ -z "$db_name" ] ; then
-    echo "错误：DB_PORT 或 DB_USER 或 DB_PASS 或 DB_NAME【未设置】 或【值为空】"
+# Validate required database parameters
+if [ -z "$db_port" ] || [ -z "$db_user" ] || [ -z "$db_pass" ] || [ -z "$db_name" ]; then
+    echo "Error: DB_PORT or DB_USER or DB_PASS or DB_NAME is [not set] or [empty]"
     exit 1
 fi
 
+# Append custom.conf to .env
 cat "$CONF_FILE" >> "$ENV_FILE"
 
-# 4. 将 DB_* 赋值给其他变量
+# 4. Assign DB_* values to other variables
 {
   echo "#db_data"
   echo "SCP_GO_AI_DB_HOST=$db_host"
@@ -80,6 +84,7 @@ cat "$CONF_FILE" >> "$ENV_FILE"
   echo "SCP_GO_AI_TRAINING_PORT=${TRAINING_START_PORT}"
 } >> "$ENV_FILE"
 
+# Handle image version overrides
 if [ -f "image.env" ]; then
   source image.env
 
@@ -104,36 +109,42 @@ if [ -f "image.env" ]; then
   replace_var "RAG_IMAGE_NAME" "$RAG_IMAGE_NAME" "$CUSTOM_DEEP_E_RAG_IMAGE_NAME"
 fi
 
-
 echo "" >> "$ENV_FILE"
 
-$ReplaceCommand  "s,^SCP_GO_AI_TRAINING_PORT=.*,SCP_GO_AI_TRAINING_PORT=${TRAINING_START_PORT}," ".env"
-$ReplaceCommand  "s,^SCP_GO_AI_TRAINING_HOST=.*,SCP_GO_AI_TRAINING_HOST=${MacTrainingHost}," ".env"
-$ReplaceCommand  "s,^AI_PY_REDIS_EXPOSED_PORT=.*,AI_PY_REDIS_EXPOSED_PORT=$redis_used_by_py," ".env"
+# Final environment variable replacements
+$ReplaceCommand "s,^SCP_GO_AI_TRAINING_PORT=.*,SCP_GO_AI_TRAINING_PORT=${TRAINING_START_PORT}," ".env"
+$ReplaceCommand "s,^SCP_GO_AI_TRAINING_HOST=.*,SCP_GO_AI_TRAINING_HOST=${MacTrainingHost}," ".env"
+$ReplaceCommand "s,^AI_PY_REDIS_EXPOSED_PORT=.*,AI_PY_REDIS_EXPOSED_PORT=$redis_used_by_py," ".env"
 source "$ENV_FILE"
 
+# Docker operations
 FileLocation="./"
 PROJECT_NAME=deepe-prod
 
 if [ "$SYSTEM" = "Darwin" ]; then
+  # MacOS specific operations
   docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml --env-file ./.env up -d --remove-orphans || exit 1
-  non_running=$(docker ps --filter "label=com.docker.compose.project=$PROJECT_NAME"  --format "{{.ID}} {{.Names}} {{.Status}}" | grep -v "Up ")
+
+  # Check for non-running containers
+  non_running=$(docker ps --filter "label=com.docker.compose.project=$PROJECT_NAME" --format "{{.ID}} {{.Names}} {{.Status}}" | grep -v "Up ")
 
   if [ -n "$non_running" ]; then
-    echo "发现非运行状态容器:"
+    echo "Found non-running containers:"
     echo "$non_running"
-    exit 1  # 存在非运行容器时退出码1
+    exit 1  # Exit with code 1 if non-running containers exist
   else
     echo "$non_running"
-    echo "所有容器运行正常"
+    echo "All containers are running normally"
   fi
 
+  # PM2 process management for Python app
   APP_NAME="training-py"
   APP_SCRIPT="./app.py"
 
-  ## 需要提前安装pm2: npm install pm2 -g
-  ## 查看Python容器日志 pm2 logs training-py
-  # 检查服务是否存在
+  ## Requires pm2 installed: npm install pm2 -g
+  ## To view Python container logs: pm2 logs training-py
+
+  # Check if service exists
   export TRAINING_START_PORT=$TRAINING_START_PORT
   export AI_PY_REDIS_EXPOSED_PORT=$AI_PY_REDIS_EXPOSED_PORT
   cd deep-e-python || exit 1
@@ -147,19 +158,22 @@ if [ "$SYSTEM" = "Darwin" ]; then
   fi
   pm2 save
 elif [ "$SYSTEM" = "Linux" ]; then
+  # Linux specific operations
   if [ "$with_ai_image" = "true" ]; then
     docker compose --profile gpu -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans || exit 1
   else
     docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans || exit 1
   fi
-    non_running=$(docker ps --filter "label=com.docker.compose.project=$PROJECT_NAME"  --format "{{.ID}} {{.Names}} {{.Status}}" | grep -v "Up ")
-    if [ -n "$non_running" ]; then
-      echo "发现非运行状态容器:"
-      echo "$non_running"
-      exit 1  # 存在非运行容器时退出码1
-    else
-      echo "$non_running"
-      echo "所有容器运行正常"
-    fi
-fi
 
+  # Check for non-running containers
+  non_running=$(docker ps --filter "label=com.docker.compose.project=$PROJECT_NAME" --format "{{.ID}} {{.Names}} {{.Status}}" | grep -v "Up ")
+
+  if [ -n "$non_running" ]; then
+    echo "Found non-running containers:"
+    echo "$non_running"
+    exit 1  # Exit with code 1 if non-running containers exist
+  else
+    echo "$non_running"
+    echo "All containers are running normally"
+  fi
+fi
