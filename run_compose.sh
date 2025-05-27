@@ -143,19 +143,3 @@ elif [ "$SYSTEM" = "Linux" ]; then
   fi
 fi
 
-
-echo "等待 deepE-go 启动并变为 healthy..."
-for i in {1..10}; do
-  STATUS=$(docker inspect --format='{{.State.Health.Status}}' $(docker compose ps -q go-service))
-  if [ "$STATUS" == "healthy" ]; then
-    echo "Go 容器启动成功"
-    exit 0
-  elif [ "$STATUS" == "unhealthy" ]; then
-    echo "Go 容器健康检查失败"
-    docker logs $(docker compose ps -q go-service)
-    exit 1
-  fi
-  sleep 3
-done
-echo "等待超时，Go 容器未变为 healthy"
-exit 1
