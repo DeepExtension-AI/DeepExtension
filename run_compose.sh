@@ -60,7 +60,7 @@ cat "$CONF_FILE" >> "$ENV_FILE"
 
 # 4. 将 DB_* 赋值给其他变量
 {
-  echo "Start to copy values..."
+  echo "#db_data"
   echo "SCP_GO_AI_DB_HOST=$db_host"
   echo "CRON_AI_DB_HOST=$db_host"
   echo "DEEPE_RAG_DB_HOST=$db_host"
