@@ -116,7 +116,7 @@ FileLocation="./"
 PROJECT_NAME=deepe-prod
 
 if [ "$SYSTEM" = "Darwin" ]; then
-  docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml --env-file ./.env up -d --remove-orphans
+  docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml --env-file ./.env up -d --remove-orphans || exit 1
   non_running=$(docker ps --filter "label=com.docker.compose.project=$PROJECT_NAME"  --format "{{.ID}} {{.Names}} {{.Status}}" | grep -v "Up ")
 
   if [ -n "$non_running" ]; then
@@ -148,9 +148,9 @@ if [ "$SYSTEM" = "Darwin" ]; then
   pm2 save
 elif [ "$SYSTEM" = "Linux" ]; then
   if [ "$with_ai_image" = "true" ]; then
-    docker compose --profile gpu -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans
+    docker compose --profile gpu -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans || exit 1
   else
-    docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans
+    docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans || exit 1
   fi
     non_running=$(docker ps --filter "label=com.docker.compose.project=$PROJECT_NAME"  --format "{{.ID}} {{.Names}} {{.Status}}" | grep -v "Up ")
     if [ -n "$non_running" ]; then
