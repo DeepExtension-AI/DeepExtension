@@ -126,7 +126,79 @@ PROJECT_NAME=deepe-prod
 
 if [ "$SYSTEM" = "Darwin" ]; then
   # MacOS specific operations
-  docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml --env-file ./.env up -d --remove-orphans || exit 1
+  case "$1" in
+      "stop")
+          docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml --env-file ./.env stop  || exit 1
+          ;;
+      "down")
+          docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml --env-file ./.env down  || exit 1
+          ;;
+      *)
+            docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml --env-file ./.env up -d --remove-orphans || exit 1
+
+            # Check for non-running containers
+            non_running=$(docker ps --filter "label=com.docker.compose.project=$PROJECT_NAME" --format "{{.ID}} {{.Names}} {{.Status}}" | grep -v "Up ")
+
+            if [ -n "$non_running" ]; then
+              echo "Found non-running containers:"
+              echo "$non_running"
+              exit 1  # Exit with code 1 if non-running containers exist
+            else
+              echo "$non_running"
+              echo "All containers are running normally"
+            fi
+
+            # PM2 process management for Python app
+            APP_NAME="training-py"
+            APP_SCRIPT="./app.py"
+
+            ## Requires pm2 installed: npm install pm2 -g
+            ## To view Python container logs: pm2 logs training-py
+
+            # Check if service exists
+            export TRAINING_START_PORT=$TRAINING_START_PORT
+            export AI_PY_REDIS_EXPOSED_PORT=$AI_PY_REDIS_EXPOSED_PORT
+            cd deep-e-python || exit 1
+            if pm2 list | grep -q "$APP_NAME"; then
+                echo "🔄 Restarting $APP_NAME..."
+                pm2 delete "$APP_NAME"
+                pm2 start "$APP_SCRIPT" --name "$APP_NAME"
+            else
+                echo "🚀 Starting $APP_NAME..."
+                pm2 start "$APP_SCRIPT" --name "$APP_NAME"
+            fi
+            pm2 save
+          ;;
+  esac
+
+elif [ "$SYSTEM" = "Linux" ]; then
+  # Linux specific operations
+  if [ "$with_ai_image" = "true" ]; then
+    case "$1" in
+        "stop")
+            docker compose --profile gpu -p "${PROJECT_NAME}" -f ./docker-compose.yml stop || exit 1
+            ;;
+        "down")
+            docker compose --profile gpu -p "${PROJECT_NAME}" -f ./docker-compose.yml down || exit 1
+            ;;
+        *)
+            docker compose --profile gpu -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans || exit 1
+            ;;
+    esac
+  else
+        case "$1" in
+            "stop")
+                docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml stop -d --remove-orphans || exit 1
+                ;;
+            "down")
+                ddocker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml down -d --remove-orphans || exit 1
+                ;;
+            *)
+               docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans || exit 1
+                ;;
+        esac
+
+  fi
 
   # Check for non-running containers
   non_running=$(docker ps --filter "label=com.docker.compose.project=$PROJECT_NAME" --format "{{.ID}} {{.Names}} {{.Status}}" | grep -v "Up ")
@@ -139,35 +211,33 @@ if [ "$SYSTEM" = "Darwin" ]; then
     echo "$non_running"
     echo "All containers are running normally"
   fi
-
-  # PM2 process management for Python app
-  APP_NAME="training-py"
-  APP_SCRIPT="./app.py"
-
-  ## Requires pm2 installed: npm install pm2 -g
-  ## To view Python container logs: pm2 logs training-py
-
-  # Check if service exists
-  export TRAINING_START_PORT=$TRAINING_START_PORT
-  export AI_PY_REDIS_EXPOSED_PORT=$AI_PY_REDIS_EXPOSED_PORT
-  cd deep-e-python || exit 1
-  if pm2 list | grep -q "$APP_NAME"; then
-      echo "🔄 Restarting $APP_NAME..."
-      pm2 delete "$APP_NAME"
-      pm2 start "$APP_SCRIPT" --name "$APP_NAME"
-  else
-      echo "🚀 Starting $APP_NAME..."
-      pm2 start "$APP_SCRIPT" --name "$APP_NAME"
-  fi
-  pm2 save
-elif [ "$SYSTEM" = "Linux" ]; then
-  # Linux specific operations
+elif [[ "$SYSTEM" =~ ^(MINGW|MSYS|CYGWIN) ]]; then
+  # Windows 环境下的处理，与 Linux 保持一致
   if [ "$with_ai_image" = "true" ]; then
-    docker compose --profile gpu -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans || exit 1
+        case "$1" in
+            "stop")
+                docker compose --profile gpu -p "${PROJECT_NAME}" -f ./docker-compose.yml stop || exit 1
+                ;;
+            "down")
+                docker compose --profile gpu -p "${PROJECT_NAME}" -f ./docker-compose.yml down || exit 1
+                ;;
+            *)
+                docker compose --profile gpu -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans || exit 1
+                ;;
+        esac
   else
-    docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans || exit 1
+      case "$1" in
+          "stop")
+              docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml stop -d --remove-orphans || exit 1
+              ;;
+          "down")
+              ddocker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml down -d --remove-orphans || exit 1
+              ;;
+          *)
+             docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans || exit 1
+              ;;
+      esac
   fi
-
   # Check for non-running containers
   non_running=$(docker ps --filter "label=com.docker.compose.project=$PROJECT_NAME" --format "{{.ID}} {{.Names}} {{.Status}}" | grep -v "Up ")
 
