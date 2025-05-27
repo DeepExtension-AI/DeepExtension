@@ -9,6 +9,9 @@ if [ "$SYSTEM" = "Darwin" ]; then
 elif [ "$SYSTEM" = "Linux" ]; then
   ReplaceCommand='sed -i'
   MacTrainingHost=${SCP_GO_AI_TRAINING_HOST}
+elif [[ "$SYSTEM" =~ ^(MINGW|MSYS|CYGWIN) ]]; then
+  ReplaceCommand='sed -i'
+  MacTrainingHost=${SCP_GO_AI_TRAINING_HOST}
 fi
 
 # Configuration file paths
