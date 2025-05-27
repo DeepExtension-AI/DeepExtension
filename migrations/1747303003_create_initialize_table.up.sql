@@ -180,6 +180,7 @@ CREATE TABLE public.model (
     actual_path text NULL,
     base_path varchar NULL,
     base_model varchar NULL,
+    is_deleted bool NULL,
     CONSTRAINT model_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX model_model_name_task_uuid_idx ON public.model USING btree (model_name, task_uuid);
@@ -252,6 +253,7 @@ CREATE TABLE public.save_models_tasks (
     task_uuid uuid NOT NULL,
     status text DEFAULT 'pending'::text NOT NULL,
     status_code int4 DEFAULT 0 NOT NULL,
+    is_deleted  bool NULL,
     CONSTRAINT save_models_tasks_pkey PRIMARY KEY (id)
 );
 
