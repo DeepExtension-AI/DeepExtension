@@ -117,6 +117,17 @@ PROJECT_NAME=deepe-prod
 
 if [ "$SYSTEM" = "Darwin" ]; then
   docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml --env-file ./.env up -d --remove-orphans
+  non_running=$(docker ps --filter "label=com.docker.compose.project=$PROJECT_NAME"  --format "{{.ID}} {{.Names}} {{.Status}}" | grep -v "Up ")
+
+  if [ -n "$non_running" ]; then
+    echo "发现非运行状态容器:"
+    echo "$non_running"
+    exit 1  # 存在非运行容器时退出码1
+  else
+    echo "$non_running"
+    echo "所有容器运行正常"
+  fi
+
   APP_NAME="training-py"
   APP_SCRIPT="./app.py"
 
@@ -141,5 +152,14 @@ elif [ "$SYSTEM" = "Linux" ]; then
   else
     docker compose -p "${PROJECT_NAME}" -f ./docker-compose.yml up -d --remove-orphans
   fi
+    non_running=$(docker ps --filter "label=com.docker.compose.project=$PROJECT_NAME"  --format "{{.ID}} {{.Names}} {{.Status}}" | grep -v "Up ")
+    if [ -n "$non_running" ]; then
+      echo "发现非运行状态容器:"
+      echo "$non_running"
+      exit 1  # 存在非运行容器时退出码1
+    else
+      echo "$non_running"
+      echo "所有容器运行正常"
+    fi
 fi
 

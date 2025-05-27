@@ -164,6 +164,11 @@ services:
       - ./datasets/${ENV}:/opt/scpx/datasets/${ENV}
       - ./knowledgeBase/${ENV}:/opt/scpx/knowledgeBase/${ENV}
       - ./adminPassword/:/opt/scpx/adminPassword/
+    healthcheck:
+      test: ["CMD","curl","-f","http://localhost:${SCP_AI_START_PORT}/health"]
+      interval: 10s
+      timeout: 2s
+      retries: 3
     networks:
       - intranet
       - host_access  # 用于访问宿主机
