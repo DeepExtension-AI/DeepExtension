@@ -1,0 +1,24 @@
+stages:
+  - test
+  - build
+  - trigger
+build:
+  tags:
+    - scpe-devpre
+  only:
+    - devpre
+  before_script:
+    - docker login -u admin -p Harbor12345 jianweisoft.cn
+    #    - docker login registry.gitlab.com -u jinxuliu -p glpat-MwyohH3g7XdiiMGxNMxa
+    - docker buildx use multi-builder
+  script:
+    - docker buildx build --label hash=$CI_COMMIT_SHORT_SHA --platform linux/amd64  -t  jianweisoft.cn/deep_e/deep_e_python_image:$CI_COMMIT_SHORT_SHA . --push
+
+trigger-scpx:
+  stage: trigger
+  only:
+    - devpre
+  tags:
+    - scpe-devpre
+  script:
+    - 'curl -X POST --fail -F token=glptt-1d1b54865b285d15ed20f27e3b6319001c830835 -F ref=devpre -F "variables[IMAGE_NAME]=deep_e_python_image" -F "variables[CUSTOM_IMAGE_NAME]=CUSTOM_TRAINING_AI_IMAGE_NAME" -F "variables[IMAGE_TAG]=$CI_COMMIT_SHORT_SHA" -F "variables[FILE]=deep_e" -F "variables[CUSTOM_IMAGE_TAG]=CUSTOM_TRAINING_AI_IMAGE_VERSION"  http://gitlab.scmify.com:8929/api/v4/projects/55/trigger/pipeline'

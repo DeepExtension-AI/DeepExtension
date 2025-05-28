@@ -1,0 +1,1 @@
+Flask==2.3.2requests==2.31.0torch==2.1.0unslothpydanticdatasetstrlredis>=6.0.0mlx

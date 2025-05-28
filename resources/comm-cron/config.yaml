@@ -1,0 +1,26 @@
+server:
+  http:
+    addr: "0.0.0.0:${START_HTTP_PORT}"
+    timeout: 1s
+  grpc:
+    addr: "0.0.0.0:${START_GRPC_PORT}"
+    timeout: 1s
+data:
+  database:
+    driver: postgres
+    source: postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=disable&TimeZone=Asia/Shanghai&search_path=public
+  redis:
+    db: 0
+    addr: ${REDIS_HOST}:${REDIS_PORT}
+    read_timeout: 10s
+    write_timeout: 10s
+trace:
+  enable: true
+  endpoint: http://127.0.0.1:14268/api/traces
+  trace_file_path: ./log/trace.log
+  exporter: jaeger
+  token:
+scp:
+  http:
+    host: "${SCP_GO_AI_HOST}"
+    port: "${SCP_GO_AI_PORT}"

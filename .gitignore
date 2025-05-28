@@ -1,0 +1,11 @@
+/adminPassword
+/consul
+/datasets
+/knowledgeBase
+/logs
+/milvus
+/models
+/redis
+image.env
+custom.conf
+.env
