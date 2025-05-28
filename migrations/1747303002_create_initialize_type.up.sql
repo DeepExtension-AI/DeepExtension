@@ -1,4 +1,3 @@
--- 基础类型
 CREATE TYPE public.quantize_enum AS ENUM (
     'q4_K_M',
     'q4_K_S',
