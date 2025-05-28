@@ -3,6 +3,7 @@ services:
   etcd:
     container_name: ${MILVUS_ETCD_NAME}
     image: quay.io/coreos/etcd:v3.5.18
+    restart: always
     environment:
       - ETCD_AUTO_COMPACTION_MODE=revision
       - ETCD_AUTO_COMPACTION_RETENTION=1000
@@ -22,6 +23,7 @@ services:
   minio:
     container_name: ${MILVUS_MINIO_NAME}
     image: minio/minio:RELEASE.2023-03-20T20-16-18Z
+    restart: always
     environment:
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
@@ -43,6 +45,7 @@ services:
     container_name: ${MILVUS_STANDALONE_NAME}
     image: milvusdb/milvus:v2.5.8
     command: [ "milvus", "run", "standalone" ]
+    restart: always
     security_opt:
       - seccomp:unconfined
     environment:
@@ -66,7 +69,7 @@ services:
       - intranet
 
   redis:
-    image: redis:${AI_REDIS_IMAGE_VERSION} # 你的redis版本
+    image: redis:${AI_REDIS_IMAGE_VERSION}
     restart: always
     container_name: ${AI_REDIS_HOST}
     privileged: true
@@ -164,9 +167,14 @@ services:
       - ./datasets/${ENV}:/opt/scpx/datasets/${ENV}
       - ./knowledgeBase/${ENV}:/opt/scpx/knowledgeBase/${ENV}
       - ./adminPassword/:/opt/scpx/adminPassword/
+    healthcheck:
+      test: ["CMD","curl","-f","http://localhost:${SCP_AI_START_PORT}/health"]
+      interval: 10s
+      timeout: 2s
+      retries: 3
     networks:
       - intranet
-      - host_access  # 用于访问宿主机
+      - host_access
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -183,7 +191,7 @@ services:
       - ./resources/comm-cron:/data/conf
     networks:
       - intranet
-      - host_access  # 用于访问宿主机
+      - host_access
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -219,7 +227,7 @@ services:
       - ./deep-e-python:/app/deep-e-python
     profiles: ["gpu"]
     healthcheck:
-      test: ["CMD", "nvidia-smi"]  # 健康检查执行 nvidia-smi
+      test: ["CMD", "nvidia-smi"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -232,7 +240,7 @@ services:
     networks:
       - intranet
   redis-py:
-    image: redis:${AI_PY_REDIS_IMAGE_VERSION} # 你的redis版本
+    image: redis:${AI_PY_REDIS_IMAGE_VERSION}
     restart: always
     container_name: ${AI_PY_REDIS_HOST}
     privileged: true
@@ -261,7 +269,7 @@ services:
       - ./knowledgeBase:/data/fileData
     networks:
       - intranet
-      - host_access  # 用于访问宿主机
+      - host_access
     extra_hosts:
       - "host.docker.internal:host-gateway"
 networks:

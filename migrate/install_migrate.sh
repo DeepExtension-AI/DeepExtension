@@ -1,60 +1,88 @@
 #!/bin/bash
 
-# 固定版本号
+# Fixed version number
 version="v4.18.3"
 
-# 检测操作系统（只可能是 darwin 或 linux）
+# Detect operating system (supports darwin, linux, and windows)
 case "$(uname -s)" in
     Darwin*) os="darwin" ;;
     Linux*)  os="linux" ;;
-    *)       echo "Unsupported OS"; exit 1 ;;
+    MINGW*|MSYS*|CYGWIN*) os="windows" ;;
+    *) echo "❌ Unsupported operating system"; exit 1 ;;
 esac
 
-# 检测架构（只可能是 amd64 或 arm64）
+# Detect architecture (only amd64 or arm64 possible)
 case "$(uname -m)" in
     x86_64*) arch="amd64" ;;
     aarch64*|arm64*) arch="arm64" ;;
-    *)       echo "Unsupported architecture"; exit 1 ;;
+    *) echo "❌ Unsupported architecture"; exit 1 ;;
 esac
 
-# 输出检测结果
+# Output detection results
 echo "Detected OS: $os"
 echo "Detected Arch: $arch"
 
-# 构造下载链接
-url="https://github.com/golang-migrate/migrate/releases/download/${version}/migrate.${os}-${arch}.tar.gz"
+# Construct download URL
+if [ "$os" = "windows" ]; then
+    url="https://github.com/golang-migrate/migrate/releases/download/${version}/migrate.${os}-${arch}.zip"
+else
+    url="https://github.com/golang-migrate/migrate/releases/download/${version}/migrate.${os}-${arch}.tar.gz"
+fi
 
-# 执行下载并解压到临时目录
+# Download and extract to temporary directory
 temp_dir=$(mktemp -d)
 echo "Downloading and extracting to ${temp_dir}..."
-if curl -sSL "$url" | tar xvz -C "$temp_dir"; then
-    # 查找解压出来的migrate二进制文件路径
-    migrate_bin="${temp_dir}/migrate"
 
-    if [ -f "${migrate_bin}" ]; then
-        # 使用sudo移动二进制文件到/usr/local/bin/
+if [ "$os" = "windows" ]; then
+    # Windows download and extraction logic
+    if curl -sSL "$url" -o "${temp_dir}/migrate.zip" && unzip -q "${temp_dir}/migrate.zip" -d "$temp_dir"; then
+        migrate_bin="${temp_dir}/migrate.exe"
+    else
+        echo "❌ Failed to download or extract the migrate binary."
+        exit 1
+    fi
+else
+    # Linux/Mac download and extraction logic
+    if curl -sSL "$url" | tar xvz -C "$temp_dir"; then
+        migrate_bin="${temp_dir}/migrate"
+    else
+        echo "❌ Failed to download or extract the migrate binary."
+        exit 1
+    fi
+fi
+
+if [ -f "${migrate_bin}" ]; then
+    if [ "$os" = "windows" ]; then
+        # Windows installation logic
+        install_dir="/usr/local/bin"
+        if [ ! -d "$install_dir" ]; then
+            mkdir -p "$install_dir"
+        fi
+        cp "${migrate_bin}" "${install_dir}/migrate.exe"
+        if [ -f "${install_dir}/migrate.exe" ]; then
+            echo "✅ Successfully installed migrate to ${install_dir}/"
+            chmod +x "${install_dir}/migrate.exe"
+            echo "You can now run the 'migrate' command from anywhere."
+        else
+            echo "❌ Failed to copy the binary to ${install_dir}/. Please check permissions."
+            exit 1
+        fi
+    else
+        # Linux/Mac installation logic
         sudo mv "${migrate_bin}" /usr/local/bin/migrate
-
-        # 确认是否成功移动
         if [ -f "/usr/local/bin/migrate" ]; then
             echo "✅ Successfully installed migrate to /usr/local/bin/"
-
-            # 添加可执行权限
             sudo chmod +x /usr/local/bin/migrate
-
             echo "You can now run the 'migrate' command from anywhere."
         else
             echo "❌ Failed to move the binary to /usr/local/bin/. Please check permissions."
             exit 1
         fi
-    else
-        echo "❌ Failed to find the migrate binary in the downloaded archive."
-        exit 1
     fi
-
-    # 删除临时目录
-    rm -rf "$temp_dir"
 else
-    echo "❌ Failed to download or extract the migrate binary."
+    echo "❌ Failed to find the migrate binary in the downloaded archive."
     exit 1
 fi
+
+# Clean up temporary directory
+rm -rf "$temp_dir"
