@@ -13,7 +13,7 @@ Egal ob Sie KI-Ingenieur oder Fachexperte sind, DeepExtension bietet Ihnen eine 
 
 ## 📘 2. Offizielle Dokumentation
 
-Bitte besuchen Sie [https://docs.deepextension.com/de/](https://docs.deepextension.com/de/) für die offizielle Dokumentation.
+Bitte besuchen Sie [https://docs.deepextension.ai/de/](https://docs.deepextension.ai/de/) für die offizielle Dokumentation.
 <div align="left" style="margin-top:20px;margin-bottom:20px;">
 <img src="docs/assets/image-20250528150548686.png" width="1000"/>
 </div>
@@ -73,13 +73,13 @@ DeepExtension verwendet eine modulare, mehrschichtige Systemarchitektur, die hoh
 - **Sicher und konform**: Feingranulare Rechtekontrolle und Datenisolierung gewährleisten Datensicherheit.
 - **Offene Integration**: Umfangreiche API-Unterstützung für die Anbindung an externe Drittanbieter-Modellplattformen.
 
-> Eine detaillierte Architekturübersicht finden Sie in der [offiziellen Architekturdokumentation](https://docs.deepextension.com/de/intro/architecture/).
+> Eine detaillierte Architekturübersicht finden Sie in der [offiziellen Architekturdokumentation](https://docs.deepextension.ai/de/intro/architecture/).
 
-- [Installationsanleitung](https://docs.deepextension.com/de/developer/install/)
-- [Häufige Fragen (FAQs)](https://docs.deepextension.com/de/faq/)
-- [Architekturdokumentation](https://docs.deepextension.com/de/intro/architecture/)
+- [Installationsanleitung](https://docs.deepextension.ai/de/developer/install/)
+- [Häufige Fragen (FAQs)](https://docs.deepextension.ai/de/faq/)
+- [Architekturdokumentation](https://docs.deepextension.ai/de/intro/architecture/)
 ## 🏄 6. Open-Source-Community
-- Dokumentationszentrum: Besuchen Sie das offizielle DeepExtension-Dokumentationsportal, [https://docs.deepextension.com/de/](https://docs.deepextension.com/de/)
+- Dokumentationszentrum: Besuchen Sie das offizielle DeepExtension-Dokumentationsportal, [https://docs.deepextension.ai/de/](https://docs.deepextension.ai/de/)
 - Community-Forum: Nehmen Sie an Diskussionen teil, geben Sie Feedback oder schlagen Sie Funktionen vor (demnächst verfügbar)
 - GitHub: Verfolgen Sie Releases, melden Sie Probleme oder beteiligen Sie sich an unseren Open-Source-Komponenten, [https://github.com/DeepExtension-AI/DeepExtension](https://github.com/DeepExtension-AI/DeepExtension)
 ## 🙌 7. Technischer Support
@@ -103,3 +103,6 @@ Feedback-Kanäle:
 
 - E-Mail: contact@deepextension.ai
 - GitHub Issues (für technische Vorschläge) 
+
+
+Vielen Dank für Ihre Unterstützung von DeepExtension! 🚀

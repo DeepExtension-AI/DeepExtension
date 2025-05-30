@@ -14,7 +14,7 @@ Whether you're an AI engineer or a business expert, DeepExtension offers a share
 
 ## 📘 2. Official Documentation
 
-📖 Visit: [https://docs.deepextension.com/](https://docs.deepextension.com/)
+📖 Visit: [https://docs.deepextension.ai/](https://docs.deepextension.ai/)
 
 <div align="left" style="margin-top:20px;margin-bottom:20px;">
 <img src="docs/assets/image-20250528150548686.png" width="1000"/>
@@ -87,15 +87,15 @@ Whether you're an AI engineer or a business expert, DeepExtension offers a share
 - 🔐 Fine-grained permission control  
 - 🌐 API-friendly for external integrations  
 
-🔗 Learn more: [Architecture Documentation](https://docs.deepextension.com/intro/architecture/)
+🔗 Learn more: [Architecture Documentation](https://docs.deepextension.ai/intro/architecture/)
 
-- [Installation Guide](https://docs.deepextension.com/developer/install/)
-- [Frequently Asked Questions (FAQs)](https://docs.deepextension.com/faq/)
-- [Architecture Documentation](https://docs.deepextension.com/intro/architecture/)
+- [Installation Guide](https://docs.deepextension.ai/developer/install/)
+- [Frequently Asked Questions (FAQs)](https://docs.deepextension.ai/faq/)
+- [Architecture Documentation](https://docs.deepextension.ai/intro/architecture/)
 
 ## 🏄 6. Open Source Community
 
-- 🔧 Documentation: [https://docs.deepextension.com/](https://docs.deepextension.com/)
+- 🔧 Documentation: [https://docs.deepextension.ai/](https://docs.deepextension.ai/)
 - 💬 Forum: Coming soon
 - 🧑‍💻 GitHub: [https://github.com/DeepExtension-AI/DeepExtension](https://github.com/DeepExtension-AI/DeepExtension)
 
@@ -104,7 +104,7 @@ Whether you're an AI engineer or a business expert, DeepExtension offers a share
 
 If you encounter any issues:
 
-1. Refer to [Docs](https://docs.deepextension.com/) or [FAQ](https://docs.deepextension.com/faq/)
+1. Refer to [Docs](https://docs.deepextension.ai/) or [FAQ](https://docs.deepextension.ai/faq/)
 2. Email us: **support@deepextension.ai**
 
 Please include:
