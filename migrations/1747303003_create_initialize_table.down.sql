@@ -8,7 +8,6 @@ DROP TABLE public.knowledge_detail_info;
 DROP TABLE public.llm_factories;
 DROP TABLE public.llm_user_config;
 DROP TABLE public.model;
-DROP TABLE public.model_card;
 DROP TABLE public.model_comparison_results;
 DROP TABLE public.model_comparison_tasks;
 DROP TABLE public.save_models_tasks;
