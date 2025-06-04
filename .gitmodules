@@ -1,0 +1,12 @@
+[submodule "scp-ui"]
+	path = scp-ui
+	url = ssh://git@gitlab.scmify.com:2224/scp-int-group/fronted-group/scp-ui.git
+[submodule "scp-inbound"]
+	path = scp-inbound
+	url = ssh://git@gitlab.scmify.com:2224/scp-int-group/backend-group/scp-inbound.git
+[submodule "scp-go"]
+	path = scp-go
+	url = ssh://git@gitlab.scmify.com:2224/scp-int-group/backend-group/scp-go.git
+[submodule "scp-data"]
+	path = scp-data
+	url = ssh://git@gitlab.scmify.com:2224/scp-int-group/backend-group/scp-data.git
