@@ -168,7 +168,7 @@ $ReplaceCommand "s,^AI_PY_REDIS_EXPOSED_PORT=.*,AI_PY_REDIS_EXPOSED_PORT=$redis_
 $ReplaceCommand "s,^UI_AI_EXPOSED_PORT=.*,UI_AI_EXPOSED_PORT=$ui_port," ".env"
 echo $db_host
 $ReplaceCommand "s,^DB_HOST=.*,DB_HOST=$db_host," ".env"
-$ReplaceCommand "s,^DB_PORT=.*,DB_PORT=$db_port," ".env"
+$ReplaceCommand "s,^DB_PORT=.*,DB_PORT=$db_exposed_port," ".env"
 $ReplaceCommand "s,^DB_USER=.*,DB_USER=$db_user," ".env"
 $ReplaceCommand "s,^DB_PASS=.*,DB_PASS=$db_pass," ".env"
 $ReplaceCommand "s,^DB_NAME=.*,DB_NAME=$db_name," ".env"
