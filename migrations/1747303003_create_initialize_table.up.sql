@@ -314,7 +314,7 @@ CREATE TABLE public.sys_users (
     "uuid" text NULL,
     username text NULL,
     "password" text NULL,
-    nick_name text DEFAULT 'System User'::text NULL,
+    nick_name text DEFAULT '系统用户'::text NULL,
     side_mode text DEFAULT 'dark'::text NULL,
     header_img text DEFAULT 'https://qmplusimg.henrongyi.top/gva_header.jpg'::text NULL,
     base_color text DEFAULT '#fff'::text NULL,
