@@ -77,6 +77,11 @@ if [ -z "$db_host" ]; then
     db_user=postgres
     db_pass=postgres
     db_name=postgres
+    while ! is_port_free $db_port; do
+        echo "Port $db_port is in use, trying next port..."
+        ((db_port++))
+    done
+    echo "DB_PORT Using free port: $db_port"
 else
     ## 检查外部数据库配置是否完整
     missing_fields=()
