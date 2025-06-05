@@ -103,7 +103,7 @@ else
 
     use_db="false"
     echo "DB_HOST=$db_host"
-    echo "DB_PORT=$db_exposed_port"
+    echo "DB_PORT=$db_port"
     echo "DB_USER=$db_user"
     echo "DB_NAME=$db_name"
 fi
@@ -112,7 +112,7 @@ fi
 {
   echo "#db_data"
   echo "DB_HOST=$db_host"
-  echo "DB_PORT=$db_port"
+  echo "DB_PORT=$db_exposed_port"
   echo "DB_USER=$db_user"
   echo "DB_PASS=$db_pass"
   echo "DB_NAME=$db_name"
