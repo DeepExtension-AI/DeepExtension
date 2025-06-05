@@ -144,14 +144,7 @@ services:
     cap_add:
       - IPC_LOCK
     healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-s",
-          "-f",
-          "http://localhost:9200/_cat/health"
-        ]
+      test: [ "CMD", "curl", "-s", "-f", "http://localhost:9200/_cat/health" ]
       interval: 3s
       timeout: 3s
       retries: 10
@@ -207,7 +200,7 @@ services:
       - ./knowledgeBase/${ENV}:/opt/scpx/knowledgeBase/${ENV}
       - ./adminPassword/:/opt/scpx/adminPassword/
     healthcheck:
-      test: ["CMD","curl","-f","http://localhost:${SCP_AI_START_PORT}/health"]
+      test: [ "CMD", "curl", "-f", "http://localhost:${SCP_AI_START_PORT}/health" ]
       interval: 10s
       timeout: 2s
       retries: 3
@@ -257,16 +250,16 @@ services:
       resources:
         reservations:
           devices:
-            - capabilities: [ gpu ]  # 启用 GPU 支持
+            - capabilities: [ gpu ] # 启用 GPU 支持
     volumes:
       - ./models:/app/models
       - ./datasets:/app/datasets
       - ./knowledgeBase:/app/knowledgeBase
       - ./logs/:/app/logs/
       - ./deep-e-python:/app/deep-e-python
-    profiles: ["gpu"]
+    profiles: [ "gpu" ]
     healthcheck:
-      test: ["CMD", "nvidia-smi"]
+      test: [ "CMD", "nvidia-smi" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -320,4 +313,3 @@ networks:
     name: ${DOCKER_NETWORK_NAME}
   host_access:
     driver: bridge
-

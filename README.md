@@ -1,92 +1,130 @@
-# scp
+<div style="display: flex; align-items: center; justify-content: center;">
+  <img src="docs/assets/favicon.svg" width="100" style="margin-right: 20px;" />
+  <h1>DeepExtension</h1>
+</div>
+
+## 💡 1. What is DeepExtension?
+
+[DeepExtension](https://deepextension.ai/) is an AI infrastructure platform built to help enterprises easily manage the entire lifecycle of large language model (LLM) development—from data preparation to fine-tuning, evaluation, and deployment.
+
+Our mission is to make domain-specific AI development accessible, collaborative, and scalable, especially for teams with limited AI expertise or compute resources.
+
+Whether you're an AI engineer or a business expert, DeepExtension offers a shared environment to build impactful models using modern techniques like PEFT, GRPO, and human-in-the-loop workflows—all through a modular, web-based interface.
 
 
+## 📘 2. Official Documentation
 
-## Getting started
+📖 Visit: [https://docs.deepextension.ai/](https://docs.deepextension.ai/)
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+<div align="left" style="margin-top:20px;margin-bottom:20px;">
+<img src="docs/assets/image-20250528150548686.png" width="1000"/>
+</div>
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## 🎉 3. Follow the Project
 
-## Add your files
+⭐️ Star our [GitHub repository](https://github.com/DeepExtension-AI/DeepExtension) to stay updated and support the project!
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+
+## 🌟 4. Key Features
+
+- 🤖 **Multi-Model Chat + Knowledge Base**  
+  Interact with local or third-party models integrated with personal or corporate knowledge bases.
+
+- 🔌 **Easy Integration with Third-Party Models**  
+  Quickly plug in and switch between models like OpenAI, Anthropic, and more.
+
+- 🚀 **Local Model Training & Deployment**  
+  Train and fine-tune models locally, save results, and deploy with one click using Ollama or other tools.
+
+- 📚 **Rapid Knowledge Base Creation**  
+  Import documents (PDF, DOCX, XLSX, etc.) to build structured, searchable knowledge bases.
+
+- 📊 **Model Evaluation & Comparison**  
+  Benchmark different versions/models using built-in evaluation tools.
+
+- 🗂 **Dataset Upload & Parsing**  
+  Upload datasets and automatically parse them into structured formats to streamline training.
+
+
+## 📚 5. Technical Overview
+
+### 🏗️ Architecture Diagram
 
 ```
-cd existing_repo
-git remote add origin http://gitlab.scmify.com:8929/fronted-group/scp.git
-git branch -M main
-git push -uf origin main
+┌─────────────────────────────┐
+          Web Frontend         
+└─────────────┬───────────────┘
+              │
+┌─────────────▼───────────────┐
+           Backend API         
+└─────────────┬───────────────┘
+              │
+┌─────────────▼───────────────┐
+     Task Orchestration Layer  
+└─────────────┬───────────────┘
+              │
+┌─────────────▼───────────────┐
+      Model Services Layer     
+└─────────────┬───────────────┘
+              │
+┌─────────────▼───────────────┐
+       Data & Knowledge Base   
+└─────────────────────────────┘
 ```
 
-## Integrate with your tools
+### Module Breakdown
 
-- [ ] [Set up project integrations](http://gitlab.scmify.com:8929/fronted-group/scp/-/settings/integrations)
+- **Frontend**: Web interface for end-to-end model management.
+- **API Layer**: Connects UI with backend services and handles business logic.
+- **Task Orchestration**: Manages workflows for training, evaluation, and inference.
+- **Model Services**: Supports inference and fine-tuning for both local and third-party models.
+- **Data Layer**: Manages structured data, vector databases, and document parsing.
 
-## Collaborate with your team
+### Advantages
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+- ✅ Decoupled, modular architecture  
+- 📈 High availability and scalability  
+- 🔐 Fine-grained permission control  
+- 🌐 API-friendly for external integrations  
 
-## Test and Deploy
+🔗 Learn more: [Architecture Documentation](https://docs.deepextension.ai/intro/architecture/)
 
-Use the built-in continuous integration in GitLab.
+- [Installation Guide](https://docs.deepextension.ai/developer/install/)
+- [Frequently Asked Questions (FAQs)](https://docs.deepextension.ai/faq/)
+- [Architecture Documentation](https://docs.deepextension.ai/intro/architecture/)
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+## 🏄 6. Open Source Community
 
-***
+- 🔧 Documentation: [https://docs.deepextension.ai/](https://docs.deepextension.ai/)
+- 💬 Forum: Coming soon
+- 🧑‍💻 GitHub: [https://github.com/DeepExtension-AI/DeepExtension](https://github.com/DeepExtension-AI/DeepExtension)
 
-# Editing this README
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+## 🙌 7. Technical Support
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+If you encounter any issues:
 
-## Name
-Choose a self-explaining name for your project.
+1. Refer to [Docs](https://docs.deepextension.ai/) or [FAQ](https://docs.deepextension.ai/faq/)
+2. Email us: **support@deepextension.ai**
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Please include:
+- Platform version
+- System info
+- Screenshots or logs (if applicable)
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## 🤝 8. Contact Us
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+- 📧 Email: contact@deepextension.ai  
+- 🌐 Website: [https://www.deepextension.ai](https://www.deepextension.ai)  
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+## 👥 9. Feedback & Feature Requests
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+We welcome feedback and suggestions!
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+- Email: contact@deepextension.ai  
+- GitHub Issues: [Submit here](https://github.com/DeepExtension-AI/DeepExtension/issues)
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Thank you for supporting DeepExtension! 🚀
