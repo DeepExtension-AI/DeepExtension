@@ -224,7 +224,8 @@ check_non_running_containers() {
 start_pm2_app() {
     APP_NAME="training-py"
     APP_SCRIPT="./app.py"
-
+    export TRAINING_START_PORT=$TRAINING_START_PORT
+    export AI_PY_REDIS_EXPOSED_PORT=$AI_PY_REDIS_EXPOSED_PORT
     cd deep-e-python || exit 1
     if pm2 list | grep -q "$APP_NAME"; then
         echo "🔄 Restarting $APP_NAME..."
