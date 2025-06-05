@@ -21,16 +21,20 @@ ENV_FILE=".env"
 ## Copy prod.env content to .env (including image.env content)
 cat prod.env > "$ENV_FILE"
 echo "" >> "$ENV_FILE"
+if [ -f "custom.conf" ]; then
+    # Extract configuration values
+    db_host=$(grep -E '^DB_HOST=' "$CONF_FILE" | cut -d'=' -f2-)
+    db_port=$(grep -E '^DB_PORT=' "$CONF_FILE" | cut -d'=' -f2-)
+    db_user=$(grep -E '^DB_USER=' "$CONF_FILE" | cut -d'=' -f2-)
+    db_pass=$(grep -E '^DB_PASS=' "$CONF_FILE" | cut -d'=' -f2-)
+    db_name=$(grep -E '^DB_NAME=' "$CONF_FILE" | cut -d'=' -f2-)
+    with_ai_image=$(grep -E '^WITH_AI_IMAGE=' "$CONF_FILE" | cut -d'=' -f2-)
+    ui_port=$(grep -E '^UI_AI_EXPOSED_PORT=' "$CONF_FILE" | cut -d'=' -f2-)
+    redis_used_by_py=$(grep -E '^AI_PY_REDIS_EXPOSED_PORT=' "$CONF_FILE" | cut -d'=' -f2-)
+else
+    echo "custom.conf not found, skipping..."
+fi
 
-# Extract configuration values
-db_host=$(grep -E '^DB_HOST=' "$CONF_FILE" | cut -d'=' -f2-)
-db_port=$(grep -E '^DB_PORT=' "$CONF_FILE" | cut -d'=' -f2-)
-db_user=$(grep -E '^DB_USER=' "$CONF_FILE" | cut -d'=' -f2-)
-db_pass=$(grep -E '^DB_PASS=' "$CONF_FILE" | cut -d'=' -f2-)
-db_name=$(grep -E '^DB_NAME=' "$CONF_FILE" | cut -d'=' -f2-)
-with_ai_image=$(grep -E '^WITH_AI_IMAGE=' "$CONF_FILE" | cut -d'=' -f2-)
-ui_port=$(grep -E '^UI_AI_EXPOSED_PORT=' "$CONF_FILE" | cut -d'=' -f2-)
-redis_used_by_py=$(grep -E '^AI_PY_REDIS_EXPOSED_PORT=' "$CONF_FILE" | cut -d'=' -f2-)
 # Set default values if empty
 if [ -z "$with_ai_image" ]; then
     echo "WITH_AI_IMAGE Using default value TRUE for Linux environment"
@@ -67,9 +71,9 @@ echo "AI_PY_REDIS_EXPOSED_PORT Using free port: $redis_used_by_py"
 # Validate required database parameters
 use_db="false"
 
-# 检查是否需要使用compose创建的数据库
+
 if [ -z "$db_host" ]; then
-    ## 使用compose创建的数据库
+
     echo "We'll use database created by compose"
     use_db="true"
     db_host="postgres-deepe-prod"
@@ -84,7 +88,6 @@ if [ -z "$db_host" ]; then
     done
     echo "DB_PORT Using free port: $db_exposed_port"
 else
-    ## 检查外部数据库配置是否完整
     missing_fields=()
     [ -z "$db_host" ] && missing_fields+=("DB_HOST")
     [ -z "$db_port" ] && missing_fields+=("DB_PORT")
@@ -93,35 +96,18 @@ else
     [ -z "$db_name" ] && missing_fields+=("DB_NAME")
 
     if [ ${#missing_fields[@]} -gt 0 ]; then
-        echo "错误：以下数据库配置信息不完整，请填写完整信息："
+        echo "Error:"
         printf '%s\n' "${missing_fields[@]}"
         exit 1
     fi
 
-    # 如果使用外部数据库，确保use_db=false
     use_db="false"
-    echo "将使用外部数据库配置："
     echo "DB_HOST=$db_host"
     echo "DB_PORT=$db_exposed_port"
     echo "DB_USER=$db_user"
     echo "DB_NAME=$db_name"
-    # 注意：出于安全考虑，不打印密码
 fi
 
-check_migrations_applied() {
-    echo "检查当前数据库迁移版本..."
-    local version=$(docker run --rm -v $(pwd)/migrations:/migrations migrate/migrate \
-        -path=/migrations/ \
-        -database "postgres://$db_user:$db_pass@$db_host:$db_port/$db_name?sslmode=disable" version 2>/dev/null)
-
-    if [ -n "$version" ] && [ "$version" != "nil" ]; then
-        echo "数据库已执行迁移（当前版本: $version），跳过迁移"
-        return 0
-    else
-        echo "数据库未执行过迁移或版本为 nil，需要执行迁移"
-        return 1
-    fi
-}
 #  Assign DB_* values to other variables
 {
   echo "#db_data"
