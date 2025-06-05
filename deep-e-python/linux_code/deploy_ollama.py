@@ -207,9 +207,22 @@ class ModelDeployerOllama:
             A dictionary containing the operation results
         """
         try:
+            import platform
+            from urllib.parse import urlparse, urlunparse
+            
+            def replace_docker_host_in_url(url):
+                if platform.system() == 'Darwin':  
+                    parsed_url = urlparse(url)
+                    if 'host.docker.internal' in parsed_url.netloc:
+                        new_netloc = parsed_url.netloc.replace('host.docker.internal', '127.0.0.1')
+                        new_parsed_url = parsed_url._replace(netloc=new_netloc)
+                        return urlunparse(new_parsed_url)
+                return url
             def check_web_service(url: str, timeout=3) -> bool:
 
                 try:
+                    url=replace_docker_host_in_url(url)
+                    print(url)
                     r = requests.get(url, timeout=timeout)
                     return r.status_code < 400  
                 except requests.exceptions.RequestException as e:
@@ -221,7 +234,7 @@ class ModelDeployerOllama:
                     "status": "error",
                     "message": "Failed to connect to Ollama service. "
                 }
-            
+            server_url=replace_docker_host_in_url(server_url)
             uploader = OllamaUploader(server_url,train_id,seq)
 
             has_failed = uploader.upload_folder(folder_path)
