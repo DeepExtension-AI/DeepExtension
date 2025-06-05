@@ -1,5 +1,44 @@
 version: '3.8'
 services:
+  db:
+    container_name: ${DB_HOST}
+    image: postgres:16.1
+    restart: always
+    profiles: ["use-db"]
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - ${DB_PORT}:5432
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d ${DB_NAME:-postgres}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    networks:
+      - intranet
+
+  migrate:
+    image: migrate/migrate:v4.18.3
+    profiles: ["use-db"]
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./migrations:/migrations
+    command:
+      - "-path=/migrations/"
+      - "-database=postgres://${DB_USER:-postgres}:${DB_PASS:-postgres}@${DB_HOST}:5432/${DB_NAME:-postgres}?sslmode=disable"
+      - "up"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        max_attempts: 3
+    networks:
+      - intranet
   etcd:
     container_name: ${MILVUS_ETCD_NAME}
     image: quay.io/coreos/etcd:v3.5.18
@@ -229,9 +268,12 @@ services:
     environment:
       - TRAINING_START_PORT=${TRAINING_START_PORT}
       - FLASK_ENV=production
-    command: gunicorn -w 4 -k gevent --timeout 1200 -b 0.0.0.0:${TRAINING_START_PORT} app:app
+    command: gunicorn -w 4 -k gevent --timeout 120 -b 0.0.0.0:${TRAINING_START_PORT} app:app
     networks:
       - intranet
+      - host_access
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   redis-py:
     image: redis:${AI_PY_REDIS_IMAGE_VERSION}
     restart: always
