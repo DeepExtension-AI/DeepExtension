@@ -235,6 +235,9 @@ if [ "$SYSTEM" = "Darwin" ]; then
     with_ai_image="false"
     handle_compose "$1"
 elif [[ "$SYSTEM" =~ ^(Linux|MINGW|MSYS|CYGWIN)$ ]]; then
+    cd deep-e-python || exit 1
+    docker build -t ${TRAINING_AI_IMAGE_NAME}:${TRAINING_AI_IMAGE_VERSION} -f Dockerfile . --load
+    cd .. || exit 1
     handle_compose "$1"
 else
     echo "Unsupported system: $SYSTEM"
