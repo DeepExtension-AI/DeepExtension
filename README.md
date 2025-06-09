@@ -68,7 +68,8 @@ Ensure that:
 
 #### 🎯 Access the Web UI
 
-Once everything is up and running, open [http://localhost:88](http://localhost:88) in your browser.
+Once everything is up and running, open [http://localhost:{webui_port}](http://localhost:{webui_port}) in your browser.
+You can find the Web UI port either in the run_compose log output or in the Docker Engine’s container management info.
 
 > This is the default port; configurable via the `prod.env` file.
 
