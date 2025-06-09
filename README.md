@@ -185,8 +185,9 @@ WITH_AI_IMAGE=false
 
 </details>
 
+> Note:
 >
-After setting up the model training environment, you need to re-run `./run_compose.sh` to enable model training features.
+> After setting up the model training environment, you need to re-run `./run_compose.sh` to enable model training features.
 
 ---
 
