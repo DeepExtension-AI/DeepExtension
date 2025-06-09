@@ -44,7 +44,7 @@ cd DeepExtension
 
 ### 4.2 Set Up Model Training Environment
 
-DeepExtension offers different setup options based on your platform’s capabilities. Select the appropriate training configuration according to your operating environment.
+**DeepExtension** offers different setup options based on your platform’s capabilities. Select the appropriate training configuration according to your operating environment.
 
 <details>
 <summary><strong> ✅ Linux/Windows with NVIDIA GPU</strong></summary>
@@ -97,7 +97,7 @@ Replace `{ai_image_name}` and `{ai_image_version}` with the actual values from y
 ##### Step 1:  Prepare the MLX Code
 - Download the entire repository from [https://github.com/ml-explore/mlx-lm](https://github.com/ml-explore/mlx-lm) (tested successfully with v0.24.1)
 - Copy the mlx_lm subdirectory from the mlx-lm project into training directory.
-- Run the preparation script to apply required MLX code modifications for DeepExtension compatibility:
+- Run the preparation script to apply required MLX code modifications for **DeepExtension** compatibility:
   ```bash
   cd DeepExtension/deep-e-python
   chmod +x prepare_mlx_changes.sh
@@ -129,7 +129,7 @@ Replace `{ai_image_name}` and `{ai_image_version}` with the actual values from y
 <details>
 <summary><strong> ✅ Any Linux/macOS Environment Without GPU (No-Training Mode)</summary></strong>
 
-To run DeepExtension without training capabilities, open `DeepExtension/custom.conf` with any text editor and add the following line:
+To run **DeepExtension** without training capabilities, open `DeepExtension/custom.conf` with any text editor and add the following line:
 ```
 WITH_AI_IMAGE=false
 ```
@@ -144,6 +144,7 @@ By default, the Web UI uses port 88 and the AI Redis service uses port 6490. To 
 #### Start the Application
 Run:
 ```bash
+cd DeepExtension
 ./run_compose.sh
 ```
 Verify that:
@@ -161,6 +162,9 @@ Project Code: 1001
 Username: admin
 Initial Password: (see file) -> DeepExtension/adminPassword/adminPassword.txt
 ```
+<div align="left" style="margin-top:20px;margin-bottom:20px;">
+<img src="docs/assets/login.png" width="600"/>
+</div>
 
 ### 4.7 Full Installation Guide
 
@@ -268,4 +272,4 @@ We welcome feedback and suggestions!
 - GitHub Issues: [Submit here](https://github.com/DeepExtension-AI/DeepExtension/issues)
 
 
-Thank you for supporting DeepExtension! 🚀
+Thank you for supporting **DeepExtension**! 🚀
