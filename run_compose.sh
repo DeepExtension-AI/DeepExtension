@@ -1,4 +1,27 @@
 #!/bin/bash
+PROJECT_NAME=deepe-prod
+# Function to check if port is used by another container
+is_port_used_by_other_container() {
+    local port=$1
+    local project_name=$2
+
+    # Get all containers using the port
+    local containers_using_port=$(docker ps --format "{{.ID}} {{.Names}} {{.Ports}}" | grep ":$port->" || true)
+
+    if [ -n "$containers_using_port" ]; then
+        # Check if any of these containers are NOT from our project
+        while read -r line; do
+            local container_id=$(echo "$line" | awk '{print $1}')
+            local labels=$(docker inspect --format '{{index .Config.Labels "com.docker.compose.project"}}' "$container_id")
+
+            if [ "$labels" != "$project_name" ]; then
+                return 0  # Port is used by another container
+            fi
+        done <<< "$containers_using_port"
+    fi
+
+    return 1  # Port is either free or used by our own containers
+}
 
 # Run preparation script
 SYSTEM=$(uname -s)
@@ -37,43 +60,35 @@ fi
 
 # Set default values if empty
 if [ -z "$with_ai_image" ]; then
+  if [ "$SYSTEM" = "Linux" ]; then
     echo "WITH_AI_IMAGE Using default value TRUE for Linux environment"
     with_ai_image="true"
+  fi
 fi
-# Check the default port
-is_port_free() {
-    local port=$1
-    if (lsof -i :$port >/dev/null 2>&1 || nc -z 127.0.0.1 $port >/dev/null 2>&1); then
-        return 1  # in use
-    else
-        return 0
-    fi
-}
+
 source prod.env
 if [ -z "$ui_port" ]; then
     ui_port=$UI_AI_EXPOSED_PORT
 fi
-while ! is_port_free $ui_port; do
-    echo "Port $ui_port is in use, trying next port..."
+while is_port_used_by_other_container $ui_port $PROJECT_NAME; do
+    echo "Port $ui_port is in use by another container, trying next port..."
     ((ui_port++))
 done
 echo "UI_AI_EXPOSED_PORT Using free port: $ui_port"
+
 if [ -z "$redis_used_by_py" ]; then
     redis_used_by_py=$AI_PY_REDIS_EXPOSED_PORT
 fi
-while ! is_port_free $redis_used_by_py; do
-    echo "Port $redis_used_by_py is in use, trying next port..."
+while is_port_used_by_other_container $redis_used_by_py $PROJECT_NAME; do
+    echo "Port $redis_used_by_py is in use by another container, trying next port..."
     ((redis_used_by_py++))
 done
 echo "AI_PY_REDIS_EXPOSED_PORT Using free port: $redis_used_by_py"
 
-
 # Validate required database parameters
 use_db="false"
 
-
 if [ -z "$db_host" ]; then
-
     echo "We'll use database created by compose"
     use_db="true"
     db_host="postgres-deepe-prod"
@@ -82,8 +97,8 @@ if [ -z "$db_host" ]; then
     db_pass=postgres
     db_name=postgres
     db_exposed_port=5432
-    while ! is_port_free $db_exposed_port; do
-        echo "Port $db_exposed_port is in use, trying next port..."
+    while is_port_used_by_other_container $db_exposed_port $PROJECT_NAME; do
+        echo "Port $db_exposed_port is in use by another container, trying next port..."
         ((db_exposed_port++))
     done
     echo "DB_PORT Using free port: $db_exposed_port"
@@ -176,8 +191,7 @@ source "$ENV_FILE"
 
 # Docker operations
 FileLocation="./"
-PROJECT_NAME=deepe-prod
-# 统一处理函数
+
 handle_compose() {
     local profile=""
     [ "$with_ai_image" = "true" ] && profile="--profile gpu"
@@ -198,21 +212,36 @@ handle_compose() {
     esac
 }
 
-# 检查非运行容器
 check_non_running_containers() {
-    non_running=$(docker ps --filter "label=com.docker.compose.project=$PROJECT_NAME" \
-                 --format "{{.ID}} {{.Names}} {{.Status}}" | grep -v "Up ")
+    local max_attempts=5
+    local attempt=1
+    local wait_seconds=2
+    local non_running=""
 
-    if [ -n "$non_running" ]; then
-        echo "Found non-running containers:"
-        echo "$non_running"
-        exit 1
-    else
-        echo "All containers are running normally"
-    fi
+    while [ $attempt -le $max_attempts ]; do
+        non_running=$(docker ps --filter "label=com.docker.compose.project=$PROJECT_NAME" \
+                     --format "{{.ID}} {{.Names}} {{.Status}}" | grep -v "Up ")
+
+        if [ -z "$non_running" ]; then
+            echo "All containers are running normally"
+            echo "Login with http://localhost:$ui_port to start the application."
+            return 0
+        fi
+
+        if [ $attempt -lt $max_attempts ]; then
+            echo "Attempt $attempt/$max_attempts: Found non-running containers, checking again in $wait_seconds seconds..."
+            echo "$non_running"
+            sleep $wait_seconds
+        fi
+
+        attempt=$((attempt + 1))
+    done
+
+    echo "After $max_attempts attempts, still found non-running containers:"
+    echo "$non_running"
+    exit 1
 }
 
-# macOS专用PM2启动
 start_pm2_app() {
     APP_NAME="training-py"
     APP_SCRIPT="./app.py"
@@ -230,7 +259,6 @@ start_pm2_app() {
     pm2 save
 }
 
-# 主逻辑
 if [ "$SYSTEM" = "Darwin" ]; then
     with_ai_image="false"
     handle_compose "$1"
