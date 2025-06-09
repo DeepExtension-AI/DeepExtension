@@ -128,6 +128,7 @@ Replace `{ai_image_name}` and `{ai_image_version}` with the actual values from y
 
 <details>
 <summary><strong> ✅ Any Linux/macOS Environment Without GPU (No-Training Mode)</summary></strong>
+
 To run DeepExtension without training capabilities, open `DeepExtension/custom.conf` with any text editor and add the following line:
 ```
 WITH_AI_IMAGE=false
