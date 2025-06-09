@@ -44,9 +44,10 @@ cd DeepExtension
 
 ### 4.2 Set Up Model Training Environment
 
-DeepExtension offers different setup options based on your platform’s capabilities. Choose a training setup based on your platform.
+DeepExtension offers different setup options based on your platform’s capabilities. Select the appropriate training configuration according to your operating environment.
 
-#### ✅ Linux/Windows with NVIDIA GPU
+<details>
+<summary><strong> ✅ Linux/Windows with NVIDIA GPU</strong></summary>
 
 ##### Step 1: Verify GPU Passthrough Support
 
@@ -91,8 +92,10 @@ docker build \
 ```
 
 Replace `{ai_image_name}` and `{ai_image_version}` with the actual values from your `prod.env` obtaining from Step 2.
+</details>
 
-#### ✅ macOS (Apple Silicon, M1–M4)
+<details>
+<summary><strong> ✅ macOS (Apple Silicon, M1–M4)</summary></strong>
 
 ##### Step 1:  Prepare the MLX Code
 - Download the entire repository from [https://github.com/ml-explore/mlx-lm](https://github.com/ml-explore/mlx-lm) (tested successfully with v0.24.1)
@@ -124,20 +127,25 @@ Replace `{ai_image_name}` and `{ai_image_version}` with the actual values from y
   ```bash
   npm install -g pm2
   ```
+</details>
 
-#### ✅ Any Linux/macOS Environment Without GPU (No-Training Mode)
+<details>
+<summary><strong> ✅ Any Linux/macOS Environment Without GPU (No-Training Mode)</summary></strong>
 To run DeepExtension without training capabilities, open `DeepExtension/custom.conf` with any text editor and add the following line:
 ```
 WITH_AI_IMAGE=false
 ```
+</details>
+
 ---
 
 ### 4.4 Configure Optional Environment Settings (Optional)
-By default, the Web UI uses port 88 and the AI Redis service uses port 6490. You can configure port settings by editing `DeepExtension/custom.conf`. For more information, refer to the [Installation Guide](https://deepextension.readthedocs.io/en/latest/developer/install/).
+By default, the Web UI uses port 88 and the AI Redis service uses port 6490. To customize the exposed ports, edit `DeepExtension/custom.conf`. For more information, refer to the [Installation Guide](https://deepextension.readthedocs.io/en/latest/developer/install/).
 
 ---
 
-### 4.5 Start the Application
+### 4.5 Start and Login
+#### Start the Application
 Run:
 ```bash
 ./run_compose.sh
@@ -147,10 +155,7 @@ Verify that:
 - All images are downloaded
 - All containers start successfully
 
----
-
-### 4.6 Root User Setup
-
+#### First Login as Admin
 During the first launch, a root user is created automatically.
 The initial password is saved at: `DeepExtension/adminPassword/adminPassword.txt`
 
