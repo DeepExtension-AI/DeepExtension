@@ -264,7 +264,18 @@ if [ "$SYSTEM" = "Darwin" ]; then
     handle_compose "$1"
 elif [[ "$SYSTEM" =~ ^(Linux|MINGW|MSYS|CYGWIN)$ ]]; then
     cd deep-e-python || exit 1
-    docker build -t ${TRAINING_AI_IMAGE_NAME}:${TRAINING_AI_IMAGE_VERSION} -f Dockerfile . --load
+    # Check if image already exists
+    if docker image inspect "${TRAINING_AI_IMAGE_NAME}:${TRAINING_AI_IMAGE_VERSION}" >/dev/null 2>&1; then
+        echo "Info: Docker image ${TRAINING_AI_IMAGE_NAME}:${TRAINING_AI_IMAGE_VERSION} already exists. Skipping build."
+    else
+        echo "Building training image ${TRAINING_AI_IMAGE_NAME}:${TRAINING_AI_IMAGE_VERSION}..."
+        if docker build -t "${TRAINING_AI_IMAGE_NAME}:${TRAINING_AI_IMAGE_VERSION}" -f Dockerfile . --load; then
+            echo "Success: Image built successfully"
+        else
+            echo "Warning: Failed to build training image. Switching to non-training mode." >&2
+            with_ai_image="false"
+        fi
+    fi
     cd .. || exit 1
     handle_compose "$1"
 else
