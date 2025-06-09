@@ -25,15 +25,22 @@ Whether you're an AI engineer or a business expert, DeepExtension offers a share
 ⭐️ Star our [GitHub repository](https://github.com/DeepExtension-AI/DeepExtension) to stay updated and support the project!
 
 ## 🚀 4. Getting Started
-You can install **DeepExtension** on:
 
-- ✅ Linux or Windows via WSL (with CUDA for GPU training)
-- ✅ macOS (with MLX on Apple M-series)
-- ✅ Any Linux/macOS environment (in **no-training mode**) for UI exploration and inference only
+You can install **DeepExtension** on the following platforms:
+
+- ✅ **Linux** or **Windows (via WSL)** — with **CUDA** support for GPU training  
+- ✅ **macOS (Apple M-series)** — with **MLX** backend  
+- ✅ **Any Linux/macOS environment (no-training mode)** — for UI and inference only
+
+---
 
 ### 📝 Prerequisites
-- Docker Engine
-> If you have not installed Docker on your local machine (Windows, Mac, or Linux), see [Install Docker Engine](https://docs.docker.com/engine/install/).
+
+- **Docker Engine**  
+  If Docker is not installed, follow the official guide:  
+  👉 [Install Docker Engine](https://docs.docker.com/engine/install/)
+
+---
 
 ### 4.1 Clone the Repository
 
@@ -42,133 +49,142 @@ git clone https://github.com/DeepExtension-AI/DeepExtension.git
 cd DeepExtension
 ```
 
-### 4.2 Set Up Model Training Environment
+---
 
-**DeepExtension** offers different setup options based on your platform’s capabilities. Select the appropriate training configuration according to your operating environment.
+### 4.2 Start the Application
+
+Run the startup script:
+
+```bash
+./run_compose.sh
+```
+
+Ensure that:
+
+- All Docker images are pulled
+- All containers start without errors
+
+---
+
+#### 🎯 Access the Web UI
+
+Once everything is up and running, open [http://localhost:88](http://localhost:88) in your browser.
+
+> This is the default port; configurable via the `prod.env` file.
+
+**Login Page Example**
+
+![Login Page](docs/assets/login.png)
+
+---
+
+#### 🔐 First-Time Admin Login
+
+A **root admin user** is automatically created on first launch.
+
+- **Initial password location:**
+
+  ```
+  DeepExtension/adminPassword/adminPassword.txt
+  ```
+
+- **Login credentials:**
+
+  ```
+  Project Code: 1001
+  Username:     admin
+  Password:     (see file above)
+  ```
+
+---
+
+### 4.3 Set Up Model Training Environment
+
+**DeepExtension** provides training capabilities based on your system configuration. Choose the appropriate setup:
 
 <details>
-<summary><strong> ✅ Linux/Windows with NVIDIA GPU</strong></summary>
-
-##### Step 1: Verify GPU Passthrough Support
-
-Run the following command in your terminal:
-
-```bash
-docker run -it --rm --gpus all pytorch/pytorch:latest \
-    python -c "import torch; print(torch.cuda.is_available())"
-```
-
-- If the output is `True`, your GPU drivers and Docker setup are properly configured.
-- If it returns `False`, check your CUDA, Docker, and NVIDIA driver installation.
-
-##### Step 2: Prepare Training Image Variables
-
-Open the environment configuration file:
-
-```bash
-DeepExtension/prod.env
-```
-
-Locate the following variables:
-
-- `TRAINING_AI_IMAGE_NAME` (e.g., `local_deep_e_python_image`) → _denoted as_ `{ai_image_name}`
-- `TRAINING_AI_IMAGE_VERSION` (e.g., `a1b2c3d4`) → _denoted as_ `{ai_image_version}`
+<summary><strong>✅ Linux / Windows (with NVIDIA GPU)</strong></summary>
 
 
-##### Step 3: Build the Training Docker Image
+Training images are prebuilt via Docker Compose.
 
-Navigate to the training image directory and build the image:
+👉 Follow the guide:  
+[Quick Start: Run Your First Training](https://deepextension.readthedocs.io/en/latest/tutorials/tutorial-quick-start)
+
+</details>
+
+<details>
+<summary><strong>✅ macOS (Apple Silicon, M1–M4)</strong></summary>
+
+
+#### 🧩 Step 1: Prepare MLX Code
+
+1. Download from: [mlx-lm GitHub](https://github.com/ml-explore/mlx-lm) (tested with v0.24.1)  
+2. Copy the `mlx_lm` folder into the training directory  
+3. Run the preparation script:
 
 ```bash
 cd DeepExtension/deep-e-python
-
-docker build \
-    -t {ai_image_name}:{ai_image_version} \
-    -f Dockerfile . \
-    --load
+chmod +x prepare_mlx_changes.sh
+./prepare_mlx_changes.sh
 ```
 
-Replace `{ai_image_name}` and `{ai_image_version}` with the actual values from your `prod.env` obtaining from Step 2.
+#### 🐍 Step 2: Set Up Python Environment
+
+Use either **conda** or **venv**:
+
+- **Conda:**
+
+```bash
+conda create -n deepe_prod python=3.11
+conda activate deepe_prod
+```
+
+- **venv:**
+
+```bash
+python3 -m venv deepe_prod
+source deepe_prod/bin/activate
+```
+
+Install required packages:
+
+```bash
+pip3 install -r requirements_mac.txt
+```
+
+#### ⚙️ Step 3: Install PM2
+
+1. Install Node.js and npm  
+2. Then install PM2 globally:
+
+```bash
+npm install -g pm2
+```
+
 </details>
 
 <details>
-<summary><strong> ✅ macOS (Apple Silicon, M1–M4)</summary></strong>
+<summary><strong>✅ No-Training Mode (Any Linux/macOS)</strong></summary>
 
-##### Step 1:  Prepare the MLX Code
-- Download the entire repository from [https://github.com/ml-explore/mlx-lm](https://github.com/ml-explore/mlx-lm) (tested successfully with v0.24.1)
-- Copy the mlx_lm subdirectory from the mlx-lm project into training directory.
-- Run the preparation script to apply required MLX code modifications for **DeepExtension** compatibility:
-  ```bash
-  cd DeepExtension/deep-e-python
-  chmod +x prepare_mlx_changes.sh
-  ./prepare_mlx_changes.sh
-  ```
-##### Step 2:  Set Up the Python Environment and Install Required Packages
-- You can create new python environment and activate it either using **Conda**,
-  ```bash
-  conda create -n deepe_prod python=3.11
-  conda activate deepe_prod
-  ```
-  or using **venv**,
-  ```bash
-  python3 -m venv deepe_prod
-  source deepe_prod/bin/activate
-  ```
-- and then install required packages,
-  ```bash
-  pip3 install -r requirements_mac.txt
-  ```
-##### Step 3:  Install pm2
-- Install Node.js and NPM
-- Run:
-  ```bash
-  npm install -g pm2
-  ```
-</details>
 
-<details>
-<summary><strong> ✅ Any Linux/macOS Environment Without GPU (No-Training Mode)</summary></strong>
+If you only want to use the UI and inference features without training:
 
-To run **DeepExtension** without training capabilities, open `DeepExtension/custom.conf` with any text editor and add the following line:
+1. Open `DeepExtension/custom.conf`  
+2. Add the following line:
+
 ```
 WITH_AI_IMAGE=false
 ```
+
 </details>
 
+---
 
-### 4.4 Configure Optional Environment Settings (Optional)
-By default, the Web UI uses port 88 and the AI Redis service uses port 6490. To customize the exposed ports, edit `DeepExtension/custom.conf`. For more information, refer to the [Installation Guide](https://deepextension.readthedocs.io/en/latest/developer/install/).
+### 📚 4.4 Full Installation Guide
 
-
-### 4.5 Start and Login
-#### Start the Application
-Run:
-```bash
-cd DeepExtension
-./run_compose.sh
-```
-Verify that:
-
-- All images are downloaded
-- All containers start successfully
-
-#### First Login as Admin
-During the first launch, a root user is created automatically.
-The initial password is saved at: `DeepExtension/adminPassword/adminPassword.txt`
-
-Use the following credentials to log in for the first time:
-```
-Project Code: 1001
-Username: admin
-Initial Password: (see file) -> DeepExtension/adminPassword/adminPassword.txt
-```
-<div align="left" style="margin-top:20px;margin-bottom:20px;">
-<img src="docs/assets/login.png" width="600"/>
-</div>
-
-### 4.7 Full Installation Guide
-
-For advanced setups (e.g. MLX training, custom database), refer to the [Installation Guide](https://deepextension.readthedocs.io/en/latest/developer/install/).
+For advanced configurations (e.g., MLX training, connecting to a custom database), see the full guide:  
+👉 [Installation Guide](https://deepextension.readthedocs.io/en/latest/developer/install/)
 
 ## 🌟 5. Key Features
 
