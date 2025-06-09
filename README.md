@@ -98,6 +98,10 @@ A **root admin user** is automatically created on first launch.
   Password:     (see file above)
   ```
 
+#### 🔧 Current Features
+DeepExtension currently supports adding, managing, and running inference on third-party models and querying knowledge bases.
+If you wish to train your own models and manage local models, please follow the installation instructions in **section 4.3: Set Up Model Training Environment**
+
 ---
 
 ### 4.3 Set Up Model Training Environment
@@ -167,7 +171,7 @@ npm install -g pm2
 </details>
 
 <details>
-<summary><strong>✅ No-Training Mode (Any Linux/macOS)</strong></summary>
+<summary><strong>✅ No-Training Mode (Any Linux)</strong></summary>
 
 
 If you only want to use the UI and inference features without training:
@@ -180,6 +184,9 @@ WITH_AI_IMAGE=false
 ```
 
 </details>
+
+>
+After setting up the model training environment, you need to re-run `./run_compose.sh` to enable model training features.
 
 ---
 
