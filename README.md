@@ -74,7 +74,9 @@ Once everything is up and running, open [http://localhost:88](http://localhost:8
 
 **Login Page Example**
 
-![Login Page](docs/assets/login.png)
+<div align="left" style="margin-top:20px;margin-bottom:20px;">
+<img src="docs/assets/login.png" width="500"/>
+</div>
 
 ---
 
