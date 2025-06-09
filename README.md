@@ -25,11 +25,11 @@ Whether you're an AI engineer or a business expert, DeepExtension offers a share
 ⭐️ Star our [GitHub repository](https://github.com/DeepExtension-AI/DeepExtension) to stay updated and support the project!
 
 ## 🚀 4. Getting Started
-You can install DeepExtension on:
+You can install **DeepExtension** on:
 
-- Linux or Windows via WSL (with CUDA for GPU training)
-- macOS (with MLX on Apple M-series)
-- Any Linux/macOS environment (in **no-training mode**) for UI exploration and inference only
+- ✅ Linux or Windows via WSL (with CUDA for GPU training)
+- ✅ macOS (with MLX on Apple M-series)
+- ✅ Any Linux/macOS environment (in **no-training mode**) for UI exploration and inference only
 
 ### 📝 Prerequisites
 - Docker Engine
@@ -61,8 +61,6 @@ docker run -it --rm --gpus all pytorch/pytorch:latest \
 - If the output is `True`, your GPU drivers and Docker setup are properly configured.
 - If it returns `False`, check your CUDA, Docker, and NVIDIA driver installation.
 
----
-
 ##### Step 2: Prepare Training Image Variables
 
 Open the environment configuration file:
@@ -76,7 +74,6 @@ Locate the following variables:
 - `TRAINING_AI_IMAGE_NAME` (e.g., `local_deep_e_python_image`) → _denoted as_ `{ai_image_name}`
 - `TRAINING_AI_IMAGE_VERSION` (e.g., `a1b2c3d4`) → _denoted as_ `{ai_image_version}`
 
----
 
 ##### Step 3: Build the Training Docker Image
 
@@ -137,12 +134,10 @@ WITH_AI_IMAGE=false
 ```
 </details>
 
----
 
 ### 4.4 Configure Optional Environment Settings (Optional)
 By default, the Web UI uses port 88 and the AI Redis service uses port 6490. To customize the exposed ports, edit `DeepExtension/custom.conf`. For more information, refer to the [Installation Guide](https://deepextension.readthedocs.io/en/latest/developer/install/).
 
----
 
 ### 4.5 Start and Login
 #### Start the Application
@@ -165,7 +160,6 @@ Project Code: 1001
 Username: admin
 Initial Password: (see file) -> DeepExtension/adminPassword/adminPassword.txt
 ```
----
 
 ### 4.7 Full Installation Guide
 
