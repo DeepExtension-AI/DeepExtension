@@ -69,6 +69,8 @@ cd DeepExtension
 服务启动后，打开浏览器访问：  
 [http://localhost:{webui_port}](http://localhost:{webui_port})
 
+默认情况下，Web UI 使用 88 端口。
+如果 88 端口已被占用，应用程序将自动使用一个可用的端口。
 你可以在 `run_compose.sh` 的日志输出中或 Docker 引擎容器管理界面中找到 `{webui_port}`。
 
 **示例：登录页面**

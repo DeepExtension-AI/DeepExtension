@@ -71,6 +71,8 @@ Make sure that:
 Once the services are up and running, open your browser and visit:  
 [http://localhost:{webui_port}](http://localhost:{webui_port})
 
+By default, the Web UI uses port 88.
+If port 88 is already in use, the application will automatically use an available port.
 You can find `{webui_port}` in the `run_compose.sh` log output or through your Docker Engine container management interface.
 
 **Example: Login Page**
