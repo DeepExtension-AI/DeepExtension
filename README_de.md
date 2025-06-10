@@ -183,7 +183,7 @@ DeepExtension verwendet eine modulare, mehrschichtige Systemarchitektur, die hoh
 - [Installationsanleitung](https://docs.deepextension.ai/de/developer/install/)
 - [Häufige Fragen (FAQs)](https://docs.deepextension.ai/de/faq/)
 - [Architekturdokumentation](https://docs.deepextension.ai/de/intro/architecture/)
-## 🏄 6. Open-Source-Community
+## 🏄 7. Open-Source-Community
 - Dokumentationszentrum: Besuchen Sie das offizielle DeepExtension-Dokumentationsportal, [https://docs.deepextension.ai/de/](https://docs.deepextension.ai/de/)
 - Community-Forum: Nehmen Sie an Diskussionen teil, geben Sie Feedback oder schlagen Sie Funktionen vor (demnächst verfügbar)
 - GitHub: Verfolgen Sie Releases, melden Sie Probleme oder beteiligen Sie sich an unseren Open-Source-Komponenten, [https://github.com/DeepExtension-AI/DeepExtension](https://github.com/DeepExtension-AI/DeepExtension)
