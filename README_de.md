@@ -21,7 +21,114 @@ Bitte besuchen Sie [https://docs.deepextension.ai/de/](https://docs.deepextensio
 ## 🎉 3. Projekt folgen
 
 ⭐️ Klicken Sie oben rechts auf Star, um DeepExtension zu folgen und Benachrichtigungen über neue Releases zu erhalten! 🌟
-## 🌟 4. Hauptfunktionen
+
+
+## 🚀 4. Erste Schritte
+
+Sie können **DeepExtension** auf den folgenden Plattformen installieren:
+
+- ✅ **Linux** oder **Windows (über WSL)** — mit **CUDA**-Unterstützung für GPU-Training  
+- ✅ **macOS (Apple M-Serie)** — mit **MLX**-Backend  
+- ✅ **Jede Linux/macOS-Umgebung (ohne Trainingsmodus)** — nur für UI-Zugriff und Inferenz
+
+---
+
+### 📝 Voraussetzungen
+
+- **Docker Engine**  
+  Wenn Docker noch nicht installiert ist, folgen Sie der offiziellen Anleitung:  
+  👉 [Docker Engine installieren](https://docs.docker.com/engine/install/)
+
+---
+
+### 4.1 Repository klonen
+
+```bash
+git clone https://github.com/DeepExtension-AI/DeepExtension.git
+cd DeepExtension
+```
+
+---
+
+### 4.2 Anwendung starten
+
+Führen Sie das Startskript aus:
+
+```bash
+./run_compose.sh
+```
+
+Stellen Sie sicher, dass:
+
+- Alle erforderlichen Docker-Images heruntergeladen wurden
+- Alle Container fehlerfrei gestartet wurden
+
+---
+
+#### 🎯 Zugriff auf das Web-UI
+
+Sobald die Dienste laufen, öffnen Sie Ihren Browser und gehen Sie zu:  
+[http://localhost:{webui_port}](http://localhost:{webui_port})
+
+Standardmäßig verwendet die Weboberfläche den Port 88.
+Wenn Port 88 bereits belegt ist, verwendet die Anwendung automatisch einen verfügbaren Port.
+Sie finden `{webui_port}` im Log-Ausgabe von `run_compose.sh` oder über Ihre Docker Engine-Verwaltungsschnittstelle.
+
+**Beispiel: Login-Seite**
+
+<div align="left" style="margin-top:20px;margin-bottom:20px;">
+<img src="docs/assets/login.png" width="500"/>
+</div>
+
+---
+
+#### 🔐 Erstmaliger Admin-Login
+
+Ein **Root-Admin-Benutzer** wird beim ersten Start automatisch erstellt.
+
+- **Datei mit dem Anfangspasswort:**
+
+  ```
+  DeepExtension/adminPassword/adminPassword.txt
+  ```
+
+- **Anmeldedaten:**
+
+  ```
+  Projektcode: 1001
+  Benutzername: admin
+  Passwort:     (siehe obige Passwortdatei)
+  ```
+
+---
+
+#### 🔧 Verfügbare Funktionen
+
+**DeepExtension** unterstützt derzeit:
+
+- Verwaltung von Drittanbieter-Modellen
+- Durchführung von Inferenz- und Evaluierungsaufgaben mit Drittanbieter-Modellen
+- Überwachung von Ausgaben und Metriken über das Web-UI
+
+---
+
+### 4.3 Trainingsumgebung für Modelle einrichten
+
+Um das Training, die Evaluierung, das Speichern und die Bereitstellung **lokaler Modelle** zu ermöglichen, müssen Sie die Trainingsumgebung konfigurieren.  
+Der Einrichtungsprozess unterscheidet sich je nach Plattform. Siehe vollständige Installationsanleitung:  
+👉 [Trainingsumgebung einrichten](https://deepextension.readthedocs.io/en/latest/developer/install/#3-set-up-model-training-environment)
+
+> **Hinweis:**  
+> Auch ohne konfigurierte Trainingsumgebung können Sie Inferenz- und Evaluierungsaufgaben mit Drittanbieter-Modellen durchführen.
+
+---
+
+### 📚 4.4 Vollständige Installationsanleitung
+
+Für erweiterte Konfigurationsoptionen — wie MLX-basiertes Training oder Anbindung an eine benutzerdefinierte Datenbank — lesen Sie die vollständige Dokumentation:  
+👉 [Installationsanleitung](https://deepextension.readthedocs.io/en/latest/developer/install/)
+
+## 🌟 5. Hauptfunktionen
 
 - 🤖 **Mehrmodell-Dialog und Wissensdatenbank-Referenz**: Unterstützt den Dialog mit lokal trainierten Modellen und verschiedenen Drittanbieter-Modellen (z.B. gängige KI-Plattformen) sowie die Integration von persönlichen oder unternehmensweiten Wissensdatenbanken für intelligente Q&A und Wissensabruf.
 - 🔌 **Einfache Integration von Drittanbieter-Modellen und -Plattformen**: Schnelles Hinzufügen und Wechseln zwischen verschiedenen Modellen und Plattformen, geeignet für vielfältige Anwendungsszenarien.
@@ -30,7 +137,7 @@ Bitte besuchen Sie [https://docs.deepextension.ai/de/](https://docs.deepextensio
 - 📊 **Modellevaluierung und Vergleichsanalyse**: Integrierte Bewertungstools ermöglichen den Vergleich von Modellen mit unterschiedlichen Leistungen und Versionen, um das am besten geeignete Zielmodell auszuwählen.
 - 📊 **Datensatz-Upload und -Analyse**: Unterstützt das Hochladen und automatische Parsen von Datensätzen für das Modelltraining, vereinfacht die Datenvorbereitung und beschleunigt die Entwicklung.
 
-## 📚 5. Technische Dokumentation
+## 📚 6. Technische Dokumentation
 
 DeepExtension verwendet eine modulare, mehrschichtige Systemarchitektur, die hohe Verfügbarkeit, Skalierbarkeit und Wartungsfreundlichkeit gewährleistet. Das Architekturdesign ist wie folgt:
 
@@ -78,11 +185,11 @@ DeepExtension verwendet eine modulare, mehrschichtige Systemarchitektur, die hoh
 - [Installationsanleitung](https://docs.deepextension.ai/de/developer/install/)
 - [Häufige Fragen (FAQs)](https://docs.deepextension.ai/de/faq/)
 - [Architekturdokumentation](https://docs.deepextension.ai/de/intro/architecture/)
-## 🏄 6. Open-Source-Community
+## 🏄 7. Open-Source-Community
 - Dokumentationszentrum: Besuchen Sie das offizielle DeepExtension-Dokumentationsportal, [https://docs.deepextension.ai/de/](https://docs.deepextension.ai/de/)
 - Community-Forum: Nehmen Sie an Diskussionen teil, geben Sie Feedback oder schlagen Sie Funktionen vor (demnächst verfügbar)
 - GitHub: Verfolgen Sie Releases, melden Sie Probleme oder beteiligen Sie sich an unseren Open-Source-Komponenten, [https://github.com/DeepExtension-AI/DeepExtension](https://github.com/DeepExtension-AI/DeepExtension)
-## 🙌 7. Technischer Support
+## 🙌 8. Technischer Support
 Wenn Sie bei der Nutzung von DeepExtension auf Probleme stoßen:
 
 1. Bitte konsultieren Sie zunächst die relevanten Dokumente und FAQs;
@@ -91,13 +198,13 @@ Wenn Sie bei der Nutzung von DeepExtension auf Probleme stoßen:
 - Verwendetes Betriebssystem / Umgebung
 - Detaillierte Fehlermeldung oder Screenshot (falls zutreffend)
 Wir antworten innerhalb von zwei Werktagen.
-## 🤝 8. Kontakt
+## 🤝 9. Kontakt
 Für allgemeine Anfragen, Kooperationen oder Medienanfragen kontaktieren Sie uns bitte wie folgt:
 
 - E-Mail: contact@deepextension.ai
 - Offizielle Website: https://www.deepextension.ai
 
-## 👥 9. Feedback und Funktionsvorschläge
+## 👥 10. Feedback und Funktionsvorschläge
 Ihr Feedback ist uns sehr wichtig! Teilen Sie uns gerne mit, welche Funktionen Sie hilfreich finden, welche Probleme bestehen und welche Features Sie sich für die Zukunft wünschen.
 Feedback-Kanäle:
 

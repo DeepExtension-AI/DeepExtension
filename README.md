@@ -24,8 +24,112 @@ Whether you're an AI engineer or a business expert, DeepExtension offers a share
 
 ⭐️ Star our [GitHub repository](https://github.com/DeepExtension-AI/DeepExtension) to stay updated and support the project!
 
+## 🚀 4. Getting Started
 
-## 🌟 4. Key Features
+You can install **DeepExtension** on the following platforms:
+
+- ✅ **Linux** or **Windows (via WSL)** — with **CUDA** support for GPU training  
+- ✅ **macOS (Apple M-series)** — with **MLX** backend  
+- ✅ **Any Linux/macOS environment (no-training mode)** — for UI access and inference only
+
+---
+
+### 📝 Prerequisites
+
+- **Docker Engine**  
+  If Docker is not already installed, follow the official instructions:  
+  👉 [Install Docker Engine](https://docs.docker.com/engine/install/)
+
+---
+
+### 4.1 Clone the Repository
+
+```bash
+git clone https://github.com/DeepExtension-AI/DeepExtension.git
+cd DeepExtension
+```
+
+---
+
+### 4.2 Start the Application
+
+Run the startup script:
+
+```bash
+./run_compose.sh
+```
+
+Make sure that:
+
+- All required Docker images are pulled
+- All containers start without errors
+
+---
+
+#### 🎯 Access the Web UI
+
+Once the services are up and running, open your browser and visit:  
+[http://localhost:{webui_port}](http://localhost:{webui_port})
+
+By default, the Web UI uses port 88.
+If port 88 is already in use, the application will automatically use an available port.
+You can find `{webui_port}` in the `run_compose.sh` log output or through your Docker Engine container management interface.
+
+**Example: Login Page**
+
+<div align="left" style="margin-top:20px;margin-bottom:20px;">
+<img src="docs/assets/login.png" width="500"/>
+</div>
+
+---
+
+#### 🔐 First-Time Admin Login
+
+A **root admin user** is automatically created on first launch.
+
+- **Initial password file:**
+
+  ```
+  DeepExtension/adminPassword/adminPassword.txt
+  ```
+
+- **Login credentials:**
+
+  ```
+  Project Code: 1001
+  Username:     admin
+  Password:     (see password file above)
+  ```
+
+---
+
+#### 🔧 Available Features
+
+**DeepExtension** currently supports:
+
+- Managing third-party models 
+- Running inference and evaluation tasks on third-party models 
+- Monitoring outputs and metrics via the Web UI
+
+---
+
+### 4.3 Set Up the Model Training Environment
+
+To enable training, evaluation, saving, and deployment of **local models**, you'll need to configure the training environment.  
+The setup process differs depending on your platform. Please refer to the full installation guide here:  
+👉 [Set Up Model Training Environment](https://deepextension.readthedocs.io/en/latest/developer/install/#3-set-up-model-training-environment)
+
+> **Note:**  
+> You can still perform inference and evaluation with third-party models without configuring the training environment.
+
+---
+
+### 📚 4.4 Full Installation Guide
+
+For advanced configuration options—such as MLX-based training or connecting to a custom database—refer to the full documentation:  
+👉 [Installation Guide](https://deepextension.readthedocs.io/en/latest/developer/install/)
+
+## 🌟 5. Key Features
 
 - 🤖 **Multi-Model Chat + Knowledge Base**  
   Interact with local or third-party models integrated with personal or corporate knowledge bases.
@@ -46,7 +150,7 @@ Whether you're an AI engineer or a business expert, DeepExtension offers a share
   Upload datasets and automatically parse them into structured formats to streamline training.
 
 
-## 📚 5. Technical Overview
+## 📚 6. Technical Overview
 
 ### 🏗️ Architecture Diagram
 
@@ -93,14 +197,14 @@ Whether you're an AI engineer or a business expert, DeepExtension offers a share
 - [Frequently Asked Questions (FAQs)](https://docs.deepextension.ai/faq/)
 - [Architecture Documentation](https://docs.deepextension.ai/intro/architecture/)
 
-## 🏄 6. Open Source Community
+## 🏄 7. Open Source Community
 
 - 🔧 Documentation: [https://docs.deepextension.ai/](https://docs.deepextension.ai/)
 - 💬 Forum: Coming soon
 - 🧑‍💻 GitHub: [https://github.com/DeepExtension-AI/DeepExtension](https://github.com/DeepExtension-AI/DeepExtension)
 
 
-## 🙌 7. Technical Support
+## 🙌 8. Technical Support
 
 If you encounter any issues:
 
@@ -113,13 +217,13 @@ Please include:
 - Screenshots or logs (if applicable)
 
 
-## 🤝 8. Contact Us
+## 🤝 9. Contact Us
 
 - 📧 Email: contact@deepextension.ai  
 - 🌐 Website: [https://www.deepextension.ai](https://www.deepextension.ai)  
 
 
-## 👥 9. Feedback & Feature Requests
+## 👥 10. Feedback & Feature Requests
 
 We welcome feedback and suggestions!
 
@@ -127,4 +231,4 @@ We welcome feedback and suggestions!
 - GitHub Issues: [Submit here](https://github.com/DeepExtension-AI/DeepExtension/issues)
 
 
-Thank you for supporting DeepExtension! 🚀
+Thank you for supporting **DeepExtension**! 🚀
