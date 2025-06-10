@@ -104,9 +104,7 @@ cd DeepExtension
 **DeepExtension** 当前支持：
 
 - 管理第三方模型
-
 - 对第三方模型执行推理和评估任务
-
 - 通过 Web UI 监控输出结果和评估指标
 
 ---
