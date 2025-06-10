@@ -105,7 +105,7 @@ A **root admin user** is automatically created on first launch.
 
 **DeepExtension** currently supports:
 
-- Managing third-party language models 
+- Managing third-party models 
 - Running inference and evaluation tasks on third-party models 
 - Monitoring outputs and metrics via the Web UI
 

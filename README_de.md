@@ -104,8 +104,10 @@ Ein **Root-Admin-Benutzer** wird beim ersten Start automatisch erstellt.
 
 **DeepExtension** unterstützt derzeit:
 
-- Verwaltung von Drittanbieter-Sprachmodellen und Wissensdatenbanken  
-- Durchführung von Inferenz- und Evaluierungsaufgaben  
+- Verwaltung von Drittanbieter-Modellen
+
+- Durchführung von Inferenz- und Evaluierungsaufgaben mit Drittanbieter-Modellen
+
 - Überwachung von Ausgaben und Metriken über das Web-UI
 
 ---
