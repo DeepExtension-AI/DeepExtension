@@ -71,8 +71,6 @@ Ensure that:
 Once everything is up and running, open [http://localhost:{webui_port}](http://localhost:{webui_port}) in your browser.
 You can find the Web UI port either in the run_compose log output or in the Docker Engine’s container management info.
 
-> This is the default port; configurable via the `prod.env` file.
-
 **Login Page Example**
 
 <div align="left" style="margin-top:20px;margin-bottom:20px;">
@@ -100,95 +98,17 @@ A **root admin user** is automatically created on first launch.
   ```
 
 #### 🔧 Current Features
-DeepExtension currently supports adding, managing, and running inference on third-party models and querying knowledge bases.
-If you wish to train your own models and manage local models, please follow the installation instructions in **section 4.3: Set Up Model Training Environment**
+**DeepExtension** currently supports managing, running inference and evaluation on third-party models.
 
 ---
 
 ### 4.3 Set Up Model Training Environment
 
-**DeepExtension** provides training capabilities based on your system configuration. Choose the appropriate setup:
+Set up the training environment to enable **DeepExtension** to train, inference, evaluate, save, and deploy local models. The setup steps vary depending on the platform you are using, so please refer to [Section: Set Up Model Training Environment](https://deepextension.readthedocs.io/en/latest/developer/install/#3-set-up-model-training-environment) in full installation guide. 
 
-<details>
-<summary><strong>✅ Linux / Windows (with NVIDIA GPU)</strong></summary>
-
-
-Training images are prebuilt via Docker Compose.
-
-👉 Follow the guide:  
-[Quick Start: Run Your First Training](https://deepextension.readthedocs.io/en/latest/tutorials/tutorial-quick-start)
-
-</details>
-
-<details>
-<summary><strong>✅ macOS (Apple Silicon, M1–M4)</strong></summary>
-
-
-#### 🧩 Step 1: Prepare MLX Code
-
-1. Download from: [mlx-lm GitHub](https://github.com/ml-explore/mlx-lm) (tested with v0.24.1)  
-2. Copy the `mlx_lm` folder into the training directory  
-3. Run the preparation script:
-
-```bash
-cd DeepExtension/deep-e-python
-chmod +x prepare_mlx_changes.sh
-./prepare_mlx_changes.sh
-```
-
-#### 🐍 Step 2: Set Up Python Environment
-
-Use either **conda** or **venv**:
-
-- **Conda:**
-
-```bash
-conda create -n deepe_prod python=3.11
-conda activate deepe_prod
-```
-
-- **venv:**
-
-```bash
-python3 -m venv deepe_prod
-source deepe_prod/bin/activate
-```
-
-Install required packages:
-
-```bash
-pip3 install -r requirements_mac.txt
-```
-
-#### ⚙️ Step 3: Install PM2
-
-1. Install Node.js and npm  
-2. Then install PM2 globally:
-
-```bash
-npm install -g pm2
-```
-
-</details>
-
-<details>
-<summary><strong>✅ No-Training Mode (Any Linux)</strong></summary>
-
-
-If you only want to use the UI and inference features without training:
-
-1. Open `DeepExtension/custom.conf`  
-2. Add the following line:
-
-```
-WITH_AI_IMAGE=false
-```
-
-</details>
-
-> Note:
+>Note:
 >
-> After setting up the model training environment, you need to re-run `./run_compose.sh` to enable model training features.
+>Without configuring the training environment, you can still use **DeepExtension** for inference and evaluation with third-party models.
 
 ---
 
