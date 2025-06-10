@@ -30,14 +30,14 @@ You can install **DeepExtension** on the following platforms:
 
 - ✅ **Linux** or **Windows (via WSL)** — with **CUDA** support for GPU training  
 - ✅ **macOS (Apple M-series)** — with **MLX** backend  
-- ✅ **Any Linux/macOS environment (no-training mode)** — for UI and inference only
+- ✅ **Any Linux/macOS environment (no-training mode)** — for UI access and inference only
 
 ---
 
 ### 📝 Prerequisites
 
 - **Docker Engine**  
-  If Docker is not installed, follow the official guide:  
+  If Docker is not already installed, follow the official instructions:  
   👉 [Install Docker Engine](https://docs.docker.com/engine/install/)
 
 ---
@@ -59,19 +59,21 @@ Run the startup script:
 ./run_compose.sh
 ```
 
-Ensure that:
+Make sure that:
 
-- All Docker images are pulled
+- All required Docker images are pulled
 - All containers start without errors
 
 ---
 
 #### 🎯 Access the Web UI
 
-Once everything is up and running, open [http://localhost:{webui_port}](http://localhost:{webui_port}) in your browser.
-You can find the Web UI port either in the run_compose log output or in the Docker Engine’s container management info.
+Once the services are up and running, open your browser and visit:  
+[http://localhost:{webui_port}](http://localhost:{webui_port})
 
-**Login Page Example**
+You can find `{webui_port}` in the `run_compose.sh` log output or through your Docker Engine container management interface.
+
+**Example: Login Page**
 
 <div align="left" style="margin-top:20px;margin-bottom:20px;">
 <img src="docs/assets/login.png" width="500"/>
@@ -83,7 +85,7 @@ You can find the Web UI port either in the run_compose log output or in the Dock
 
 A **root admin user** is automatically created on first launch.
 
-- **Initial password location:**
+- **Initial password file:**
 
   ```
   DeepExtension/adminPassword/adminPassword.txt
@@ -94,27 +96,35 @@ A **root admin user** is automatically created on first launch.
   ```
   Project Code: 1001
   Username:     admin
-  Password:     (see file above)
+  Password:     (see password file above)
   ```
-
-#### 🔧 Current Features
-**DeepExtension** currently supports managing, running inference and evaluation on third-party models.
 
 ---
 
-### 4.3 Set Up Model Training Environment
+#### 🔧 Available Features
 
-Set up the training environment to enable **DeepExtension** to train, inference, evaluate, save, and deploy local models. The setup steps vary depending on the platform you are using, so please refer to [Section: Set Up Model Training Environment](https://deepextension.readthedocs.io/en/latest/developer/install/#3-set-up-model-training-environment) in full installation guide. 
+**DeepExtension** currently supports:
 
->Note:
->
->Without configuring the training environment, you can still use **DeepExtension** for inference and evaluation with third-party models.
+- Managing third-party language models 
+- Running inference and evaluation tasks on third-party models 
+- Monitoring outputs and metrics via the Web UI
+
+---
+
+### 4.3 Set Up the Model Training Environment
+
+To enable training, evaluation, saving, and deployment of **local models**, you'll need to configure the training environment.  
+The setup process differs depending on your platform. Please refer to the full installation guide here:  
+👉 [Set Up Model Training Environment](https://deepextension.readthedocs.io/en/latest/developer/install/#3-set-up-model-training-environment)
+
+> **Note:**  
+> You can still perform inference and evaluation with third-party models without configuring the training environment.
 
 ---
 
 ### 📚 4.4 Full Installation Guide
 
-For advanced configurations (e.g., MLX training, connecting to a custom database), see the full guide:  
+For advanced configuration options—such as MLX-based training or connecting to a custom database—refer to the full documentation:  
 👉 [Installation Guide](https://deepextension.readthedocs.io/en/latest/developer/install/)
 
 ## 🌟 5. Key Features
