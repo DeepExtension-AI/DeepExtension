@@ -1,11 +1,15 @@
 #!/bin/bash
 PROJECT_NAME=deepe-prod
-# Function to check if port is used by another container
 is_port_used_by_other_container() {
     local port=$1
     local project_name=$2
 
-    # Get all containers using the port
+    # Check if port is being used by non-Docker processes
+    if ss -tuln | grep -q ":$port "; then
+        return 0  # Port is used by non-Docker process
+    fi
+
+    # Get all Docker containers using the port
     local containers_using_port=$(docker ps --format "{{.ID}} {{.Names}} {{.Ports}}" | grep ":$port->" || true)
 
     if [ -n "$containers_using_port" ]; then
