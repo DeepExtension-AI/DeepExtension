@@ -6,7 +6,6 @@ is_port_used_by_other_container() {
 
     # Check if port is being used by non-Docker processes
     if (lsof -i :$port >/dev/null 2>&1 || nc -z 127.0.0.1 $port >/dev/null 2>&1); then
-       # in use
         # Get all Docker containers using the port
         local containers_using_port=$(docker ps --format "{{.ID}} {{.Names}} {{.Ports}}" | grep ":$port->" || true)
 
@@ -15,13 +14,13 @@ is_port_used_by_other_container() {
             while read -r line; do
                 local container_id=$(echo "$line" | awk '{print $1}')
                 local labels=$(docker inspect --format '{{index .Config.Labels "com.docker.compose.project"}}' "$container_id")
-
                 if [ "$labels" != "$project_name" ]; then
                     return 0  # Port is used by another container
                 fi
             done <<< "$containers_using_port"
+        else
+            return 0  # Port is used by another container
         fi
-        return 1 ## free
     fi
 
     return 1  # Port is either free or used by our own containers
