@@ -286,6 +286,7 @@ CREATE TABLE public.sys_menus (
     group_name text NULL,
     is_index bool DEFAULT false NULL,
     component text NULL,
+    is_overview bool DEFAULT false NOT NULL,
     CONSTRAINT sys_menus_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX sys_menus_parea_id_idx ON public.sys_menus USING btree (co_code, menu_tag);
