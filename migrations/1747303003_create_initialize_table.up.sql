@@ -79,6 +79,7 @@ CREATE TABLE public.deploy_models_tasks (
     server_url text NOT NULL,
     quantize public."quantize_enum" DEFAULT 'None'::quantize_enum NOT NULL,
     save_task_uuid uuid NULL,
+    co_id int4 NULL,
     CONSTRAINT deploy_model_tasks_pkey PRIMARY KEY (id)
 );
 
@@ -206,6 +207,7 @@ CREATE TABLE public.model_comparison_results (
     judge_system_prompt text NULL,
     judge_user_prompt text NULL,
     err_judge text NULL,
+    co_id int4 NULL,
     CONSTRAINT model_comparison_results_pkey PRIMARY KEY (id)
 );
 CREATE INDEX idx_mcr_task_record ON public.model_comparison_results USING btree (task_uuid, record_id);
@@ -231,6 +233,7 @@ CREATE TABLE public.model_comparison_tasks (
     finished_at int8 NULL,
     eval_type int4 DEFAULT 0 NOT NULL,
     dataset_item_num int4 DEFAULT 0 NOT NULL,
+    co_id int4 NULL,
     CONSTRAINT model_comparison_tasks_pkey PRIMARY KEY (id),
     CONSTRAINT model_comparison_tasks_task_uuid_key UNIQUE (task_uuid)
 );
@@ -253,6 +256,7 @@ CREATE TABLE public.save_models_tasks (
     status text DEFAULT 'pending'::text NOT NULL,
     status_code int4 DEFAULT 0 NOT NULL,
     is_deleted bool DEFAULT false NOT NULL,
+    co_id int4 NULL,
     CONSTRAINT save_models_tasks_pkey PRIMARY KEY (id)
 );
 
@@ -286,6 +290,7 @@ CREATE TABLE public.sys_menus (
     group_name text NULL,
     is_index bool DEFAULT false NULL,
     component text NULL,
+    is_overview bool DEFAULT false NOT NULL,
     CONSTRAINT sys_menus_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX sys_menus_parea_id_idx ON public.sys_menus USING btree (co_code, menu_tag);
