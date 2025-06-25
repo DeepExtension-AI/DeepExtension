@@ -21,7 +21,113 @@
 ## 🎉 3.关注项目
 
 ⭐️ 点击右上角的 Star 关注 DeepExtension，可以获取最新发布的实时通知 !🌟
-## 🌟 4. 主要功能
+
+## 🚀 4. 快速开始
+
+你可以在以下平台上安装 **DeepExtension**：
+
+- ✅ **Linux** 或 **Windows（通过 WSL）** — 支持 **CUDA** 进行 GPU 训练  
+- ✅ **macOS（Apple M 系列）** — 使用 **MLX** 后端  
+- ✅ **任意 Linux/macOS 环境（非训练模式）** — 仅用于 UI 访问和推理
+
+---
+
+### 📝 前置条件
+
+- **Docker 引擎**  
+  如果尚未安装 Docker，请参考官方安装指南：  
+  👉 [安装 Docker 引擎](https://docs.docker.com/engine/install/)
+
+---
+
+### 4.1 克隆代码仓库
+
+```bash
+git clone https://github.com/DeepExtension-AI/DeepExtension.git
+cd DeepExtension
+```
+
+---
+
+### 4.2 启动应用程序
+
+运行启动脚本：
+
+```bash
+./run_compose.sh
+```
+
+请确保：
+
+- 所需的 Docker 镜像已全部拉取
+- 所有容器成功启动，无错误
+
+---
+
+#### 🎯 访问 Web UI
+
+服务启动后，打开浏览器访问：  
+[http://localhost:{webui_port}](http://localhost:{webui_port})
+
+默认情况下，Web UI 使用 88 端口。
+如果 88 端口已被占用，应用程序将自动使用一个可用的端口。
+你可以在 `run_compose.sh` 的日志输出中或 Docker 引擎容器管理界面中找到 `{webui_port}`。
+
+**示例：登录页面**
+
+<div align="left" style="margin-top:20px;margin-bottom:20px;">
+<img src="docs/assets/login.png" width="500"/>
+</div>
+
+---
+
+#### 🔐 管理员首次登录
+
+首次启动时会自动创建一个 **root 管理员用户**。
+
+- **初始密码文件：**
+
+  ```
+  DeepExtension/adminPassword/adminPassword.txt
+  ```
+
+- **登录凭据：**
+
+  ```
+  项目代码： 1001
+  用户名：   admin
+  密码：     （见上方密码文件）
+  ```
+
+---
+
+#### 🔧 当前可用功能
+
+**DeepExtension** 当前支持：
+
+- 管理第三方模型
+- 对第三方模型执行推理和评估任务
+- 通过 Web UI 监控输出结果和评估指标
+
+---
+
+### 4.3 配置模型训练环境
+
+要启用 **本地模型** 的训练、评估、保存和部署功能，你需要配置训练环境。  
+不同平台的配置步骤不同，请参考完整安装指南：  
+👉 [配置模型训练环境](https://deepextension.readthedocs.io/en/latest/developer/install/#3-set-up-model-training-environment)
+
+> **注意：**  
+> 即使没有配置训练环境，你仍然可以使用第三方模型执行推理和评估任务。
+
+---
+
+### 📚 4.4 完整安装指南
+
+如需高级配置（如基于 MLX 的训练或连接自定义数据库），请参考完整文档：  
+👉 [安装指南](https://deepextension.readthedocs.io/en/latest/developer/install/)
+
+## 🌟 5. 主要功能
 
 - 🤖 **多模型对话与知识库引用**：支持与本地已训练模型及多种第三方模型（如主流AI平台）直接对话，结合个人或企业知识库，实现智能问答与知识检索。
 - 🔌 **便捷集成第三方模型与平台**：可快速添加和切换多种第三方模型及平台，适用范围广，满足不同场景需求。
@@ -30,7 +136,7 @@
 - 📊 **模型评估与对比分析**：内置模型评测工具，可对不同性能、不同版本的模型进行横向对比，帮助用户选择最适合的目标模型。
 - 📊 **数据集上传与解析**：支持上传并自动解析模型训练所需的数据集，简化数据准备流程，加速模型开发。
 
-## 📚 5. 技术文档
+## 📚 6. 技术文档
 
 DeepExtension 采用模块化、分层式的系统架构，确保平台具备高可用性、可扩展性与易维护性。整体架构设计如下：
 
@@ -78,11 +184,11 @@ DeepExtension 采用模块化、分层式的系统架构，确保平台具备高
 - [安装指南](https://docs.deepextension.ai/zh/developer/install/)
 - [常见问题 FAQs](https://docs.deepextension.ai/zh/faq/)
 - [架构文档](https://docs.deepextension.ai/zh/intro/architecture/)
-## 🏄 6. 开源社区
+## 🏄 7. 开源社区
 - 文档中心：访问官方 DeepExtension 文档门户，[文档地址:https://docs.deepextension.ai/zh/](https://docs.deepextension.ai/zh/)
 - 社区论坛：参与讨论、提交反馈或提出功能建议（即将上线）
 - GitHub：关注版本发布、提交问题、参与我们的开源组件项目，[项目地址:https://github.com/DeepExtension-AI/DeepExtension](https://github.com/DeepExtension-AI/DeepExtension)
-## 🙌 7. 技术支持
+## 🙌 8. 技术支持
 如果在使用 DeepExtension 时遇到问题：
 1. 您可以优先查阅相关文档与常见问题解答；
 2. 若问题仍未解决，你也可以通过邮件support@deepextension.ai联系我们，并提供以下信息：
@@ -90,7 +196,7 @@ DeepExtension 采用模块化、分层式的系统架构，确保平台具备高
 - 所使用的操作系统 / 环境
 - 详细错误信息或截图（如适用）
 我们将在两个工作日内给予回复。
-## 🤝 8. 联系我们
+## 🤝 9. 联系我们
 如有一般性咨询、合作或媒体采访需求，请通过以下方式联系我们：
 
 - 邮箱：contact@deepextension.ai
@@ -100,7 +206,7 @@ DeepExtension 采用模块化、分层式的系统架构，确保平台具备高
 <img src="docs/assets/wechat.png" width="300"/>
 </div>
 
-## 👥 9. 意见与功能建议
+## 👥 10. 意见与功能建议
 我们非常重视您的反馈，欢迎告知好用的功能和存在的问题，以及您希望未来能加入功能。
 反馈渠道：
 

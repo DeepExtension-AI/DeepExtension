@@ -30,14 +30,14 @@ You can install **DeepExtension** on the following platforms:
 
 - ✅ **Linux** or **Windows (via WSL)** — with **CUDA** support for GPU training  
 - ✅ **macOS (Apple M-series)** — with **MLX** backend  
-- ✅ **Any Linux/macOS environment (no-training mode)** — for UI and inference only
+- ✅ **Any Linux/macOS environment (no-training mode)** — for UI access and inference only
 
 ---
 
 ### 📝 Prerequisites
 
 - **Docker Engine**  
-  If Docker is not installed, follow the official guide:  
+  If Docker is not already installed, follow the official instructions:  
   👉 [Install Docker Engine](https://docs.docker.com/engine/install/)
 
 ---
@@ -59,22 +59,27 @@ Run the startup script:
 ./run_compose.sh
 ```
 
-Ensure that:
+Make sure that:
 
-- All Docker images are pulled
+- All required Docker images are pulled
 - All containers start without errors
 
 ---
 
 #### 🎯 Access the Web UI
 
-Once everything is up and running, open [http://localhost:88](http://localhost:88) in your browser.
+Once the services are up and running, open your browser and visit:  
+[http://localhost:{webui_port}](http://localhost:{webui_port})
 
-> This is the default port; configurable via the `prod.env` file.
+By default, the Web UI uses port 88.
+If port 88 is already in use, the application will automatically use an available port.
+You can find `{webui_port}` in the `run_compose.sh` log output or through your Docker Engine container management interface.
 
-**Login Page Example**
+**Example: Login Page**
 
-![Login Page](docs/assets/login.png)
+<div align="left" style="margin-top:20px;margin-bottom:20px;">
+<img src="docs/assets/login.png" width="500"/>
+</div>
 
 ---
 
@@ -82,7 +87,7 @@ Once everything is up and running, open [http://localhost:88](http://localhost:8
 
 A **root admin user** is automatically created on first launch.
 
-- **Initial password location:**
+- **Initial password file:**
 
   ```
   DeepExtension/adminPassword/adminPassword.txt
@@ -93,97 +98,35 @@ A **root admin user** is automatically created on first launch.
   ```
   Project Code: 1001
   Username:     admin
-  Password:     (see file above)
+  Password:     (see password file above)
   ```
 
 ---
 
-### 4.3 Set Up Model Training Environment
+#### 🔧 Available Features
 
-**DeepExtension** provides training capabilities based on your system configuration. Choose the appropriate setup:
+**DeepExtension** currently supports:
 
-<details>
-<summary><strong>✅ Linux / Windows (with NVIDIA GPU)</strong></summary>
+- Managing third-party models 
+- Running inference and evaluation tasks on third-party models 
+- Monitoring outputs and metrics via the Web UI
 
+---
 
-Training images are prebuilt via Docker Compose.
+### 4.3 Set Up the Model Training Environment
 
-👉 Follow the guide:  
-[Quick Start: Run Your First Training](https://deepextension.readthedocs.io/en/latest/tutorials/tutorial-quick-start)
+To enable training, evaluation, saving, and deployment of **local models**, you'll need to configure the training environment.  
+The setup process differs depending on your platform. Please refer to the full installation guide here:  
+👉 [Set Up Model Training Environment](https://deepextension.readthedocs.io/en/latest/developer/install/#3-set-up-model-training-environment)
 
-</details>
-
-<details>
-<summary><strong>✅ macOS (Apple Silicon, M1–M4)</strong></summary>
-
-
-#### 🧩 Step 1: Prepare MLX Code
-
-1. Download from: [mlx-lm GitHub](https://github.com/ml-explore/mlx-lm) (tested with v0.24.1)  
-2. Copy the `mlx_lm` folder into the training directory  
-3. Run the preparation script:
-
-```bash
-cd DeepExtension/deep-e-python
-chmod +x prepare_mlx_changes.sh
-./prepare_mlx_changes.sh
-```
-
-#### 🐍 Step 2: Set Up Python Environment
-
-Use either **conda** or **venv**:
-
-- **Conda:**
-
-```bash
-conda create -n deepe_prod python=3.11
-conda activate deepe_prod
-```
-
-- **venv:**
-
-```bash
-python3 -m venv deepe_prod
-source deepe_prod/bin/activate
-```
-
-Install required packages:
-
-```bash
-pip3 install -r requirements_mac.txt
-```
-
-#### ⚙️ Step 3: Install PM2
-
-1. Install Node.js and npm  
-2. Then install PM2 globally:
-
-```bash
-npm install -g pm2
-```
-
-</details>
-
-<details>
-<summary><strong>✅ No-Training Mode (Any Linux/macOS)</strong></summary>
-
-
-If you only want to use the UI and inference features without training:
-
-1. Open `DeepExtension/custom.conf`  
-2. Add the following line:
-
-```
-WITH_AI_IMAGE=false
-```
-
-</details>
+> **Note:**  
+> You can still perform inference and evaluation with third-party models without configuring the training environment.
 
 ---
 
 ### 📚 4.4 Full Installation Guide
 
-For advanced configurations (e.g., MLX training, connecting to a custom database), see the full guide:  
+For advanced configuration options—such as MLX-based training or connecting to a custom database—refer to the full documentation:  
 👉 [Installation Guide](https://deepextension.readthedocs.io/en/latest/developer/install/)
 
 ## 🌟 5. Key Features
