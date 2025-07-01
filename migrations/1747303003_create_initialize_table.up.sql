@@ -164,7 +164,7 @@ CREATE TABLE public.llm_user_config (
     CONSTRAINT llm_user_config_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX llm_user_config_factory_id_idx ON public.llm_user_config USING btree (factory_id, llm_id, user_id);
-CREATE UNIQUE INDEX llm_user_config_model_name_idx ON public.llm_user_config USING btree (model_name, co_id, user_id, factory_id);
+CREATE UNIQUE INDEX llm_user_config_model_name_idx ON public.llm_user_config USING btree (model_name, model_type, co_id, user_id, factory_id);
 
 
 CREATE TABLE public.model (
