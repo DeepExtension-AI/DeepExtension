@@ -197,6 +197,7 @@ services:
       - ./models:/opt/scpx/models
       - ./datasets/${ENV}:/opt/scpx/datasets/${ENV}
       - ./knowledgeBase/${ENV}:/opt/scpx/knowledgeBase/${ENV}
+      - ./multimodal:/opt/scpx/multimodal
       - ./adminPassword/:/opt/scpx/adminPassword/
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${SCP_AI_START_PORT}/health" ]
