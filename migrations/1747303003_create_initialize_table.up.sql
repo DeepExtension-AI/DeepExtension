@@ -43,6 +43,8 @@ CREATE TABLE public.dataset_base_info (
     dataset_state int4 NOT NULL,
     co_id int4 NOT NULL,
     train_name text NULL,
+    use_type int4 NULL,
+    image_max_num int4 DEFAULT 0 NOT NULL,
     CONSTRAINT dataset_base_info_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX dataset_base_info_dataset_name_idx ON public.dataset_base_info USING btree (dataset_name);
@@ -291,6 +293,7 @@ CREATE TABLE public.sys_menus (
     is_index bool DEFAULT false NULL,
     component text NULL,
     is_overview bool DEFAULT false NOT NULL,
+    seq int4 DEFAULT 0 NOT NULL,
     CONSTRAINT sys_menus_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX sys_menus_parea_id_idx ON public.sys_menus USING btree (co_code, menu_tag);
