@@ -302,6 +302,8 @@ services:
     volumes:
       - ./resources/rag:/data/conf
       - ./knowledgeBase:/data/fileData
+      - ./multimodal:/file/multimodal
+      - ./datasets:/datasets
     networks:
       - intranet
       - host_access
