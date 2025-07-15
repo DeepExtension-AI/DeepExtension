@@ -191,55 +191,61 @@ CREATE UNIQUE INDEX model_model_name_task_uuid_idx ON public.model USING btree (
 
 
 CREATE TABLE public.model_comparison_results (
-                                                 id bigserial NOT NULL,
-                                                 created_at int8 NOT NULL,
-                                                 created_by int4 NULL,
-                                                 updated_at int8 NOT NULL,
-                                                 updated_by int4 NULL,
-                                                 task_uuid uuid NOT NULL,
-                                                 dataset_uuid uuid NOT NULL,
-                                                 page_num int4 NULL,
-                                                 record_id text NOT NULL,
-                                                 response_a text NULL,
-                                                 response_b text NULL,
-                                                 error_a text NULL,
-                                                 error_b text NULL,
-                                                 response_judge text NULL,
-                                                 description text NULL,
-                                                 candidate_system_prompt text NULL,
-                                                 candidate_user_prompt text NULL,
-                                                 judge_system_prompt text NULL,
-                                                 judge_user_prompt text NULL,
-                                                 err_judge text NULL,
-                                                 co_id int4 NULL,
-                                                 CONSTRAINT model_comparison_results_pkey PRIMARY KEY (id)
+    id bigserial NOT NULL,
+    created_at int8 NOT NULL,
+    created_by int4 NULL,
+    updated_at int8 NOT NULL,
+    updated_by int4 NULL,
+    task_uuid uuid NOT NULL,
+    dataset_uuid uuid NOT NULL,
+    page_num int4 NULL,
+    record_id text NOT NULL,
+    response_a text NULL,
+    response_b text NULL,
+    error_a text NULL,
+    error_b text NULL,
+    response_judge text NULL,
+    description text NULL,
+    candidate_system_prompt text NULL,
+    candidate_user_prompt text NULL,
+    judge_system_prompt text NULL,
+    judge_user_prompt text NULL,
+    err_judge text NULL,
+    co_id int4 NULL,
+    judge_system_images text NULL,
+    judge_user_images text NULL,
+    candidate_system_images text NULL,
+    candidate_user_images text NULL,
+    CONSTRAINT model_comparison_results_pkey PRIMARY KEY (id)
 );
 CREATE INDEX idx_mcr_task_record ON public.model_comparison_results USING btree (task_uuid, record_id);
 CREATE INDEX idx_mcr_task_uuid ON public.model_comparison_results USING btree (task_uuid);
 
 
 CREATE TABLE public.model_comparison_tasks (
-                                               id bigserial NOT NULL,
-                                               created_at int8 NOT NULL,
-                                               created_by int4 NOT NULL,
-                                               updated_at int8 NOT NULL,
-                                               updated_by int4 NOT NULL,
-                                               task_uuid uuid DEFAULT gen_random_uuid() NOT NULL,
-                                               dataset_uuid uuid NOT NULL,
-                                               model_a_config jsonb NOT NULL,
-                                               model_b_config jsonb NOT NULL,
-                                               judge_model_config jsonb NULL,
-                                               candidate_system_prompt text NULL,
-                                               candidate_user_prompt text NULL,
-                                               judge_system_prompt text NULL,
-                                               judge_user_prompt text NULL,
-                                               status varchar(20) DEFAULT 'pending'::character varying NULL,
-                                               finished_at int8 NULL,
-                                               eval_type int4 DEFAULT 0 NOT NULL,
-                                               dataset_item_num int4 DEFAULT 0 NOT NULL,
-                                               co_id int4 NULL,
-                                               CONSTRAINT model_comparison_tasks_pkey PRIMARY KEY (id),
-                                               CONSTRAINT model_comparison_tasks_task_uuid_key UNIQUE (task_uuid)
+    id bigserial NOT NULL,
+    created_at int8 NOT NULL,
+    created_by int4 NOT NULL,
+    updated_at int8 NOT NULL,
+    updated_by int4 NOT NULL,
+    task_uuid uuid DEFAULT gen_random_uuid() NOT NULL,
+    dataset_uuid uuid NOT NULL,
+    model_a_config jsonb NOT NULL,
+    model_b_config jsonb NOT NULL,
+    judge_model_config jsonb NULL,
+    candidate_system_prompt text NULL,
+    candidate_user_prompt text NULL,
+    judge_system_prompt text NULL,
+    judge_user_prompt text NULL,
+    status varchar(20) DEFAULT 'pending'::character varying NULL,
+    finished_at int8 NULL,
+    eval_type int4 DEFAULT 0 NOT NULL,
+    dataset_item_num int4 DEFAULT 0 NOT NULL,
+    co_id int4 NULL,
+    candidate_user_images text NULL,
+    judge_user_images text NULL,
+    CONSTRAINT model_comparison_tasks_pkey PRIMARY KEY (id),
+    CONSTRAINT model_comparison_tasks_task_uuid_key UNIQUE (task_uuid)
 );
 CREATE INDEX idx_mct_dataset_uuid ON public.model_comparison_tasks USING btree (dataset_uuid);
 
@@ -282,21 +288,21 @@ CREATE UNIQUE INDEX sys_company_co_name_idx ON public.sys_company USING btree (c
 
 
 CREATE TABLE public.sys_menus (
-                                  id bigserial NOT NULL,
-                                  created_at int8 NOT NULL,
-                                  created_by int4 NOT NULL,
-                                  updated_at int8 NOT NULL,
-                                  updated_by int4 NOT NULL,
-                                  menu_name jsonb NOT NULL,
-                                  menu_tag text NOT NULL,
-                                  co_code int4 NOT NULL,
-                                  "path" text NULL,
-                                  group_name text NULL,
-                                  is_index bool DEFAULT false NULL,
-                                  component text NULL,
-                                  is_overview bool DEFAULT false NOT NULL,
-                                  seq int4 DEFAULT 0 NOT NULL,
-                                  CONSTRAINT sys_menus_pkey PRIMARY KEY (id)
+    id bigserial NOT NULL,
+    created_at int8 NOT NULL,
+    created_by int4 NOT NULL,
+    updated_at int8 NOT NULL,
+    updated_by int4 NOT NULL,
+    menu_name jsonb NOT NULL,
+    menu_tag text NOT NULL,
+    co_code int4 NOT NULL,
+    "path" text NULL,
+    group_name text NULL,
+    is_index bool DEFAULT false NULL,
+    component text NULL,
+    is_overview bool DEFAULT false NOT NULL,
+    seq int4 DEFAULT 0 NOT NULL,
+    CONSTRAINT sys_menus_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX sys_menus_parea_id_idx ON public.sys_menus USING btree (co_code, menu_tag);
 
@@ -482,15 +488,15 @@ CREATE TABLE public.sys_version_config (
 
 
 CREATE TABLE public.sys_deploy_env (
-                                       id bigserial NOT NULL,
-                                       created_at int8 NOT NULL,
-                                       created_by int4 NOT NULL,
-                                       updated_at int8 NOT NULL,
-                                       updated_by int4 NOT NULL,
-                                       deploy_factory text NOT NULL,
-                                       env_url text NOT NULL,
-                                       co_code int4 NOT NULL,
-                                       CONSTRAINT sys_deploy_env_pkey PRIMARY KEY (id)
+    id bigserial NOT NULL,
+    created_at int8 NOT NULL,
+    created_by int4 NOT NULL,
+    updated_at int8 NOT NULL,
+    updated_by int4 NOT NULL,
+    deploy_factory text NOT NULL,
+    env_url text NOT NULL,
+    co_code int4 NOT NULL,
+    CONSTRAINT sys_deploy_env_pkey PRIMARY KEY (id)
 );
 -- public.sys_plan_profile definition
 
