@@ -187,6 +187,7 @@ services:
     image: ${SCP_AI_IMAGE_NAME}:${SCP_AI_IMAGE_VERSION}
     container_name: ${AI_SCP_HOST}
     restart: always
+    pid: "host"
     ports:
       - ${SCP_AI_START_PORT}
     env_file:
