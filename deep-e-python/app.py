@@ -53,14 +53,14 @@ def transferTrain():
     Receives training parameters and starts the training process in a separate thread
     '''
     data = request.json
-    train_id = data.get("taskUuid")
+    train_id = data.get("train_id")
     seq = data.get("seq")
     
     # Log the incoming request parameters
     write_log(LevelEnum.INFO, LogEnum.ActualParams, f"{request.json}", train_id, seq, None)
     
     # Validate required parameters
-    required_params = ['taskUuid', 'seq']
+    required_params = ['train_id', 'seq']
     if not all(param in data for param in required_params):
         write_log(LevelEnum.ERROR, LogEnum.ParamCheckFailed, ", ".join(required_params), train_id, seq, None)
         return jsonify(
@@ -155,10 +155,12 @@ def chatWithModel():
                         f"--prompt={data['prompt']}",
                         f"--session_id={data.get('sessionId', 'default')}",
                         f"--max_length={data.get('maxLength', 512)}",
-                        f"--max_context_tokens={data.get('maxContextTokens', 2048)}",
+                        f"--max_context_tokens={data.get('maxContentTokens', 2048)}",
                         f"--temperature={data.get('temperature', 0.7)}",
                         f"--top_p={data.get('topP', 0.9)}",
                         f"--top_k={data.get('topK', 50)}",
+                        f"--model_type={data.get('modelType', 'chat')}",
+                        f"--template={data.get('template','')}"
                     ]
 
                     # Add optional parameters
@@ -171,7 +173,7 @@ def chatWithModel():
 
                     system = platform.system()
                     if system == "Linux":
-                        cmd = ['python3', 'model_manager.py'] + chat_args
+                        cmd = ['python3', 'linux_code/model_manager.py'] + chat_args
                     else:
                         print("Unknown OS") 
                         
@@ -183,7 +185,8 @@ def chatWithModel():
                         stderr=subprocess.PIPE,
                         text=True,
                         bufsize=1,
-                        universal_newlines=True
+                        universal_newlines=True,
+                        start_new_session=True
                     )
 
                     # Process real-time output
@@ -193,15 +196,23 @@ def chatWithModel():
                             break
                         if output:
                             output = output.strip()
+                            print(f"print:{output}")
                             try:
                                 # Try parsing as JSON, treat as plain output if not JSON
                                 outputDic = json.loads(output)
                                 if outputDic["status"] == "resp":
                                     tmp = json.dumps({"text": outputDic["text"]})
+                                    print(f"yield:{tmp}")
+                                    yield f"data: {tmp}\n\n"
+                                elif outputDic["status"] == "error":
+                                    tmp = json.dumps({"finish_reason": outputDic["error"]})
+                                    print(f"yield_error:{tmp}")
                                     yield f"data: {tmp}\n\n"
                             except:
+                                print(f"print——except:{output}")
                                 if 'status' in output:
                                     tmp = json.dumps({"text": output})
+                                    print(f"except:{tmp}")
                                     yield f"data: {tmp}\n\n"
 
                     # Get final result
@@ -213,15 +224,21 @@ def chatWithModel():
                             result = json.loads(stdout.splitlines()[-1])
                             if result.get("status") == "resp":  
                                 tmp = json.dumps({"finish_reason": None, "text": result.get("text")})
+                                #print(f"stderr1:{tmp}")
+                                ##yield f"data: {tmp}\n\n"
                         except:
                             tmp = json.dumps({"finish_reason": stderr})
+                            #print(f"stderr2:{tmp}")
+                            ##yield f"data: {tmp}\n\n"
                     else:
+                        
                         tmp = json.dumps({"finish_reason": stderr, "text": ""})
-                        yield f"data: {tmp}\n\n"
+                        #print(f"stderr3:{tmp}")
+                        ##yield f"data: {tmp}\n\n"
 
                 except Exception as e:
                     error_msg = f"Chat process execution failed: {str(e)}\n{traceback.format_exc()}"
-                    tmp = json.dumps({"finish_reason": error_msg, "text": ""})
+                    tmp = json.dumps({"finish_reason": error_msg, "text": ""}) 
                     yield f"data: {tmp}\n\n"
 
             # Start processing thread
@@ -236,6 +253,9 @@ def chatWithModel():
                 try:
                     line = result_queue.get(timeout=2)
                     tmp = line
+                    print(
+                        f"alive:{tmp}"
+                    )
                     yield f"{tmp}\n\n"
                 except Exception as e:
                     yield "\n"  
@@ -325,7 +345,7 @@ def merge_model():
     seq = data.get("seq")
     try:
         write_log(LevelEnum.INFO, LogEnum.StartHandlingEvents, 'Save', train_id, seq, None)
-        required_params = ['baseModelPath', 'loraAdapterPath', 'savePath', 'trainId', 'seq']
+        required_params = ['baseModelPath', 'loraAdapterPath', 'savePath', 'modelUsageType','trainId', 'seq']
         if not all(param in data for param in required_params):
             write_log(LevelEnum.ERROR, LogEnum.ParamCheckFailed, ", ".join(required_params), train_id, seq, None)
             return jsonify(
@@ -343,6 +363,7 @@ def merge_model():
         dtype_str = data.get('dtypeStr', 'bfloat16')
         train_id = data['trainId']
         seq = data['seq']
+        modelUsageType=data['modelUsageType']
         
         # Log actual parameters
         write_log(LevelEnum.INFO, LogEnum.ActualParams, f"base_path:{base_path}", train_id, seq, None)
@@ -351,7 +372,7 @@ def merge_model():
         write_log(LevelEnum.INFO, LogEnum.ActualParams, f"dtype_str:{dtype_str}", train_id, seq, None)
         write_log(LevelEnum.INFO, LogEnum.ActualParams, f"train_id:{train_id}", train_id, seq, None)
         write_log(LevelEnum.INFO, LogEnum.ActualParams, f"seq:{seq}", train_id, seq, None)
-        
+        write_log(LevelEnum.INFO, LogEnum.ActualParams, f"modelUsageType:{modelUsageType}", train_id, seq, None)
         # System detection
         system_type = platform.system().lower()
 
@@ -366,6 +387,7 @@ def merge_model():
                     lora_adapter_path=adapter_path,
                     save_path=save_path,
                     dtype_str=dtype_str,
+                    modelUsageType=modelUsageType
                 )
                 if result['status'] == 'success':
                     write_log(LevelEnum.INFO, LogEnum.HandleEventsSuccess, 'Save', train_id, seq, None)
@@ -437,7 +459,7 @@ def merge_model():
             'error': str(e)
         }
     
-from linux_code.deploy_ollama import ModelDeployerOllama
+from deploy_ollama import ModelDeployerOllama
 @app.route('/deployModel', methods=['POST'])
 def deploy_model():
     """Model deployment API endpoint
@@ -512,5 +534,5 @@ def create_app():
 
 if __name__ == '__main__':
     start_port=os.getenv('TRAINING_START_PORT')
-    app.run(host='0.0.0.0', port=start_port
+    app.run(host='0.0.0.0', port=5054
             ,threaded=True)  

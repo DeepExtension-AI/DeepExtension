@@ -25,13 +25,12 @@ from train_callback import TrainCallback,write_log,StatusEnum,LevelEnum,LogEnum
 global MODEL_PATH, MAX_SEQ_LENGTH, LORA_RANK, LOAD_IN_4BIT
 global DATASET_PATH, MAX_INPUT_LENGTH, MAX_CONTENT_LENGTH, MAX_SAMPLES
 global NUM_GENERATIONS, MAX_GRAD_NORM, OUTPUT_DIR, MAX_STEPS
-global BATCH_SIZE, GRAD_ACCUM_STEPS, LEARNING_RATE, WARMUP_STEPS,MODEL_NAME
-
+global BATCH_SIZE, GRAD_ACCUM_STEPS, LEARNING_RATE, WARMUP_STEPS,InputTrainName,OutputTrainName
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_path', type=str, required=True)
 parser.add_argument('--max_seq_length', type=int, required=True)
 parser.add_argument('--lora_rank', type=int, required=True)
-parser.add_argument('--load_in_4bit', type=bool, default=False)  # MLX不支持4bit
+parser.add_argument('--load_in_4bit', type=bool, required=True)
 parser.add_argument('--dataset_path', type=str, required=True)
 parser.add_argument('--max_input_length', type=int, required=True)
 parser.add_argument('--max_content_length', type=int, required=True)
@@ -39,17 +38,20 @@ parser.add_argument('--max_samples', type=int, required=True)
 parser.add_argument('--num_generations', type=int, required=True)
 parser.add_argument('--max_grad_norm', type=float, required=True)
 parser.add_argument('--output_dir', type=str, required=True)
-parser.add_argument('--max_steps', type=int, required=True)
+parser.add_argument('--max_steps', type=int)
 parser.add_argument('--batch_size', type=int, required=True)
 parser.add_argument('--grad_accum_steps', type=int, required=True)
 parser.add_argument('--learning_rate', type=float, required=True)
 parser.add_argument('--warmup_steps', type=int, required=True)
-parser.add_argument('--input_train_name', type=str, required=True)
-parser.add_argument('--output_train_name', type=str, required=True)
+parser.add_argument('--input_train_name', type=str)
+parser.add_argument('--output_train_name', type=str)
 parser.add_argument('--train_id', type=str, required=True)
 parser.add_argument('--seq', type=int, required=True)
-parser.add_argument('--model_name', type=str, required=True)
-args = parser.parse_args()
+parser.add_argument('--model_name',type=str,required=True)
+known_args, unknown_args = parser.parse_known_args()
+print("Known args:", known_args)
+print("Unknown args:", unknown_args)
+args = known_args
 callback = TrainCallback(1,args.train_id,args.seq)
 # 设置全局变量
 MODEL_PATH = args.model_path
