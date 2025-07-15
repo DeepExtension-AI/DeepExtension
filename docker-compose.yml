@@ -247,6 +247,7 @@ services:
       - ${TRAINING_START_PORT}
     env_file:
       - .env
+    pid: "host"
     deploy:
       resources:
         reservations:
