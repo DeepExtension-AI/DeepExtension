@@ -39,18 +39,20 @@ parser.add_argument('--max_samples', type=int, required=True)
 parser.add_argument('--num_generations', type=int, required=True)
 parser.add_argument('--max_grad_norm', type=float, required=True)
 parser.add_argument('--output_dir', type=str, required=True)
-parser.add_argument('--max_steps', type=int, required=True)
+parser.add_argument('--max_steps', type=int)
 parser.add_argument('--batch_size', type=int, required=True)
 parser.add_argument('--grad_accum_steps', type=int, required=True)
 parser.add_argument('--learning_rate', type=float, required=True)
 parser.add_argument('--warmup_steps', type=int, required=True)
-parser.add_argument('--input_train_name', type=str, required=True)
-parser.add_argument('--output_train_name', type=str, required=True)
+parser.add_argument('--input_train_name', type=str)
+parser.add_argument('--output_train_name', type=str)
 parser.add_argument('--train_id', type=str, required=True)
 parser.add_argument('--seq', type=int, required=True)
 parser.add_argument('--model_name',type=str,required=True)
-args = parser.parse_args()
-
+known_args, unknown_args = parser.parse_known_args()
+print("Known args:", known_args)
+print("Unknown args:", unknown_args)
+args = known_args
     # 模型参数
 MODEL_PATH = args.model_path
 MAX_SEQ_LENGTH = args.max_seq_length
@@ -293,7 +295,7 @@ training_args = GRPOConfig(
     max_prompt_length = 256,
     max_completion_length = 200,
     # num_train_epochs = 1, # Set to 1 for a full training run
-    max_steps = MAX_STEPS,
+    **({"max_steps": MAX_STEPS} if MAX_STEPS is not None else {}),
     save_steps = 250,
     max_grad_norm = MAX_GRAD_NORM,
     report_to = "none", # Can use Weights & Biases

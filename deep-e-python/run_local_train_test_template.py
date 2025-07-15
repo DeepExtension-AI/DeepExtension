@@ -44,7 +44,8 @@ def run_local_train():
         'output_train_name': 'completion',
         'train_id': '1',
         'seq': '1',
-        'status_file': 'status.json'
+        'status_file': 'status.json',
+        'model_name': 'test'
     }
 
     # Build the command
