@@ -340,11 +340,12 @@ CREATE TABLE public.sys_users (
                                   co_code int4 NOT NULL,
                                   "enable" int8 DEFAULT 1 NULL,
                                   is_deleted bool DEFAULT false NOT NULL,
+                                  deleted_at int8 NULL,
                                   CONSTRAINT sys_users_pkey PRIMARY KEY (id)
 );
 CREATE INDEX idx_sys_users_username ON public.sys_users USING btree (username);
 CREATE INDEX idx_sys_users_uuid ON public.sys_users USING btree (uuid);
-CREATE UNIQUE INDEX sys_users_co_code_idx ON public.sys_users USING btree (co_code, username);
+CREATE UNIQUE INDEX sys_users_co_code_idx ON public.sys_users USING btree (co_code, username) WHERE (deleted_at = 0);
 
 
 CREATE TABLE public.table1 (
