@@ -258,6 +258,7 @@ services:
       - ./models:/app/models
       - ./datasets:/app/datasets
       - ./knowledgeBase:/app/knowledgeBase
+      - ./multimodal:/app/multimodal
       - ./logs/:/app/logs/
       - ./deep-e-python:/app/deep-e-python
     profiles: [ "gpu" ]
