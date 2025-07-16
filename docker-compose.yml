@@ -308,6 +308,7 @@ services:
       - ./knowledgeBase:/data/fileData
       - ./multimodal:/file/multimodal
       - ./datasets:/datasets
+      - ./testImages:/app/testImages
     networks:
       - intranet
       - host_access
