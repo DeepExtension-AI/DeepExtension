@@ -125,7 +125,7 @@ cd DeepExtension
 ### 📚 4.4 完整安装指南
 
 如需高级配置（如基于 MLX 的训练或连接自定义数据库），请参考完整文档：  
-👉 [安装指南](https://deepextension.readthedocs.io/en/latest/developer/install/)
+👉 [安装指南](https://deepextension.readthedocs.io/en/latest/zh/developer/install/)
 
 ## 🌟 5. 主要功能
 
