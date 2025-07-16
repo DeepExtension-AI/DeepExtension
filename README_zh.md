@@ -115,7 +115,7 @@ cd DeepExtension
 
 要启用 **本地模型** 的训练、评估、保存和部署功能，你需要配置训练环境。  
 不同平台的配置步骤不同，请参考完整安装指南：  
-👉 [配置模型训练环境](https://deepextension.readthedocs.io/en/latest/developer/install/#3-set-up-model-training-environment)
+👉 [配置模型训练环境](https://deepextension.readthedocs.io/en/latest/zh/developer/install/#3-set-up-model-training-environment)
 
 > **注意：**  
 > 即使没有配置训练环境，你仍然可以使用第三方模型执行推理和评估任务。
