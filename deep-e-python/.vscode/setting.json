@@ -1,0 +1,7 @@
+{
+  "licenseHeaderManager.templates": {
+    "*.py": "py.lict",
+    "*.java": "py.lict",
+    "*.js": "py.lict"
+  }
+}

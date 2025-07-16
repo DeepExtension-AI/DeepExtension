@@ -16,7 +16,7 @@
   */
 """
 
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoModelForVision2Seq, AutoProcessor
 from peft import PeftModel
 import torch
 from train_callback import write_log
@@ -32,7 +32,7 @@ class ModelMerger:
 
     @classmethod
     def merge_models(cls, train_id: str, seq: int, base_model_path: str, lora_adapter_path: str,
-                   save_path: str, dtype_str: str = "bfloat16") -> dict:
+                   save_path: str, dtype_str: str = "bfloat16", modelUsageType: str = "chat") -> dict:
         """Core business logic for model merging
         
         Args:
@@ -48,29 +48,48 @@ class ModelMerger:
             dtype = cls.dtype_map.get(dtype_str.lower(), torch.bfloat16)
             # Load base model
             write_log(LevelEnum.INFO, LogEnum.MergeLoadingBaseModel, base_model_path, train_id, seq, None)
-            base_model = AutoModelForCausalLM.from_pretrained(
-                base_model_path, 
-                torch_dtype=dtype
-            )
+            if modelUsageType == "chat":
+                base_model = AutoModelForCausalLM.from_pretrained(
+                    base_model_path, 
+                    torch_dtype=dtype
+                )
+            elif modelUsageType == "vision-language":
+                base_model = AutoModelForVision2Seq.from_pretrained(
+                    base_model_path,
+                    torch_dtype=dtype,
+                    device_map="auto" 
+                )
+
             
             # Merge LoRA adapter
-            write_log(LevelEnum.INFO, LogEnum.MergeAdapters, base_model_path + "," + lora_adapter_path, train_id, seq, None)
+            write_log(LevelEnum.INFO, LogEnum.MergeAdapters, f"{base_model_path}, {lora_adapter_path}", train_id, seq, None)
+
             model = PeftModel.from_pretrained(base_model, lora_adapter_path)
             model = model.merge_and_unload()
             
             # Save merged model
             write_log(LevelEnum.INFO, LogEnum.MergeSuccess, save_path, train_id, seq, None)
-            model.save_pretrained(save_path, safe_serialization=True)
+
+            model.save_pretrained(
+                save_path,
+                safe_serialization=True,
+                max_shard_size="10GB"  # 建议分片保存大模型
+            )
             
             # Save tokenizer
-            tokenizer = AutoTokenizer.from_pretrained(lora_adapter_path)
+            if modelUsageType == "chat":
+                tokenizer = AutoTokenizer.from_pretrained(lora_adapter_path)
+            elif modelUsageType == "vision-language":
+                tokenizer = AutoProcessor.from_pretrained(lora_adapter_path)
+            
             tokenizer.save_pretrained(save_path)
             return {
                 "status": "success",
                 "message": f"Model successfully merged and saved to {save_path}",
-                "dtype_used": str(dtype)
+                "dtype_used": str(dtype),
+                "model_type": modelUsageType
             }
-            
+
         except Exception as e:
             return {
                 "status": "error",

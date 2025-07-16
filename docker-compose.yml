@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   db:
     container_name: ${DB_HOST}
@@ -188,6 +187,7 @@ services:
     image: ${SCP_AI_IMAGE_NAME}:${SCP_AI_IMAGE_VERSION}
     container_name: ${AI_SCP_HOST}
     restart: always
+    pid: "host"
     ports:
       - ${SCP_AI_START_PORT}
     env_file:
@@ -198,7 +198,9 @@ services:
       - ./models:/opt/scpx/models
       - ./datasets/${ENV}:/opt/scpx/datasets/${ENV}
       - ./knowledgeBase/${ENV}:/opt/scpx/knowledgeBase/${ENV}
+      - ./multimodal:/opt/scpx/multimodal
       - ./adminPassword/:/opt/scpx/adminPassword/
+      - ./license/:/opt/scpx/license/
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${SCP_AI_START_PORT}/health" ]
       interval: 10s
@@ -246,6 +248,7 @@ services:
       - ${TRAINING_START_PORT}
     env_file:
       - .env
+    pid: "host"
     deploy:
       resources:
         reservations:
@@ -255,6 +258,7 @@ services:
       - ./models:/app/models
       - ./datasets:/app/datasets
       - ./knowledgeBase:/app/knowledgeBase
+      - ./multimodal:/app/multimodal
       - ./logs/:/app/logs/
       - ./deep-e-python:/app/deep-e-python
     profiles: [ "gpu" ]
@@ -302,6 +306,9 @@ services:
     volumes:
       - ./resources/rag:/data/conf
       - ./knowledgeBase:/data/fileData
+      - ./multimodal:/file/multimodal
+      - ./datasets:/datasets
+      - ./testImages:/app/testImages
     networks:
       - intranet
       - host_access

@@ -19,18 +19,19 @@
 import logging
 import time
 import threading
+from unsloth import FastVisionModel
 from typing import Dict, Optional, List, Tuple
 from datetime import datetime, timedelta
-from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig, TextStreamer
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig, TextStreamer, AutoModelForVision2Seq
 import torch
 import traceback
-
 class ModelManager:
-    def __init__(self):
+    def __init__(self,model_type:str):
         self.models: Dict[str, dict] = {}  
         self.last_used: Dict[str, datetime] = {}  
         self.lock = threading.Lock() 
-        self.conversation_histories = {}  
+        self.conversation_histories = {} 
+        self.model_type = model_type
         self._start_cleanup_thread()  
 
     def _start_cleanup_thread(self):
@@ -76,6 +77,7 @@ class ModelManager:
         self,
         model_id: str,
         model_name: str,
+        model_type:str,
         baseModelPath: str,
         device: Optional[str] = "cuda",
         precision: Optional[str] = "fp16",
@@ -97,8 +99,16 @@ class ModelManager:
             elif precision == "fp32":
                 model_args["torch_dtype"] = torch.float32
             config = AutoConfig.from_pretrained(baseModelPath)
-            tokenizer = AutoTokenizer.from_pretrained(baseModelPath)
-            model = AutoModelForCausalLM.from_pretrained(**model_args)
+
+            if model_type == "chat":
+                tokenizer = AutoTokenizer.from_pretrained(baseModelPath)
+                model = AutoModelForCausalLM.from_pretrained(**model_args)
+            elif model_type == "vision-language":
+                model, tokenizer = FastVisionModel.from_pretrained(
+                    baseModelPath,
+                    load_in_4bit = True, # Use 4bit to reduce memory use. False for 16bit LoRA.
+                    use_gradient_checkpointing = "unsloth", # True or "unsloth" for long context
+                )
             if merge_lora and hasattr(model, "peft_config"):
                 from peft import PeftModel
                 model = PeftModel.from_pretrained(model, model_id)
@@ -107,6 +117,7 @@ class ModelManager:
                 config.max_seq_length = getattr(config, 'max_position_embeddings', 2048)
             if not hasattr(model, 'max_seq_length'):
                 model.max_seq_length = config.max_seq_length
+            print("支持images参数:", "images" in tokenizer.__call__.__annotations__)
             with self.lock:
                 self.models[model_name] = {
                     "model": model,
@@ -137,6 +148,7 @@ class ModelManager:
     
     def generate_text(
         self,
+        model_type:str,
         model_name: str,
         prompt: str,
         max_length: int ,
@@ -147,7 +159,8 @@ class ModelManager:
         system_prompt: Optional[str] ,
         reset_context: bool ,
         session_id: str,
-        history: Optional[List[Dict]]
+        history: Optional[List[Dict]],
+         template: Optional[str] = None
     ) -> Tuple[str, List[Dict]]:
         """
         Generate text and maintain conversation context
@@ -178,6 +191,7 @@ class ModelManager:
         tokenizer = self.models[model_name]["tokenizer"]
         if history is not None:
             context = history.copy()
+            print(history)
             if system_prompt:
                 print(system_prompt)
         else:
@@ -189,14 +203,64 @@ class ModelManager:
                         "content": system_prompt
                     })
             context = self.conversation_histories[session_id].copy()
-        messages=self._format_context(context)
+        
         try:
-            inputs = tokenizer(messages, return_tensors="pt", truncation=True, max_length=max_context_tokens).to(model.device)
+            if model_type == "chat":
+                # 使用 apply_chat_template 格式化对话
+                input_text = tokenizer.apply_chat_template(
+                    context,
+                    tokenize=False,
+                    add_generation_prompt=True,
+                    # chat_template=template  # 允许使用自定义模板
+                )
+                inputs = tokenizer(input_text, return_tensors="pt", truncation=True, max_length=max_context_tokens).to(model.device)
+
+            elif model_type == "vision-language":
+            
+                FastVisionModel.for_inference(model)
+                print(context)
+                messages=self._convert_to_multimodal_format(context)
+                print(json.dumps(messages, indent=2, ensure_ascii=False))
+                # 转换为 Dataset 并指定 Image 类型
+                # 转换为适合 Dataset 的格式
+                from datasets import Dataset, Image
+                import base64
+                from io import BytesIO
+                import os
+                import pandas as pd
+
+                # 定义正确的特征结构
+                from datasets import Features, Sequence, Value
+                from torchvision.transforms import Resize
+
+                resize = Resize((336, 336)) 
+                # 从原始 context 提取
+                all_image_paths = []
+                for message in context:
+                    if 'images' in message:
+                        all_image_paths.extend([img['data'] for img in message['images']])
+                print("All image paths:", all_image_paths)
+                # 图像路径列表 → 转为字典列表格式
+                image_dicts = [{"image_path": path} for path in all_image_paths]
+
+                # 创建 Dataset（自动转换路径为 PIL.Image）
+                dataset = Dataset.from_list(
+                    image_dicts,
+                    features=Features({"image_path": Image()})
+                )
+
+                # 提取所有 PIL.Image
+                all_pil_images = [example["image_path"] for example in dataset]
+                all_resized_images = [resize(img) for img in all_pil_images]
+                input_text = tokenizer.apply_chat_template(messages, add_generation_prompt = True)
+                inputs = tokenizer(all_resized_images,input_text,add_special_tokens = False,return_tensors = "pt",truncation=True, max_length=max_context_tokens ).to(model.device)
+         
             if hasattr(model,"past_key_values"):
                 inputs["past_key_values"]=None
             streamer = TextStreamer(tokenizer)
             outputs = model.generate(
                 **inputs,
+                max_new_tokens=max_context_tokens,
                 max_length=max_length,
                 temperature=temperature,
                 top_p=top_p,
@@ -235,15 +299,45 @@ class ModelManager:
         for message in context:
             role = message["role"]
             content = message["content"]
-    
             if role in ["system", "user", "assistant"]:
-                    prompt_parts.append(f"<|im_start|>{role}\n{content}<|im_end|>")
+                prompt_parts.append(f"<|im_start|>{role}\n{content}<|im_end|>")
+
+
         if not prompt_parts[-1].startswith("<|im_start|>assistant"):
             prompt_parts.append("<|im_start|>assistant")
         prompt = "\n".join(prompt_parts)
         return prompt
         
-    
+    def _convert_to_multimodal_format(self,data)-> str:
+        converted = []
+        
+        for msg in data:
+            # 跳过system消息（根据需求决定是否保留）
+            if msg["role"] == "system":
+                continue
+                
+            new_msg = {
+                "role": msg["role"],
+                "content": []
+            }
+            
+            # 处理图像
+            if "images" in msg:
+                for img in msg["images"]:
+                    new_msg["content"].append({
+                        "type": "image"
+                    })
+            
+            # 处理文本
+            if "content" in msg and msg["content"]:
+                new_msg["content"].append({
+                    "type": "text",
+                    "text": msg["content"] 
+                })
+            
+            converted.append(new_msg)
+        
+        return converted
     def clear_context(self, session_id: str = "default"):
         if session_id in self.conversation_histories:
             self.conversation_histories[session_id] = []
@@ -269,15 +363,18 @@ def main():
     parser.add_argument('--system_prompt', type=str)
     parser.add_argument('--reset_context', type=str)
     parser.add_argument('--history', type=str)
+    parser.add_argument('--model_type', type=str, default='chat')
+    parser.add_argument('--template',type=str,default='')
 
     args = parser.parse_args()
 
     try:
-        model_manager = ModelManager()
+        model_manager = ModelManager(args.model_type)
         
         success = model_manager.load_model(
             model_id=args.model_id,
             model_name=args.model_name,
+            model_type=args.model_type,
             baseModelPath=args.base_model_path
         )
         
@@ -285,8 +382,9 @@ def main():
             raise Exception("Loading Model Failed")
 
         history = json.loads(args.history) if args.history else None
-
+        print(history)
         result = model_manager.generate_text(
+            model_type=args.model_type,
             model_name=args.model_name,
             prompt=args.prompt,
             session_id=args.session_id,
@@ -297,7 +395,8 @@ def main():
             top_k=args.top_k,
             system_prompt=args.system_prompt,
             reset_context=args.reset_context == 'true' if args.reset_context else False,
-            history=history
+            history=history,
+            template=args.template
         )
 
         model_manager._start_cleanup_thread()
@@ -315,3 +414,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+# 转换函数

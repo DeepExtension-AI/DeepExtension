@@ -15,61 +15,52 @@
   * limitations under the License.
   */
 """
+
 from enums import StatusEnum,LogEnum,LevelEnum
 from redis_util import redis_client
 import threading
 import subprocess
 import os
-import psutil
+import json
 from train_callback import write_log
 class Training:
 
     @classmethod
     def run_training(cls,train_id, params):
 
-        write_log(LevelEnum.INFO,LogEnum.StartHandlingEvents,params.get('trainingName','Training'),train_id,params.get('seq',1),None)
-        args = [
-            f"--model_path={params.get('modelPath')}",
-            f"--max_seq_length={params.get('maxSeqLength')}",
-            f"--lora_rank={params.get('loraRank')}",
-            f"--load_in_4bit={'true' if params.get('loadInFourBit') else 'false'}",
-            f"--dataset_path={params.get('datasetPath')}",
-            f"--max_input_length={params.get('maxInputLength')}",
-            f"--max_content_length={params.get('maxContentLength')}",
-            f"--max_samples={params.get('maxSamples')}",
-            f"--num_generations={params.get('numGenerations')}",
-            f"--max_grad_norm={params.get('maxGradNorm')}",
-            f"--output_dir={params.get('outputDir')}",
-            f"--max_steps={params.get('maxSteps')}",
-            f"--batch_size={params.get('batchSize')}",
-            f"--grad_accum_steps={params.get('gradAccumSteps')}",
-            f"--learning_rate={params.get('learningRate')}",
-            f"--warmup_steps={params.get('warmupSteps')}",
-            f"--input_train_name={params.get('inputTrainName')}",
-            f"--output_train_name={params.get('outputTrainName')}",
-            f"--train_id={params.get('taskUuid')}",
-            f"--seq={params.get('seq')}",
-            f"--model_name={params.get('modelName')}",
-        ]
-        if not os.path.isfile(params.get('trainFileName')):
-            write_log(LevelEnum.ERROR,LogEnum.TrainingFileNotFound,params.get('trainFileName'),train_id,params.get('seq',1),None)
+        write_log(LevelEnum.INFO,LogEnum.StartHandlingEvents,params.get('training_name','Training'),train_id,params.get('seq',1),None)
+        args = []
+        for key, value in params.items():
+            if value is not None:  
+        ##modelName   model_name
+                if isinstance(value, bool):
+                    arg_value = 'true' if value else 'false'
+                elif isinstance(value, (list, dict)):
+                    arg_value = json.dumps(value)  
+                else:
+                    arg_value = str(value)
+                
+                args.append(f"--{key}={arg_value}")
+        if not os.path.isfile(params.get('train_file_name')):
+            write_log(LevelEnum.ERROR,LogEnum.TrainingFileNotFound,params.get('train_file_name'),train_id,params.get('seq',1),None)
             redis_client.set_status(train_id, StatusEnum.Failed.value)
             return {
                 'status': 'failed',
                 'train_id': train_id,
                 'return_code': -1
             }
-        cmd = ['python3', params.get('trainFileName')] + args
+        print(args)
+        cmd = ['python3', params.get('train_file_name')] + args
         process = subprocess.Popen(
             cmd, 
             stdout=subprocess.PIPE, 
             stderr=subprocess.PIPE,
             text=True
         )
-        current_pid = psutil.Process().pid 
+        current_pid = process.pid 
         host_pid = get_host_pid(current_pid)
         print(f"CurrentProcessPid: {current_pid}, HostPid: {host_pid}")
-        redis_client.set_status(train_id, StatusEnum.Running.value,host_pid)
+        redis_client.set_status(train_id, StatusEnum.Running.value,current_pid)
         def printReal(pipe, is_error=False):
             for line in iter(pipe.readline, ''):
                 print(f"{'[ERR] ' if is_error else '[OUT] '}{line.rstrip()}")
@@ -98,10 +89,10 @@ class Training:
         process.stderr.close()
         print(f"return_code{return_code}")
         if return_code != 0:
-            write_log(LevelEnum.ERROR,LogEnum.HandleEventsFailed,params.get('trainingName','Training')+","+"Unknown",train_id,params.get('seq',1),None)
+            write_log(LevelEnum.ERROR,LogEnum.HandleEventsFailed,params.get('train_name','Training')+","+"Unknown",train_id,params.get('seq',1),None)
             redis_client.set_status(train_id, StatusEnum.Failed.value)
         else:
-            write_log(LevelEnum.INFO,LogEnum.HandleEventsSuccess,params.get('trainingName','Training'),train_id,params.get('seq',1),None)
+            write_log(LevelEnum.INFO,LogEnum.HandleEventsSuccess,params.get('train_name','Training'),train_id,params.get('seq',1),None)
             data=redis_client.get_status(train_id)
             if (data.get("status") != StatusEnum.Success.value and 
                 data.get("status") != StatusEnum.Failed.value):
@@ -114,10 +105,14 @@ class Training:
         }
 
 
-def get_host_pid(pid):
+def get_host_pid(container_pid):
     try:
-        process = psutil.Process(pid)
-        return process.ppid()  
-    except psutil.NoSuchProcess:
+        with open(f'/proc/{container_pid}/status') as f:
+            for line in f:
+                if line.startswith('NSpid'):
+                    parts = line.split()
+                    if len(parts) >= 3:
+                        return int(parts[2])
+    except Exception as e:
+        print(f"Error getting host PID: {e}")
         return None
-

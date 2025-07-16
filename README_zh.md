@@ -15,7 +15,7 @@
 
 请登录网址 [https://docs.deepextension.ai/zh/](https://docs.deepextension.ai/zh/) 查看官方文档。
 <div align="left" style="margin-top:20px;margin-bottom:20px;">
-<img src="docs/assets/image-20250528150548686.png" width="1000"/>
+<img src="docs/assets/image-20250716093554.jpeg" width="1000"/>
 </div>
 
 ## 🎉 3.关注项目
@@ -115,7 +115,7 @@ cd DeepExtension
 
 要启用 **本地模型** 的训练、评估、保存和部署功能，你需要配置训练环境。  
 不同平台的配置步骤不同，请参考完整安装指南：  
-👉 [配置模型训练环境](https://deepextension.readthedocs.io/en/latest/developer/install/#3-set-up-model-training-environment)
+👉 [配置模型训练环境](https://deepextension.readthedocs.io/en/latest/zh/developer/install/#3-set-up-model-training-environment)
 
 > **注意：**  
 > 即使没有配置训练环境，你仍然可以使用第三方模型执行推理和评估任务。
@@ -125,7 +125,7 @@ cd DeepExtension
 ### 📚 4.4 完整安装指南
 
 如需高级配置（如基于 MLX 的训练或连接自定义数据库），请参考完整文档：  
-👉 [安装指南](https://deepextension.readthedocs.io/en/latest/developer/install/)
+👉 [安装指南](https://deepextension.readthedocs.io/en/latest/zh/developer/install/)
 
 ## 🌟 5. 主要功能
 
@@ -134,7 +134,8 @@ cd DeepExtension
 - 🚀 **本地模型训练与一键部署**：支持在本地环境下对模型进行训练与微调，训练成果可快速保存，并可在 Ollama 等环境下高效部署，极大提升模型迭代效率。
 - 📚 **个人知识库快速构建**：支持一键创建个人知识库，灵活导入多种格式的文件（如PDF、DOCX、XLSX等），便于知识管理与扩展。
 - 📊 **模型评估与对比分析**：内置模型评测工具，可对不同性能、不同版本的模型进行横向对比，帮助用户选择最适合的目标模型。
-- 📊 **数据集上传与解析**：支持上传并自动解析模型训练所需的数据集，简化数据准备流程，加速模型开发。
+- 🗃️ **数据集上传与解析**：支持上传并自动解析模型训练所需的数据集，简化数据准备流程，加速模型开发。
+- 📥 **支持图像/图文多模态模型**：增加支持图像/图文多模态模型的在线推理、本地微调训练与自动评测，可用于图像问答、对比分析等多种视觉任务，便于快速迭代与落地。
 
 ## 📚 6. 技术文档
 
