@@ -131,24 +131,13 @@ For advanced configuration options—such as MLX-based training or connecting to
 
 ## 🌟 5. Key Features
 
-- 🤖 **Multi-Model Chat + Knowledge Base**  
-  Interact with local or third-party models integrated with personal or corporate knowledge bases.
-
-- 🔌 **Easy Integration with Third-Party Models**  
-  Quickly plug in and switch between models like OpenAI, Anthropic, and more.
-
-- 🚀 **Local Model Training & Deployment**  
-  Train and fine-tune models locally, save results, and deploy with one click using Ollama or other tools.
-
-- 📚 **Rapid Knowledge Base Creation**  
-  Import documents (PDF, DOCX, XLSX, etc.) to build structured, searchable knowledge bases.
-
-- 📊 **Model Evaluation & Comparison**  
-  Benchmark different versions/models using built-in evaluation tools.
-
-- 🗂 **Dataset Upload & Parsing**  
-  Upload datasets and automatically parse them into structured formats to streamline training.
-
+- 🤖 **Multi-Model Chat + Knowledge Base**: Interact with local or third-party models integrated with personal or corporate knowledge bases.
+- 🔌 **Easy Integration with Third-Party Models**: Quickly plug in and switch between models like OpenAI, Anthropic, and more.
+- 🚀 **Local Model Training & Deployment**: Train and fine-tune models locally, save results, and deploy with one click using Ollama or other tools.
+- 📚 **Rapid Knowledge Base Creation**: Import documents (PDF, DOCX, XLSX, etc.) to build structured, searchable knowledge bases.
+- 📊 **Model Evaluation & Comparison**: Benchmark different versions/models using built-in evaluation tools.
+- 🗃️ **Dataset Upload & Parsing**: Upload datasets and automatically parse them into structured formats to streamline training.
+- 📥️ **Support for image and image-text multimodal models**: Added support for online inference, local fine-tuning, and automatic evaluation of image and image-text multimodal models. Suitable for a variety of vision tasks such as visual question answering and comparative analysis, enabling rapid iteration and deployment.
 
 ## 📚 6. Technical Overview
 
