@@ -17,7 +17,7 @@ Whether you're an AI engineer or a business expert, DeepExtension offers a share
 📖 Visit: [https://docs.deepextension.ai/](https://docs.deepextension.ai/)
 
 <div align="left" style="margin-top:20px;margin-bottom:20px;">
-<img src="docs/assets/image-20250528150548686.png" width="1000"/>
+<img src="docs/assets/image-20250716093554.jpeg" width="1000"/>
 </div>
 
 ## 🎉 3. Follow the Project

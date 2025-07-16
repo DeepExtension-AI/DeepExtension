@@ -5,7 +5,7 @@
 
 ## 💡 1. Was ist DeepExtension?
 
-[DeepExtension](https://deepextension.ai/) ist eine KI-Infrastrukturplattform, die Unternehmen dabei unterstützt, den gesamten Lebenszyklus der Entwicklung großer Sprachmodelle (LLM) einfach zu verwalten – von der Datenvorbereitung über das Finetuning und die Evaluierung bis hin zur Bereitstellung.
+[DeepExtension](https://deepextension.ai/de/de_home/) ist eine KI-Infrastrukturplattform, die Unternehmen dabei unterstützt, den gesamten Lebenszyklus der Entwicklung großer Sprachmodelle (LLM) einfach zu verwalten – von der Datenvorbereitung über das Finetuning und die Evaluierung bis hin zur Bereitstellung.
 
 Unsere Mission ist es, die domänenspezifische KI-Entwicklung **benutzerfreundlich, kollaborativ und skalierbar** zu machen – besonders für Teams ohne KI-Expertise oder mit begrenzten Rechenressourcen.
 
@@ -15,7 +15,7 @@ Egal ob Sie KI-Ingenieur oder Fachexperte sind, DeepExtension bietet Ihnen eine 
 
 Bitte besuchen Sie [https://docs.deepextension.ai/de/](https://docs.deepextension.ai/de/) für die offizielle Dokumentation.
 <div align="left" style="margin-top:20px;margin-bottom:20px;">
-<img src="docs/assets/image-20250528150548686.png" width="1000"/>
+<img src="docs/assets/image-20250716093554.jpeg" width="1000"/>
 </div>
 
 ## 🎉 3. Projekt folgen
@@ -116,7 +116,7 @@ Ein **Root-Admin-Benutzer** wird beim ersten Start automatisch erstellt.
 
 Um das Training, die Evaluierung, das Speichern und die Bereitstellung **lokaler Modelle** zu ermöglichen, müssen Sie die Trainingsumgebung konfigurieren.  
 Der Einrichtungsprozess unterscheidet sich je nach Plattform. Siehe vollständige Installationsanleitung:  
-👉 [Trainingsumgebung einrichten](https://deepextension.readthedocs.io/en/latest/developer/install/#3-set-up-model-training-environment)
+👉 [Trainingsumgebung einrichten](https://deepextension.readthedocs.io/en/latest/de/developer/install/#3-set-up-model-training-environment)
 
 > **Hinweis:**  
 > Auch ohne konfigurierte Trainingsumgebung können Sie Inferenz- und Evaluierungsaufgaben mit Drittanbieter-Modellen durchführen.
@@ -126,7 +126,7 @@ Der Einrichtungsprozess unterscheidet sich je nach Plattform. Siehe vollständig
 ### 📚 4.4 Vollständige Installationsanleitung
 
 Für erweiterte Konfigurationsoptionen — wie MLX-basiertes Training oder Anbindung an eine benutzerdefinierte Datenbank — lesen Sie die vollständige Dokumentation:  
-👉 [Installationsanleitung](https://deepextension.readthedocs.io/en/latest/developer/install/)
+👉 [Installationsanleitung](https://deepextension.readthedocs.io/en/latest/de/developer/install/)
 
 ## 🌟 5. Hauptfunktionen
 
@@ -186,7 +186,7 @@ DeepExtension verwendet eine modulare, mehrschichtige Systemarchitektur, die hoh
 - [Häufige Fragen (FAQs)](https://docs.deepextension.ai/de/faq/)
 - [Architekturdokumentation](https://docs.deepextension.ai/de/intro/architecture/)
 ## 🏄 7. Open-Source-Community
-- Dokumentationszentrum: Besuchen Sie das offizielle DeepExtension-Dokumentationsportal, [https://docs.deepextension.ai/de/](https://docs.deepextension.ai/de/)
+- Dokumentationszentrum: Besuchen Sie das offizielle DeepExtension-Dokumentationsportal, [https://deepextension.readthedocs.io/en/latest/de/](https://docs.deepextension.ai/de/)
 - Community-Forum: Nehmen Sie an Diskussionen teil, geben Sie Feedback oder schlagen Sie Funktionen vor (demnächst verfügbar)
 - GitHub: Verfolgen Sie Releases, melden Sie Probleme oder beteiligen Sie sich an unseren Open-Source-Komponenten, [https://github.com/DeepExtension-AI/DeepExtension](https://github.com/DeepExtension-AI/DeepExtension)
 ## 🙌 8. Technischer Support
@@ -202,7 +202,7 @@ Wir antworten innerhalb von zwei Werktagen.
 Für allgemeine Anfragen, Kooperationen oder Medienanfragen kontaktieren Sie uns bitte wie folgt:
 
 - E-Mail: contact@deepextension.ai
-- Offizielle Website: https://www.deepextension.ai
+- Offizielle Website: https://deepextension.ai/de/de_home/
 
 ## 👥 10. Feedback und Funktionsvorschläge
 Ihr Feedback ist uns sehr wichtig! Teilen Sie uns gerne mit, welche Funktionen Sie hilfreich finden, welche Probleme bestehen und welche Features Sie sich für die Zukunft wünschen.
