@@ -135,7 +135,8 @@ Für erweiterte Konfigurationsoptionen — wie MLX-basiertes Training oder Anbin
 - 🚀 **Lokales Modelltraining und One-Click-Bereitstellung**: Unterstützt das Training und Finetuning von Modellen in lokalen Umgebungen, speichert Trainingsergebnisse schnell und ermöglicht eine effiziente Bereitstellung, z.B. in Ollama-Umgebungen, um die Modelliteration zu beschleunigen.
 - 📚 **Schneller Aufbau persönlicher Wissensdatenbanken**: Einfache Erstellung persönlicher Wissensdatenbanken, flexibler Import verschiedener Dateiformate (z.B. PDF, DOCX, XLSX) für effizientes Wissensmanagement und -erweiterung.
 - 📊 **Modellevaluierung und Vergleichsanalyse**: Integrierte Bewertungstools ermöglichen den Vergleich von Modellen mit unterschiedlichen Leistungen und Versionen, um das am besten geeignete Zielmodell auszuwählen.
-- 📊 **Datensatz-Upload und -Analyse**: Unterstützt das Hochladen und automatische Parsen von Datensätzen für das Modelltraining, vereinfacht die Datenvorbereitung und beschleunigt die Entwicklung.
+- 🗃️ **Datensatz-Upload und -Analyse**: Unterstützt das Hochladen und automatische Parsen von Datensätzen für das Modelltraining, vereinfacht die Datenvorbereitung und beschleunigt die Entwicklung.
+- 📥 **Unterstützung für Bild- und Bild-Text-Multimodalmodelle**：Unterstützung für Online-Inferenz, lokales Finetuning und automatische Bewertung von Bild- und Bild-Text-Multimodalmodellen hinzugefügt. Einsetzbar für verschiedene visuelle Aufgaben wie visuelle Fragebeantwortung und Vergleichsanalyse, was eine schnelle Iteration und Umsetzung ermöglicht.
 
 ## 📚 6. Technische Dokumentation
 
