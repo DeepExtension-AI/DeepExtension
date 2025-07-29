@@ -1,4 +1,4 @@
-FROM ghcr.io/deepextension/deep_e/grpo-base:v0.1
+FROM jianweisoft.cn/scpe/grpo-base:latest
 
 WORKDIR /app/deep-e-python
 

@@ -22,7 +22,7 @@ import threading
 from unsloth import FastVisionModel
 from typing import Dict, Optional, List, Tuple
 from datetime import datetime, timedelta
-from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig, TextStreamer, AutoModelForVision2Seq
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig, TextStreamer,  MaxLengthCriteria, StoppingCriteriaList
 import torch
 import traceback
 class ModelManager:
@@ -109,14 +109,21 @@ class ModelManager:
                     load_in_4bit = True, # Use 4bit to reduce memory use. False for 16bit LoRA.
                     use_gradient_checkpointing = "unsloth", # True or "unsloth" for long context
                 )
+                tokenizer1 = AutoTokenizer.from_pretrained(baseModelPath)
+                print(tokenizer1.eos_token, tokenizer1.eos_token_id) 
             if merge_lora and hasattr(model, "peft_config"):
                 from peft import PeftModel
                 model = PeftModel.from_pretrained(model, model_id)
                 model = model.merge_and_unload() 
             if not hasattr(config, 'max_seq_length'):
+                print(getattr(config, 'max_position_embeddings'),0)
                 config.max_seq_length = getattr(config, 'max_position_embeddings', 2048)
+            else :
+                print(f"config.max_seq_length:{config.max_seq_length}")
             if not hasattr(model, 'max_seq_length'):
                 model.max_seq_length = config.max_seq_length
+            else :
+                print(f"model.max_seq_length:{model.max_seq_length}")
             print("支持images参数:", "images" in tokenizer.__call__.__annotations__)
             with self.lock:
                 self.models[model_name] = {
@@ -221,62 +228,80 @@ class ModelManager:
                 print(context)
                 messages=self._convert_to_multimodal_format(context)
                 print(json.dumps(messages, indent=2, ensure_ascii=False))
-                # 转换为 Dataset 并指定 Image 类型
-                # 转换为适合 Dataset 的格式
-                from datasets import Dataset, Image
-                import base64
-                from io import BytesIO
-                import os
-                import pandas as pd
-
-                # 定义正确的特征结构
-                from datasets import Features, Sequence, Value
+         
+                from datasets import Dataset, Image,Features
                 from torchvision.transforms import Resize
-
-                resize = Resize((336, 336)) 
-                # 从原始 context 提取
+                all_resized_images=[]
                 all_image_paths = []
                 for message in context:
                     if 'images' in message:
                         all_image_paths.extend([img['data'] for img in message['images']])
                 print("All image paths:", all_image_paths)
-                # 图像路径列表 → 转为字典列表格式
+                if len(all_image_paths)==0:
+                    tmp={
+                        "text": "Error: Please enter at least one picture",
+                        "status": "resp"
+                    }
+                    print(json.dumps(tmp,ensure_ascii=False))
+                    return
                 image_dicts = [{"image_path": path} for path in all_image_paths]
-
-                # 创建 Dataset（自动转换路径为 PIL.Image）
                 dataset = Dataset.from_list(
                     image_dicts,
                     features=Features({"image_path": Image()})
                 )
-
-                # 提取所有 PIL.Image
                 all_pil_images = [example["image_path"] for example in dataset]
+                resize = Resize((336, 336)) 
                 all_resized_images = [resize(img) for img in all_pil_images]
                 input_text = tokenizer.apply_chat_template(messages, add_generation_prompt = True)
-                inputs = tokenizer(all_resized_images,input_text,add_special_tokens = False,return_tensors = "pt",truncation=True, max_length=max_context_tokens ).to(model.device)
-         
-            if hasattr(model,"past_key_values"):
-                inputs["past_key_values"]=None
+                print(f"input_text:{input_text}")
+                print(f"all_resized_images:{all_resized_images}")
+                inputs = tokenizer(
+                    all_resized_images,  
+                    input_text,
+                    add_special_tokens=True, 
+                    return_tensors="pt",
+                    truncation=False,
+                    padding="longest",
+                    max_length=model.config.max_position_embeddings - 100  
+                ).to(model.device)
+
             streamer = TextStreamer(tokenizer)
-            outputs = model.generate(
-                **inputs,
-                max_new_tokens=max_context_tokens,
-                max_length=max_length,
-                temperature=temperature,
-                top_p=top_p,
-                top_k=top_k,
-                pad_token_id=tokenizer.eos_token_id,
-                do_sample=True if temperature>0 else False,
-                use_cache=True,
-                streamer=streamer, 
-            )
-            input_length = inputs.input_ids.shape[1]
-            generated_ids = outputs[0][input_length:]
-            response = tokenizer.decode(generated_ids, skip_special_tokens=True)
-            if "assistant:" in response:
-                assistant_response = response.split("assistant:")[-1].strip()
-            else:
-                assistant_response = response.strip()
+       
+
+            print( model.config.max_position_embeddings - inputs.input_ids.shape[1])
+            generation_config = {
+                "max_new_tokens": min(
+                    max_length,  
+                    model.config.max_position_embeddings - inputs.input_ids.shape[1] - 10 
+                ),
+                "temperature": temperature,
+                "top_p": top_p,
+                "top_k": top_k,
+                #"pad_token_id": tokenizer.eos_token_id,
+                "eos_token_id": None,  
+                "do_sample": temperature > 0.1,
+                "early_stopping": False,  
+                "streamer": streamer,
+            }
+
+            try:
+                with torch.inference_mode():
+                    outputs = model.generate(**inputs, **generation_config   )
+        
+                full_response = tokenizer.decode(
+                    outputs[0][inputs.input_ids.shape[1]:],
+                    skip_special_tokens=False  
+                )
+        
+                print(full_response)
+                full_response = full_response.split(tokenizer.eos_token)[0]  
+                print(f"decode:{full_response}")
+            except RuntimeError as e:
+                print(f"Error: {str(e)}")
+                full_response = "There is an error occurred when generating texts"
+            print(f"full_response:{full_response}")
+            assistant_response = full_response.split("<|im_end|>")[0].strip()
+            print(f"assistant_response:{assistant_response}")
             context.append({"role": "assistant", "content": assistant_response})
             tmp={
                 "text": assistant_response,
@@ -307,8 +332,18 @@ class ModelManager:
             prompt_parts.append("<|im_start|>assistant")
         prompt = "\n".join(prompt_parts)
         return prompt
-        
-    def _convert_to_multimodal_format(self,data)-> str:
+    def _convert_to_multimodal_format(self, data):
+        converted = []
+        for msg in data:
+            new_msg = {"role": msg["role"], "content": []}
+            if "images" in msg:
+                new_msg["content"].extend([{"type": "image"}] * len(msg["images"]))
+            if "content" in msg:
+                new_msg["content"].append({"type": "text", "text": msg["content"]})
+            converted.append(new_msg)
+        return converted
+    
+    def _convert_to_multimodal_format1(self,data)-> str:
         converted = []
         
         for msg in data:
