@@ -164,6 +164,7 @@ CREATE TABLE public.llm_user_config (
                                         ping_time int8 NULL,
                                         model_type text NULL,
                                         model_name text NULL,
+                                        tags _text NULL,
                                         CONSTRAINT llm_user_config_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX llm_user_config_factory_id_idx ON public.llm_user_config USING btree (factory_id, llm_id, user_id);
