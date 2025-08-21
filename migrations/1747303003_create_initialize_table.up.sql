@@ -357,19 +357,19 @@ CREATE TABLE public.table1 (
                                updated_by int4 NOT NULL,
                                template_name jsonb NOT NULL,
                                template_uuid uuid NOT NULL,
-                               is_system bool DEFAULT false NOT NULL,
+                               is_system bool NOT NULL DEFAULT false,
                                co_id int4 NULL,
-                               is_origin bool DEFAULT false NOT NULL,
+                               is_origin bool NOT NULL DEFAULT false,
                                steps_num int4 NOT NULL,
                                template_parameters jsonb NULL,
                                job_parameters jsonb NULL,
                                train_file bytea NULL,
                                template_type int4 NULL,
                                extract_show_field text NULL,
+                               train_env text NOT NULL DEFAULT 'base'::text,
                                CONSTRAINT sys_job_template_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX sys_job_template_template_uuid_idx ON public.table1 USING btree (template_uuid);
-
 
 CREATE TABLE public.table2 (
                                id bigserial NOT NULL,
