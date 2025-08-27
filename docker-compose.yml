@@ -262,6 +262,7 @@ services:
       - ./logs/:/app/logs/
       - ./deep-e-python:/app/deep-e-python
       - ./conda/envs:/opt/conda/envs
+      - ./images/:/app/images
     profiles: [ "gpu" ]
     healthcheck:
       test: [ "CMD", "nvidia-smi" ]
