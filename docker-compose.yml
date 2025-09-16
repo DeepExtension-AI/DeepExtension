@@ -48,7 +48,7 @@ services:
       - ETCD_QUOTA_BACKEND_BYTES=4294967296
       - ETCD_SNAPSHOT_COUNT=50000
     volumes:
-      - ./milvus/${ENV}/volumes/etcd:/etcd
+      - ./milvus/${JW_ENV}/volumes/etcd:/etcd
     command: etcd -advertise-client-urls=http://etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
     healthcheck:
       test: [ "CMD", "etcdctl", "endpoint", "health" ]
@@ -69,7 +69,7 @@ services:
       - ${MILVUS_MINIO_PORT_FIRST}
       - ${MILVUS_MINIO_PORT_SECOND}
     volumes:
-      - ./milvus/${ENV}/volumes/minio:/minio_data
+      - ./milvus/${JW_ENV}/volumes/minio:/minio_data
     command: minio server /minio_data --console-address ":${MILVUS_MINIO_PORT_FIRST}"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${MILVUS_MINIO_PORT_SECOND}/minio/health/live" ]
@@ -90,7 +90,7 @@ services:
       ETCD_ENDPOINTS: etcd:2379
       MINIO_ADDRESS: minio:9000
     volumes:
-      - ./milvus/${ENV}/volumes/milvus:/var/lib/milvus
+      - ./milvus/${JW_ENV}/volumes/milvus:/var/lib/milvus
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${MILVUS_STANDALONE_PORT_SECOND}/healthz" ]
       interval: 30s
@@ -116,9 +116,9 @@ services:
     environment:
       TZ: Asia/Shanghai
     volumes:
-      - ./redis/data-${ENV}:/usr/local/redis/data
-      - ./redis/conf-${ENV}/redis.conf:/usr/local/redis/conf/redis.conf
-      - ./redis/logs-${ENV}:/usr/local/redis/logs
+      - ./redis/data-${JW_ENV}:/usr/local/redis/data
+      - ./redis/conf-${JW_ENV}/redis.conf:/usr/local/redis/conf/redis.conf
+      - ./redis/logs-${JW_ENV}:/usr/local/redis/logs
     command: [ "redis-server", "/usr/local/redis/conf/redis.conf" ]
     networks:
       - intranet
@@ -173,9 +173,9 @@ services:
     container_name: ${AI_CONSUL_HOST}
     restart: always
     volumes:
-      - ./consul/config-${ENV}:/consul/config
-      - ./consul/data-${ENV}:/consul/data
-      - ./consul/logs-${ENV}:/consul/logs
+      - ./consul/config-${JW_ENV}:/consul/config
+      - ./consul/data-${JW_ENV}:/consul/data
+      - ./consul/logs-${JW_ENV}:/consul/logs
     command: consul agent -server -bootstrap-expect=1 -client=0.0.0.0 -ui -bind='{{ GetPrivateIP }}' -data-dir=/consul/data -node=consul-node -datacenter=dc1 -log-level=debug -enable-script-checks=true -config-dir=/consul/config
     ports:
       - ${AI_CONSUL_HTTP_START_PORT}
@@ -196,8 +196,8 @@ services:
       - ./resources/scp-go:/opt/scpx/resources/
       - ./logs/:/opt/scpx/logs/
       - ./models:/opt/scpx/models
-      - ./datasets/${ENV}:/opt/scpx/datasets/${ENV}
-      - ./knowledgeBase/${ENV}:/opt/scpx/knowledgeBase/${ENV}
+      - ./datasets/${JW_ENV}:/opt/scpx/datasets/${JW_ENV}
+      - ./knowledgeBase/${JW_ENV}:/opt/scpx/knowledgeBase/${JW_ENV}
       - ./multimodal:/opt/scpx/multimodal
       - ./adminPassword/:/opt/scpx/adminPassword/
       - ./license/:/opt/scpx/license/
@@ -261,6 +261,8 @@ services:
       - ./multimodal:/app/multimodal
       - ./logs/:/app/logs/
       - ./deep-e-python:/app/deep-e-python
+      - ./conda/envs:/opt/conda/envs
+      - ./images/:/app/images
     profiles: [ "gpu" ]
     healthcheck:
       test: [ "CMD", "nvidia-smi" ]
@@ -288,9 +290,9 @@ services:
     environment:
       TZ: Asia/Shanghai
     volumes:
-      - ./redis-py/data-${ENV}:/usr/local/redis/data
-      - ./redis-py/conf-${ENV}/redis.conf:/usr/local/redis/conf/redis.conf
-      - ./redis-py/logs-${ENV}:/usr/local/redis/logs
+      - ./redis-py/data-${JW_ENV}:/usr/local/redis/data
+      - ./redis-py/conf-${JW_ENV}/redis.conf:/usr/local/redis/conf/redis.conf
+      - ./redis-py/logs-${JW_ENV}:/usr/local/redis/logs
     command: [ "redis-server", "/usr/local/redis/conf/redis.conf" ]
     networks:
       - intranet
