@@ -26,7 +26,7 @@ CREATE TABLE public.base_model (
                                    disk_size_gb varchar(20) NULL,
                                    "template" text NULL,
                                    model_usage_type text NOT NULL DEFAULT 'chat'::text,
-                                   inference_file text NULL,
+                                   inference_python_file text NULL,
                                    deploy_config jsonb NULL,
                                    conda_env text NULL,
                                    inference_support bool NULL,
