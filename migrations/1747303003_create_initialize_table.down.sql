@@ -26,3 +26,4 @@ DROP TABLE public.sys_version_config;
 DROP TABLE public.sys_deploy_env;
 DROP TABLE public.sys_plan_profile;
 DROP TABLE public.sys_params;
+DROP TABLE public.train_method_info;
