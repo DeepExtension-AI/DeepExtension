@@ -553,6 +553,7 @@ CREATE TABLE public.train_method_info (
                                           trained_inference_support bool DEFAULT false NOT NULL,
                                           saved_inference_support bool DEFAULT false NOT NULL,
                                           python_file_config jsonb NOT NULL,
+                                          co_code int8 NOT NULL,
                                           CONSTRAINT train_method_info_pkey PRIMARY KEY (id)
 );
 
