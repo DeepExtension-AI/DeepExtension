@@ -25,10 +25,9 @@ CREATE TABLE public.base_model (
                                    model_references text NULL,
                                    disk_size_gb varchar(20) NULL,
                                    "template" text NULL,
-                                   model_usage_type text NOT NULL DEFAULT 'chat'::text,
-                                   inference_python_file text NULL,
+                                   model_usage_type text DEFAULT 'chat'::text NOT NULL ,
+                                   inference_python_file jsonb NULL,
                                    deploy_config jsonb NULL,
-                                   conda_env text NULL,
                                    inference_support bool NULL,
                                    deployment_tools _int4 NULL,
                                    CONSTRAINT base_model_pkey PRIMARY KEY (id)
@@ -89,6 +88,7 @@ CREATE TABLE public.deploy_models_tasks (
                                             save_task_uuid uuid NULL,
                                             co_id int4 NULL,
                                             model_usage_type text NOT NULL DEFAULT 'chat'::text,
+                                            train_template_uuid text NULL,
                                             CONSTRAINT deploy_model_tasks_pkey PRIMARY KEY (id)
 );
 
@@ -197,64 +197,76 @@ CREATE UNIQUE INDEX model_model_name_task_uuid_idx ON public.model USING btree (
 
 
 CREATE TABLE public.model_comparison_results (
-    id bigserial NOT NULL,
-    created_at int8 NOT NULL,
-    created_by int4 NULL,
-    updated_at int8 NOT NULL,
-    updated_by int4 NULL,
-    task_uuid uuid NOT NULL,
-    dataset_uuid uuid NOT NULL,
-    page_num int4 NULL,
-    record_id text NOT NULL,
-    response_a text NULL,
-    response_b text NULL,
-    error_a text NULL,
-    error_b text NULL,
-    response_judge text NULL,
-    description text NULL,
-    candidate_system_prompt text NULL,
-    candidate_user_prompt text NULL,
-    judge_system_prompt text NULL,
-    judge_user_prompt text NULL,
-    err_judge text NULL,
-    co_id int4 NULL,
-    judge_system_images text NULL,
-    judge_user_images text NULL,
-    candidate_system_images text NULL,
-    candidate_user_images text NULL,
-    CONSTRAINT model_comparison_results_pkey PRIMARY KEY (id)
+                                                 id bigserial NOT NULL,
+                                                 created_at int8 NOT NULL,
+                                                 created_by int4 NULL,
+                                                 updated_at int8 NOT NULL,
+                                                 updated_by int4 NULL,
+                                                 task_uuid uuid NOT NULL,
+                                                 dataset_uuid uuid NOT NULL,
+                                                 page_num int4 NULL,
+                                                 record_id text NOT NULL,
+                                                 response_a text NULL,
+                                                 response_b text NULL,
+                                                 error_a text NULL,
+                                                 error_b text NULL,
+                                                 response_judge text NULL,
+                                                 description text NULL,
+                                                 candidate_system_prompt text NULL,
+                                                 candidate_user_prompt text NULL,
+                                                 judge_system_prompt text NULL,
+                                                 judge_user_prompt text NULL,
+                                                 err_judge text NULL,
+                                                 co_id int4 NULL,
+                                                 judge_system_images text NULL,
+                                                 judge_user_images text NULL,
+                                                 candidate_system_images text NULL,
+                                                 candidate_user_images text NULL,
+                                                 CONSTRAINT model_comparison_results_pkey PRIMARY KEY (id)
 );
 CREATE INDEX idx_mcr_task_record ON public.model_comparison_results USING btree (task_uuid, record_id);
 CREATE INDEX idx_mcr_task_uuid ON public.model_comparison_results USING btree (task_uuid);
 
 
 CREATE TABLE public.model_comparison_tasks (
-    id bigserial NOT NULL,
-    created_at int8 NOT NULL,
-    created_by int4 NOT NULL,
-    updated_at int8 NOT NULL,
-    updated_by int4 NOT NULL,
-    task_uuid uuid DEFAULT gen_random_uuid() NOT NULL,
-    dataset_uuid uuid NOT NULL,
-    model_a_config jsonb NOT NULL,
-    model_b_config jsonb NOT NULL,
-    judge_model_config jsonb NULL,
-    candidate_system_prompt text NULL,
-    candidate_user_prompt text NULL,
-    judge_system_prompt text NULL,
-    judge_user_prompt text NULL,
-    status varchar(20) DEFAULT 'pending'::character varying NULL,
-    finished_at int8 NULL,
-    eval_type int4 DEFAULT 0 NOT NULL,
-    dataset_item_num int4 DEFAULT 0 NOT NULL,
-    co_id int4 NULL,
-    candidate_user_images text NULL,
-    judge_user_images text NULL,
-    CONSTRAINT model_comparison_tasks_pkey PRIMARY KEY (id),
-    CONSTRAINT model_comparison_tasks_task_uuid_key UNIQUE (task_uuid)
+                                               id bigserial NOT NULL,
+                                               created_at int8 NOT NULL,
+                                               created_by int4 NOT NULL,
+                                               updated_at int8 NOT NULL,
+                                               updated_by int4 NOT NULL,
+                                               task_uuid uuid DEFAULT gen_random_uuid() NOT NULL,
+                                               dataset_uuid uuid NOT NULL,
+                                               model_a_config jsonb NOT NULL,
+                                               model_b_config jsonb NOT NULL,
+                                               judge_model_config jsonb NULL,
+                                               candidate_system_prompt text NULL,
+                                               candidate_user_prompt text NULL,
+                                               judge_system_prompt text NULL,
+                                               judge_user_prompt text NULL,
+                                               status varchar(20) DEFAULT 'pending'::character varying NULL,
+                                               finished_at int8 NULL,
+                                               eval_type int4 DEFAULT 0 NOT NULL,
+                                               dataset_item_num int4 DEFAULT 0 NOT NULL,
+                                               co_id int4 NULL,
+                                               candidate_user_images text NULL,
+                                               judge_user_images text NULL,
+                                               CONSTRAINT model_comparison_tasks_pkey PRIMARY KEY (id),
+                                               CONSTRAINT model_comparison_tasks_task_uuid_key UNIQUE (task_uuid)
 );
 CREATE INDEX idx_mct_dataset_uuid ON public.model_comparison_tasks USING btree (dataset_uuid);
 
+
+CREATE TABLE public.python_env_info (
+                                        id bigserial NOT NULL,
+                                        created_at int8 NOT NULL,
+                                        created_by int4 NOT NULL,
+                                        updated_at int8 NOT NULL,
+                                        updated_by int4 NOT NULL,
+                                        env_name text NOT NULL,
+                                        co_id int8 NOT NULL,
+                                        CONSTRAINT python_env_info_pkey PRIMARY KEY (id)
+);
+CREATE UNIQUE INDEX python_env_info_env_name_idx ON public.python_env_info USING btree (env_name, co_id);
 
 CREATE TABLE public.save_models_tasks (
                                           id bigserial NOT NULL,
@@ -308,21 +320,21 @@ CREATE TABLE public.sys_deploy_env (
 );
 
 CREATE TABLE public.sys_menus (
-    id bigserial NOT NULL,
-    created_at int8 NOT NULL,
-    created_by int4 NOT NULL,
-    updated_at int8 NOT NULL,
-    updated_by int4 NOT NULL,
-    menu_name jsonb NOT NULL,
-    menu_tag text NOT NULL,
-    co_code int4 NOT NULL,
-    "path" text NULL,
-    group_name text NULL,
-    is_index bool DEFAULT false NULL,
-    component text NULL,
-    is_overview bool DEFAULT false NOT NULL,
-    seq int4 DEFAULT 0 NOT NULL,
-    CONSTRAINT sys_menus_pkey PRIMARY KEY (id)
+                                  id bigserial NOT NULL,
+                                  created_at int8 NOT NULL,
+                                  created_by int4 NOT NULL,
+                                  updated_at int8 NOT NULL,
+                                  updated_by int4 NOT NULL,
+                                  menu_name jsonb NOT NULL,
+                                  menu_tag text NOT NULL,
+                                  co_code int4 NOT NULL,
+                                  "path" text NULL,
+                                  group_name text NULL,
+                                  is_index bool DEFAULT false NULL,
+                                  component text NULL,
+                                  is_overview bool DEFAULT false NOT NULL,
+                                  seq int4 DEFAULT 0 NOT NULL,
+                                  CONSTRAINT sys_menus_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX sys_menus_parea_id_idx ON public.sys_menus USING btree (co_code, menu_tag);
 
@@ -548,12 +560,11 @@ CREATE TABLE public.train_method_info (
                                           template_uuid uuid NOT NULL,
                                           training_type _int4 NOT NULL,
                                           life_cycle int4 NOT NULL,
-                                          conda_env text NOT NULL,
                                           deployment_tools _int4 NOT NULL,
                                           trained_inference_support bool DEFAULT false NOT NULL,
                                           saved_inference_support bool DEFAULT false NOT NULL,
                                           python_file_config jsonb NOT NULL,
-                                          co_code int8 NOT NULL,
+                                          co_id int8 NOT NULL,
                                           CONSTRAINT train_method_info_pkey PRIMARY KEY (id)
 );
 
