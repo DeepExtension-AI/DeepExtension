@@ -89,6 +89,7 @@ CREATE TABLE public.deploy_models_tasks (
                                             co_id int4 NULL,
                                             model_usage_type text NOT NULL DEFAULT 'chat'::text,
                                             train_template_uuid text NULL,
+                                            base_model_id int8 NULL,
                                             CONSTRAINT deploy_model_tasks_pkey PRIMARY KEY (id)
 );
 
