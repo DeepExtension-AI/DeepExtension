@@ -52,8 +52,8 @@ CREATE TABLE public.dataset_base_info (
                                           image_max_num int4 DEFAULT 0 NOT NULL,
                                           CONSTRAINT dataset_base_info_pkey PRIMARY KEY (id)
 );
-CREATE UNIQUE INDEX dataset_base_info_dataset_name_idx ON public.dataset_base_info USING btree (dataset_name);
-CREATE UNIQUE INDEX dataset_base_info_dataset_uuid_idx ON public.dataset_base_info USING btree (dataset_uuid);
+CREATE UNIQUE INDEX dataset_base_info_dataset_name_idx ON public.dataset_base_info USING btree (dataset_name, co_id);
+CREATE UNIQUE INDEX dataset_base_info_dataset_uuid_idx ON public.dataset_base_info USING btree (dataset_uuid, co_id);
 
 
 CREATE TABLE public.dataset_detail_info (
@@ -173,7 +173,7 @@ CREATE TABLE public.llm_user_config (
                                         CONSTRAINT llm_user_config_pkey PRIMARY KEY (id)
 );
 CREATE UNIQUE INDEX llm_user_config_factory_id_idx ON public.llm_user_config USING btree (factory_id, llm_id, user_id);
-CREATE UNIQUE INDEX llm_user_config_model_name_idx ON public.llm_user_config USING btree (model_name, model_type, co_id, user_id, factory_id);
+CREATE UNIQUE INDEX llm_user_config_model_name_idx ON public.llm_user_config USING btree (model_name, model_type, co_id, user_id, factory_id, request_url);
 
 
 CREATE TABLE public.model (
@@ -318,6 +318,7 @@ CREATE TABLE public.sys_deploy_env (
                                        is_system bool DEFAULT false NOT NULL,
                                        CONSTRAINT sys_deploy_env_pkey PRIMARY KEY (id)
 );
+CREATE UNIQUE INDEX sys_deploy_env_deploy_factory_idx ON public.sys_deploy_env USING btree (deploy_factory, co_code);
 
 CREATE TABLE public.sys_menus (
                                   id bigserial NOT NULL,
@@ -567,4 +568,5 @@ CREATE TABLE public.train_method_info (
                                           co_id int8 NOT NULL,
                                           CONSTRAINT train_method_info_pkey PRIMARY KEY (id)
 );
+CREATE UNIQUE INDEX train_method_info_template_uuid_idx ON public.train_method_info USING btree (template_uuid, co_id);
 
