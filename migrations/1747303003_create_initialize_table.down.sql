@@ -10,6 +10,7 @@ DROP TABLE public.llm_user_config;
 DROP TABLE public.model;
 DROP TABLE public.model_comparison_results;
 DROP TABLE public.model_comparison_tasks;
+DROP TABLE public.python_env_info;
 DROP TABLE public.save_models_tasks;
 DROP TABLE public.sys_company;
 DROP TABLE public.sys_menus;
