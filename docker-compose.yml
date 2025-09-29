@@ -201,6 +201,8 @@ services:
       - ./multimodal:/opt/scpx/multimodal
       - ./adminPassword/:/opt/scpx/adminPassword/
       - ./license/:/opt/scpx/license/
+      - ./imageGeneration/:/opt/scpx/imageGeneration/
+      - ./images/:/opt/scpx/images/
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:${SCP_AI_START_PORT}/health" ]
       interval: 10s
