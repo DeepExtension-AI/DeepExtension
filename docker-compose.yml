@@ -21,7 +21,7 @@ services:
       - intranet
 
   migrate:
-    image: dockerpull.cn/migrate/migrate:v4.18.3
+    image: migrate/migrate:v4.18.3
     profiles: ["use-db"]
     depends_on:
       db:
