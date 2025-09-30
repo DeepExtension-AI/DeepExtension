@@ -1,0 +1,77 @@
+# Flux 基础镜像 - 包含所有重型依赖
+# 使用官方Python 3.11镜像作为基础镜像
+FROM dockerpull.cn/python:3.11-slim
+
+# 设置工作目录
+WORKDIR /app
+
+# 配置国内镜像源加速
+RUN rm -f /etc/apt/sources.list.d/debian.sources && \
+    echo "deb https://mirrors.ustc.edu.cn/debian/ trixie main" > /etc/apt/sources.list && \
+    echo "deb https://mirrors.ustc.edu.cn/debian/ trixie-updates main" >> /etc/apt/sources.list && \
+    echo "deb https://mirrors.ustc.edu.cn/debian-security/ trixie-security main" >> /etc/apt/sources.list
+
+# 安装系统依赖
+RUN apt-get update && apt-get install -y \
+    wget \
+    curl \
+    git \
+    build-essential \
+    libgl1-mesa-dev \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+
+# 配置pip国内镜像源
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
+
+# 复制本地wheel文件
+COPY whl/nunchaku-0.3.2+torch2.8-cp311-cp311-linux_x86_64.whl /tmp/whl/nunchaku-0.3.2+torch2.8-cp311-cp311-linux_x86_64.whl
+
+# 安装PyTorch (CUDA 12.8版本) - 使用本地wheel文件
+RUN pip install --no-cache-dir \
+    torch==2.8.0+cu128 \
+    torchvision==0.23.0+cu128 \
+    torchaudio==2.8.0+cu128 \
+    --extra-index-url https://download.pytorch.org/whl/cu128 
+
+# 安装nunchaku依赖
+RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple ninja wheel diffusers transformers accelerate sentencepiece protobuf huggingface_hub
+
+# 安装nunchaku - 使用本地wheel文件
+RUN pip install --no-cache-dir /tmp/whl/nunchaku-0.3.2+torch2.8-cp311-cp311-linux_x86_64.whl
+
+# 清理临时文件
+RUN rm -rf /tmp/whl
+
+# 安装其他常用ML库
+RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple \
+    Flask>=2.3.0 \
+    waitress>=2.1.0 \
+    Pillow>=9.5.0 \
+    opencv-python>=4.8.0 \
+    PyYAML>=6.0 \
+    numpy>=1.24.0 \
+    safetensors>=0.3.0 \
+    psutil>=5.9.0 \
+    scipy>=1.10.0 \
+    scikit-image>=0.20.0
+
+# 创建挂载点目录
+RUN mkdir -p /app/flux_models /app/generated_images
+
+# 设置环境变量
+ENV PYTHONPATH=/app
+ENV CUDA_VISIBLE_DEVICES=0
+
+# 暴露端口
+EXPOSE 5050
+
+# 标签信息
+LABEL maintainer="Flux Team"
+LABEL description="Flux AI Image Generation Base Image with PyTorch and Dependencies"
+LABEL version="1.0"

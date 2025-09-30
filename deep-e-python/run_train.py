@@ -31,10 +31,12 @@ class Training:
         write_log(LevelEnum.INFO,LogEnum.StartHandlingEvents,params.get('training_name','Training'),train_id,params.get('seq',1),None)
         args = []
         for key, value in params.items():
+            print(f"key:{key},value:{value}")
             if value is not None:  
         ##modelName   model_name
                 if isinstance(value, bool):
-                    arg_value = 'true' if value else 'false'
+                    print("is bool")
+                    arg_value = True if value else False
                 elif isinstance(value, (list, dict)):
                     arg_value = json.dumps(value)  
                 else:
@@ -50,13 +52,16 @@ class Training:
                 'return_code': -1
             }
         print(args)
-        cmd = ['python3', params.get('train_file_name')] + args
+        
+        cmd = ['conda', 'run', '-n', params.get('train_env'), 'python', params.get('train_file_name')] + args
+        print(cmd)
         process = subprocess.Popen(
             cmd, 
             stdout=subprocess.PIPE, 
             stderr=subprocess.PIPE,
             text=True
         )
+        print(f"process:{process.stdout}")
         current_pid = process.pid 
         host_pid = get_host_pid(current_pid)
         print(f"CurrentProcessPid: {current_pid}, HostPid: {host_pid}")

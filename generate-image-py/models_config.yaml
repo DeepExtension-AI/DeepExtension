@@ -1,0 +1,93 @@
+models:
+  flux-kontext-gguf:
+    description: FLUX Kontext GGUF格式，内存占用更低
+    huggingface_path: bullerwins/FLUX.1-Kontext-dev-GGUF
+    local_path: flux_models/flux-kontext-gguf/flux1-kontext-dev-Q4_K_M.gguf
+    memory_usage: low
+    name: FLUX Kontext GGUF
+    pipeline_class: FluxKontextPipeline
+    supports_img2img: true
+    supports_text2img: true
+    torch_dtype: bfloat16
+    type: gguf
+  flux.1-kontext-dev:
+    description: FLUX.1 Kontext开发版本，支持上下文理解
+    huggingface_path: black-forest-labs/FLUX.1-Kontext-dev
+    local_path: flux_models/FLUX.1-Kontext-dev
+    memory_usage: high
+    name: FLUX.1 Kontext Dev
+    pipeline_class: FluxKontextPipeline
+    supports_img2img: true
+    supports_text2img: true
+    torch_dtype: bfloat16
+    type: flux
+  flux.1-schnell:
+    description: FLUX.1 快速版本，适合快速生成
+    enable_cpu_offload: true
+    enable_sequential_cpu_offload: true
+    enable_vae_slicing: true
+    enable_vae_tiling: true
+    huggingface_path: black-forest-labs/FLUX.1-schnell
+    local_path: flux_models/FLUX.1-schnell
+    low_cpu_mem_usage: true
+    memory_usage: low
+    name: FLUX.1 Schnell
+    pipeline_class: FluxPipeline
+    supports_img2img: false
+    supports_text2img: true
+    torch_dtype: bfloat16
+    type: flux
+  nunchaku-int4:
+    base_model: flux_models/FLUX.1-Kontext-dev
+    description: Nunchaku优化的FLUX模型，INT4量化版本
+    local_path: flux_models/nunchaku/svdq-int4_r32-flux.1-kontext-dev.safetensors
+    memory_usage: low
+    name: Nunchaku FLUX INT4
+    pipeline_class: FluxKontextPipeline
+    supports_img2img: true
+    supports_text2img: true
+    torch_dtype: bfloat16
+    transformer_class: NunchakuFluxTransformer2dModel
+    type: flux_nunchaku
+  sd-3.5-2025080401:
+    base_model_path: /home/cicd/workspace/fine-tuning-image/stable-diffusion-3.5-medium
+    lora_scale: 0.7
+    lora_weights_path: /home/cicd/workspace/fine-tuning-image/SimpleTuner/output/models/2025080401/pytorch_lora_weights.safetensors
+    name: sd-3.5-2025080401
+    pipeline_class: StableDiffusion3Pipeline
+    type: stable_diffusion
+  sd3.5-medium:
+    description: Stable Diffusion 3.5 Medium版本，仅支持文生图
+    huggingface_path: stabilityai/stable-diffusion-3.5-medium
+    local_path: flux_models/stable-diffusion-3.5-medium
+    memory_usage: medium
+    name: Stable Diffusion 3.5 Medium
+    pipeline_class: StableDiffusion3Pipeline
+    supports_img2img: false
+    supports_text2img: true
+    torch_dtype: bfloat16
+    type: stable_diffusion
+  sd3.5-medium-lora:
+    base_model_path: /home/cicd/workspace/fine-tuning-image/stable-diffusion-3.5-medium
+    lora_scale: 0.7
+    lora_weights_path: /home/cicd/workspace/fine-tuning-image/SimpleTuner/output/models/2025080401/pytorch_lora_weights.safetensors
+    name: sd3.5-medium-lora
+    pipeline_class: StableDiffusion3Pipeline
+    type: stable_diffusion
+settings:
+  aggressive_memory_cleanup: true
+  auto_unload_timeout: 1
+  cache_dir: ./cache
+  cleanup_after_generation: true
+  default_model: flux.1-schnell
+  enable_attention_slicing: true
+  enable_cpu_offload: true
+  enable_memory_optimization: true
+  enable_model_cache: false
+  enable_sequential_cpu_offload: true
+  enable_vae_slicing: true
+  enable_vae_tiling: true
+  local_files_only: true
+  log_level: INFO
+  max_cache_size: 5GB
+  max_cached_models: 1

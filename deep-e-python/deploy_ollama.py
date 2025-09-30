@@ -15,7 +15,6 @@
   * limitations under the License.
   */
 """
-
 import os
 import hashlib
 import requests
@@ -265,3 +264,61 @@ class ModelDeployerOllama:
                 "status": "error",
                 "message": str(e)
             }
+
+# 在文件末尾添加以下代码
+if __name__ == "__main__":
+    import sys
+    import json
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Deploy Ollama ')
+    
+    # 定义命令行参数
+    parser.add_argument('--trainId', type=str, required=True, help='训练ID')
+    parser.add_argument('--seq', type=str, default='1', help='序列号')
+    parser.add_argument('--folderPath', type=str, required=True, help='文件夹路径')
+    parser.add_argument('--serverUrl', type=str, required=True, help='服务器URL')
+    parser.add_argument('--modelName', type=str, required=True, help='模型名称')
+    parser.add_argument('--quantize', type=str, default='', help='量化方式')
+    parser.add_argument('--template', type=str, default='', help='模板')
+    parser.add_argument('--system', type=str, default='',  help='系统提示')
+    parser.add_argument('--parameters', type=str, default='', help='参数字典')
+    
+    known_args, unknown_args = parser.parse_known_args()
+    print("Known args:", known_args)
+    print("Unknown args:", unknown_args)
+    args = known_args
+    
+    try:
+        
+        # 执行部署
+        result = ModelDeployerOllama.deploy_model(
+    
+            status_file='status_file',
+            train_id = args.trainId,
+            seq=args.seq,
+            folder_path = args.folderPath,
+            model_name = args.modelName,
+            server_url = args.serverUrl,
+            quantize = args.quantize,
+            template = args.template,
+            system = args.system,
+            parameters = args.parameters,
+        )
+        
+        # 输出结果
+        print(json.dumps(result))
+        
+        # 根据结果设置退出码
+        if result.get('status') == 'success':
+            sys.exit(0)
+        else:
+            sys.exit(1)
+            
+    except Exception as e:
+        error_result = {
+            "status": "error",
+            "message": f"Script execution failed: {str(e)}"
+        }
+        print(json.dumps(error_result))
+        sys.exit(1)

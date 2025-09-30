@@ -1,0 +1,90 @@
+# Python缓存文件
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+PIPFILE.lock
+
+# 环境变量文件
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 日志文件
+*.log
+logs/
+
+# 测试文件
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Git文件
+.git/
+.gitignore
+
+# Docker文件
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# 环境配置文件
+.env
+.env.local
+.env.example
+
+# 文档文件
+README.md
+*.md
+
+# 临时文件
+*.tmp
+*.temp
+
+# 模型文件夹（挂载到容器，不需要复制）
+flux_models/
+models/
+generated_images/
+
+# 大文件和二进制文件
+*.safetensors
+*.gguf
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.pkl
+*.h5
+*.hdf5
+
+# 系统文件
+.DS_Store
+Thumbs.db

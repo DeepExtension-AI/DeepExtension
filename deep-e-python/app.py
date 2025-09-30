@@ -97,9 +97,6 @@ def transferTrain():
             }
         ), HTTPStatus.BAD_REQUEST.value
 
-
-
-
 def get_absolute_path(relative_path: Optional[Union[str, None]]) -> Optional[str]:
     """
     Convert a relative path to an absolute path, with special case handling
@@ -128,8 +125,8 @@ def get_absolute_path(relative_path: Optional[Union[str, None]]) -> Optional[str
         
     return absolute_path
 
-@app.route('/chat', methods=['POST'])
-def chatWithModel():
+@app.route('/chatTest', methods=['POST'])
+def chatWithTest():
     # Get all required data early in request context
     try:
         data = request.get_json()
@@ -149,6 +146,8 @@ def chatWithModel():
                 try:
                     # Build command line arguments
                     chat_args = [
+                        f"--promptFile={data.get('promptFile', '')}",
+                        f"--condaEnv={data.get('condaEnv', '')}",
                         f"--model_id={data.get('modelId', '')}",
                         f"--model_name={data['modelName']}",
                         f"--base_model_path={data['baseModelPath']}",
@@ -319,6 +318,99 @@ def chatWithModel():
         }
     )
 
+@app.route('/chat', methods=['POST'])
+def chatWithModel():
+    # Get all required data early in request context
+    try:
+        data = request.get_json()
+        print(data)
+        if not data or 'modelName' not in data or 'prompt' not in data:
+            return jsonify({"error": "Missing required parameters: modelName and prompt", "status": "error"}), 400
+    except Exception as e:
+        error_msg = f"Request parsing failed: {str(e)}\n{traceback.format_exc()}"
+        return jsonify({"status": "error", "error": error_msg}), 400
+
+    def linux_generate(data):
+        """Stream generated responses"""
+        try:
+            result_queue = Queue()
+            prompter = Prompting()
+            chat_thread = threading.Thread(
+                target=lambda q, d: [q.put(line) for line in prompter.run_prompting(d)],
+                args=(result_queue, data)
+            )
+            chat_thread.start()
+
+            # Get output from queue and forward it
+            while chat_thread.is_alive() or not result_queue.empty():
+                try:
+                    line = result_queue.get(timeout=2)
+                    tmp = line
+                    print(
+                        f"alive:{tmp}"
+                    )
+                    yield f"{tmp}\n\n"
+                except Exception as e:
+                    yield "\n"  
+                    continue
+
+        except Exception as e:
+            error_msg = f"Response generation failed: {str(e)}\n{traceback.format_exc()}"
+            tmp = json.dumps({"finish_reason": error_msg, "text": ""})
+            yield f"data: {tmp}\n\n"
+
+    def mac_generate(data):
+        try:
+            model_id = data["modelId"]
+            base_model_path = data["baseModelPath"]
+            history = data.get("history", [])
+            max_content_tokens = data.get("maxContentTokens", 2048)
+
+            absolute_base_path = get_absolute_path(base_model_path)
+            absolute_adapter_path = get_absolute_path(model_id)
+
+            # Initialize model inferencer
+            from mac_code.mac_chat import ModelInference
+            inferencer = ModelInference(absolute_base_path, adapter_path=absolute_adapter_path)
+
+            # Stream generated responses
+            for response in inferencer.generate_response(
+                messages=history,
+                max_tokens=max_content_tokens
+            ):
+                yield f"data: {json.dumps({'text': response})}\n\n"
+
+        except Exception as e:
+            error = f"Mac generation failed: {str(e)}\n{traceback.format_exc()}"
+            yield f"data: {json.dumps({'finish_reason': error})}\n\n"
+
+    system = platform.system()
+    def generate(data):
+        try:
+            if system == "Linux":
+                for chunk in linux_generate(data):
+                    yield chunk
+            
+            elif system == "Darwin":
+                for chunk in mac_generate(data):
+                    yield chunk
+            
+            else:
+                yield f"data: {json.dumps({'finish_reason': 'Unsupported OS'})}\n\n"
+        
+        except Exception as e:
+                error = f"Generate Failed: {str(e)}\n{traceback.format_exc()}"
+                yield f"data: {json.dumps({'finish_reason': error})}\n\n"
+
+    return Response(
+        generate(data),  
+        mimetype='application/x-ndjson',
+        headers={
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+            'X-Accel-Buffering': 'no'
+        }
+    )
     
 @app.route('/trainingStatus/<taskUuid>', methods=['GET'])
 def check_training_status(taskUuid):
@@ -373,23 +465,40 @@ def merge_model():
         write_log(LevelEnum.INFO, LogEnum.ActualParams, f"train_id:{train_id}", train_id, seq, None)
         write_log(LevelEnum.INFO, LogEnum.ActualParams, f"seq:{seq}", train_id, seq, None)
         write_log(LevelEnum.INFO, LogEnum.ActualParams, f"modelUsageType:{modelUsageType}", train_id, seq, None)
-        # System detection
+        conda_env = data.get('condaEnv', 'base') or 'base'
+        saveFile = 'linux_code/save_model'
         system_type = platform.system().lower()
+        if system_type == 'darwin':
+            save_path = 'mac_code/mac_save'
+        pythonFile = data.get('savePythonFile', saveFile) or saveFile
 
-        result = None
-        if system_type == "linux":
+        cmd = [
+            "conda", "run", "-n", conda_env,
+            "python", pythonFile+".py",
+            "--train_id", str(data.get('trainId')),
+            "--seq", str(data.get('seq','1')),
+            "--save_path", str(data['savePath']),
+            "--base_path", str(data['baseModelPath']),
+            "--adapter_path", str(data['loraAdapterPath']),
+            "--dtype_str", str(data.get('dtypeStr', 'bfloat16')),
+            "--model_usage_type", str(data.get('modelUsageType', 'chat')),
+        ]
+
+        # 执行命令
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        stdout, stderr = process.communicate()
+        return_code = process.returncode
+        # 读取执行结果
+        if return_code == 0:
             try:
-                from linux_code.save_model import ModelMerger
-                result = ModelMerger.merge_models(
-                    train_id=train_id,
-                    seq=seq,
-                    base_model_path=base_path,
-                    lora_adapter_path=adapter_path,
-                    save_path=save_path,
-                    dtype_str=dtype_str,
-                    modelUsageType=modelUsageType
-                )
-                if result['status'] == 'success':
+                result = json.loads(stdout)
+            
+                if result.get('status') == 'success':
                     write_log(LevelEnum.INFO, LogEnum.HandleEventsSuccess, 'Save', train_id, seq, None)
                     redis_client.set_status(train_id, StatusEnum.Success.value)
                     return jsonify({
@@ -398,35 +507,12 @@ def merge_model():
                         'error': ''
                     }), HTTPStatus.OK.value
                 else:
-                    write_log(LevelEnum.ERROR, LogEnum.HandleEventsFailed, 'Save' + "," + result['message'], train_id, seq, None)
+                    write_log(LevelEnum.ERROR, LogEnum.HandleEventsFailed, 'Save' + "," + result.get('message', ''), train_id, seq, None)
                     redis_client.set_status(train_id, StatusEnum.Failed.value)
-                    return jsonify({
-                        'status': HTTPStatus.BAD_REQUEST.phrase,
-                        'train_id': train_id,
-                        'error': result['message']
-                    }), HTTPStatus.BAD_REQUEST.value
-            except Exception as e:
-                write_log(LevelEnum.ERROR, LogEnum.HandleEventsFailed, 'Save' + "," + f"Linux:{str(e)}", train_id, seq, None)
-                redis_client.set_status(train_id, StatusEnum.Failed.value)
-                return jsonify({
-                    'status': HTTPStatus.BAD_REQUEST.phrase,
-                    'train_id': train_id,
-                    'error': f"Linux model merge failed: {str(e)}"
-                }), HTTPStatus.BAD_REQUEST.value
-
-        elif system_type == "darwin":  # macOS
-            try:
-                from mac_code.mac_save import merge_model as mac_merge_model
-                result = mac_merge_model(
-                    train_id=train_id,
-                    seq=seq,
-                    base_model_path=os.path.abspath(base_path),
-                    adapter_path=os.path.abspath(adapter_path),
-                    save_path=os.path.abspath(save_path),
-                    dequantize_model=(dtype_str == 'float32')
-                )
-                if result['status'] == 'success':
-                    write_log(LevelEnum.INFO, LogEnum.HandleEventsSuccess, '', train_id, seq, None)
+                    return jsonify(result), HTTPStatus.BAD_REQUEST.value
+            except json.JSONDecodeError:
+                if 'success' in stdout.lower():
+                    write_log(LevelEnum.INFO, LogEnum.HandleEventsSuccess, 'Save', train_id, seq, None)
                     redis_client.set_status(train_id, StatusEnum.Success.value)
                     return jsonify({
                         'status': HTTPStatus.OK.phrase,
@@ -434,21 +520,24 @@ def merge_model():
                         'error': ''
                     }), HTTPStatus.OK.value
                 else:
-                    write_log(LevelEnum.ERROR, LogEnum.HandleEventsFailed, 'Save' + "," + result['message'], train_id, seq, None)
+                    write_log(LevelEnum.ERROR, LogEnum.HandleEventsFailed, f'Save failed: Invalid JSON output: {stdout}', train_id, seq, None)
                     redis_client.set_status(train_id, StatusEnum.Failed.value)
                     return jsonify({
-                        'status': HTTPStatus.BAD_REQUEST.phrase,
+                        'status': HTTPStatus.INTERNAL_SERVER_ERROR.phrase,
                         'train_id': train_id,
-                        'error': result['message']
-                    }), HTTPStatus.BAD_REQUEST.value
-            except Exception as e:
-                write_log(LevelEnum.ERROR, LogEnum.HandleEventsFailed, 'Save' + "," + f"macOS:{str(e)}", train_id, seq, None)
-                redis_client.set_status(train_id, StatusEnum.Failed.value)
-                return jsonify({
-                    'status': HTTPStatus.BAD_REQUEST.phrase,
-                    'train_id': train_id,
-                    'error': f"macOS model merge failed: {str(e)}"
-                }), HTTPStatus.BAD_REQUEST.value
+                        'error': f'Invalid JSON output: {stdout}'
+                    }), HTTPStatus.INTERNAL_SERVER_ERROR.value
+        else:
+            write_log(LevelEnum.ERROR, LogEnum.HandleEventsFailed, 'Save' + "," + stderr, train_id, seq, None)
+            redis_client.set_status(train_id, StatusEnum.Failed.value)
+            return jsonify({
+                'status': HTTPStatus.BAD_REQUEST.phrase,
+                'train_id': train_id,
+                'error': stderr
+            }), HTTPStatus.BAD_REQUEST.value
+        
+        # System detection
+ 
 
     except Exception as e:
         write_log(LevelEnum.ERROR, LogEnum.HandleEventsFailed, 'Save' + "," + f"{str(e)}\n{traceback.format_exc()}", train_id, seq, None)
@@ -482,6 +571,7 @@ def deploy_model():
     try:
         write_log(LevelEnum.INFO, LogEnum.StartHandlingEvents, 'Deploy', train_id, seq, None)
         # Parameter validation
+        print(data)
         required_params = ['folderPath', 'serverUrl', 'modelName', 'trainId', 'seq']
         if not all(param in data for param in required_params):
             write_log(LevelEnum.ERROR, LogEnum.ParamCheckFailed, None, ", ".join(required_params), train_id, seq, None)
@@ -495,40 +585,166 @@ def deploy_model():
         
         # Call business logic
         redis_client.set_status(train_id, StatusEnum.Running.value)
-        
-        # Execute deployment
-        result = ModelDeployerOllama.deploy_model(
-            train_id=data['trainId'],
-            seq=data['seq'],
-            status_file='status_file',
-            folder_path=get_absolute_path(data['folderPath']),
-            server_url=data['serverUrl'],
-            model_name=data['modelName'],
-            quantize=data['quantize'],
-            template=data['template'],
-            system=data['system'],
-            parameters=data['parameters']
+        conda_env = data.get('condaEnv', 'base') or 'base'
+        pythonFile = data.get('deployPythonFile', 'deploy_ollama') or 'deploy_ollama'
+
+        cmd = [
+            "conda", "run", "-n", conda_env,
+            "python", pythonFile+".py",
+            "--trainId", str(data.get('trainId')),
+            "--seq", str(data.get('seq','1')),
+            "--folderPath", str(get_absolute_path(data['folderPath'])),
+            "--serverUrl", str(data['serverUrl']),
+            "--modelName", str(data['modelName']),
+            "--quantize", str(data.get('quantize', '')),
+            "--template", str(data.get('template', '')),
+            "--basePath", str(data.get('basePath', '')),
+            "--actualPath", str(data.get('actualPath', '')),
+        ]
+
+        # 执行命令
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
         )
+
         
-        # Return response
-        if result['status'] == 'success':
-            write_log(LevelEnum.INFO, LogEnum.HandleEventsSuccess, 'Deploy', train_id, seq, None)
-            redis_client.set_status(train_id, StatusEnum.Success.value)
-            return jsonify(result), HTTPStatus.OK.value
+        stdout, stderr = process.communicate()
+        return_code = process.returncode
+        
+        # 读取执行结果
+        if return_code == 0:
+            try:
+                result = json.loads(stdout)
+                if result.get('status') == 'success':
+                    write_log(LevelEnum.INFO, LogEnum.HandleEventsSuccess, 'Deploy', train_id, seq, None)
+                    redis_client.set_status(train_id, StatusEnum.Success.value)
+                    return jsonify(result), HTTPStatus.OK.value
+                else:
+                    write_log(LevelEnum.ERROR, LogEnum.HandleEventsFailed, 'Deploy' + "," + result.get('message', ''), train_id, seq, None)
+                    redis_client.set_status(train_id, StatusEnum.Failed.value)
+                    return jsonify(result), HTTPStatus.BAD_REQUEST.value
+            except json.JSONDecodeError:
+                if 'success' in stdout.lower():
+                    write_log(LevelEnum.INFO, LogEnum.HandleEventsSuccess, 'Deploy', train_id, seq, None)
+                    redis_client.set_status(train_id, StatusEnum.Success.value)
+                    return jsonify({
+                        'status': HTTPStatus.OK.phrase,
+                        'train_id': train_id,
+                        'error': ''
+                    }), HTTPStatus.OK.value
+                else:
+                    write_log(LevelEnum.ERROR, LogEnum.HandleEventsFailed, f'Deploy failed: Invalid JSON output: {stdout}', train_id, seq, None)
+                    redis_client.set_status(train_id, StatusEnum.Failed.value)
+                    return jsonify({
+                        'status': HTTPStatus.INTERNAL_SERVER_ERROR.phrase,
+                        'train_id': train_id,
+                        'error': f'Invalid JSON output: {stdout}'
+                    }), HTTPStatus.INTERNAL_SERVER_ERROR.value
         else:
-            write_log(LevelEnum.ERROR, LogEnum.HandleEventsFailed, 'Deploy' + "," + result['message'], train_id, seq, None)
+            write_log(LevelEnum.ERROR, LogEnum.HandleEventsFailed, f'Deploy failed with return code {return_code}: {stderr}', train_id, seq, None)
             redis_client.set_status(train_id, StatusEnum.Failed.value)
-            return jsonify(result), HTTPStatus.BAD_REQUEST.value
-            
+            return jsonify({
+                'status': 'error',
+                'message': f'Deployment script failed with return code {return_code}',
+                'stdout': stdout,
+                'stderr': stderr
+            }), HTTPStatus.INTERNAL_SERVER_ERROR.value
+                
     except Exception as e:
         write_log(LevelEnum.ERROR, LogEnum.HandleEventsFailed, 'Deploy' + "," + f"{str(e)}\n{traceback.format_exc()}", train_id, seq, None)
         redis_client.set_status(train_id, StatusEnum.Failed.value)
-        return {
-            'status': HTTPStatus.BAD_REQUEST.value,
-            'train_id': data['trainId'],
+        return jsonify({
+            'status': HTTPStatus.BAD_REQUEST.phrase,
+            'train_id': train_id,
             'error': str(e)
-        }
+        }), HTTPStatus.BAD_REQUEST.value
+
+from run_prompt import Prompting
+@app.route('/imageProcessingByModel', methods=['POST'])
+def image_processing_by_model():
+    try:
+        import uuid
+        uuid_str = str(uuid.uuid4())
+        data = request.get_json()
+        print(data)
+        prompter = Prompting()
+        thread = threading.Thread(
+            target=prompter.run_generate_images,
+            args=(uuid_str, data)
+        )
+        thread.start()
+
+        result_url = f"/getGeneratedImages/{uuid_str}"
+        return jsonify({
+            'code': 0,
+            'message': "",
+            'data': {
+                'imageUrlList': [result_url]
+            }
+        }), 200
+    except Exception as e:
+        return jsonify({
+            'code': -1,
+            'message': str(e),
+        }), 200
     
+@app.route('/getGeneratedImages/<taskId>', methods=['GET'])
+def getGeneratedImages(taskId):
+    try:
+        status_info = redis_client.get_status(taskId)
+        status=status_info.get('status')
+        if status == StatusEnum.Success.value :
+            base_dir = "../images/"
+            valid_extensions = {'.png', '.jpg', '.jpeg', '.gif', '.webp'}  # 支持的图片格式
+            
+            if not os.path.exists(base_dir):
+                return jsonify({
+                    'code': -1,
+                    'message': "Workdir was not found",
+                    'data': {'imageUrlList': []}
+                }), 404
+            
+            result_urls = []
+            for filename in os.listdir(base_dir):
+                file_path = os.path.join(base_dir, filename)
+                if (os.path.isfile(file_path) and 
+                    filename.startswith(taskId) and
+                    os.path.splitext(filename)[1].lower() in valid_extensions):
+                    result_urls.append(f"/images/{filename}")
+            
+            return jsonify({
+                'code': 0,
+                'message': f"Find {len(result_urls)} images",
+                'data': {'imageUrlList': result_urls}
+            }), 200
+        elif status==StatusEnum.Running.value:
+            return jsonify({
+                'code': StatusEnum.Running.value,
+                'message': "",
+                'data': {}
+            }), 200
+        elif status ==StatusEnum.Failed.value:
+            return jsonify({
+                'code': -1,
+                'message': "",
+                'data': {}
+            }), 400
+        return jsonify({
+                'code': StatusEnum.Unknown.value,
+                'message': "",
+                'data': {}
+            }), 200
+    except Exception as e:
+        return jsonify({
+            'code': -1,
+            'message': f"Error: {str(e)}",
+            'data': {'imageUrlList': []}
+        }), 500
+
+
 def create_app():
     return app
 

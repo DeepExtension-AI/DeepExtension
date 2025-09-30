@@ -58,3 +58,50 @@ def merge_model(
             "status": "error",
             "message": str(e)
         }
+if __name__ == "__main__":
+    import sys
+    import json
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Merge Models ')
+    
+    # 定义命令行参数          
+    parser.add_argument('--train_id', type=str, required=True, help='训练ID')
+    parser.add_argument('--seq', type=str, default='1', help='序列号')
+    parser.add_argument('--save_path', type=str, required=True, help='保存路径')
+    parser.add_argument('--base_path', type=str, required=True, help='基础模型路径')
+    parser.add_argument('--adapter_path', type=str, required=True, help='lora路径')
+    parser.add_argument('--dtype_str', type=str, default='', help='')
+    parser.add_argument('--model_usage_type', type=str, default='',  help='类型')
+    
+    known_args, unknown_args = parser.parse_known_args()
+    print("Known args:", known_args)
+    print("Unknown args:", unknown_args)
+    args = known_args
+    
+    try:
+        
+        # 执行部署
+        result = merge_model(
+            train_id = args.train_id,
+            base_model_path = args.base_path,
+            adapter_path = args.adapter_path,
+            save_path = args.save_path,
+        )
+        
+        # 输出结果
+        print(json.dumps(result))
+        
+        # 根据结果设置退出码
+        if result.get('status') == 'success':
+            sys.exit(0)
+        else:
+            sys.exit(1)
+            
+    except Exception as e:
+        error_result = {
+            "status": "error",
+            "message": f"Script execution failed: {str(e)}"
+        }
+        print(json.dumps(error_result))
+        sys.exit(1)

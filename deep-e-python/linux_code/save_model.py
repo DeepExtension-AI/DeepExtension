@@ -15,7 +15,12 @@
   * limitations under the License.
   */
 """
-
+import os
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(current_dir)
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoModelForVision2Seq, AutoProcessor
 from peft import PeftModel
 import torch
@@ -32,7 +37,7 @@ class ModelMerger:
 
     @classmethod
     def merge_models(cls, train_id: str, seq: int, base_model_path: str, lora_adapter_path: str,
-                   save_path: str, dtype_str: str = "bfloat16", modelUsageType: str = "chat") -> dict:
+                   save_path: str, dtype_str: str = "bfloat16", model_usage_type: str = "chat") -> dict:
         """Core business logic for model merging
         
         Args:
@@ -48,12 +53,12 @@ class ModelMerger:
             dtype = cls.dtype_map.get(dtype_str.lower(), torch.bfloat16)
             # Load base model
             write_log(LevelEnum.INFO, LogEnum.MergeLoadingBaseModel, base_model_path, train_id, seq, None)
-            if modelUsageType == "chat":
+            if model_usage_type == "chat":
                 base_model = AutoModelForCausalLM.from_pretrained(
                     base_model_path, 
                     torch_dtype=dtype
                 )
-            elif modelUsageType == "vision-language":
+            elif model_usage_type == "vision-language":
                 base_model = AutoModelForVision2Seq.from_pretrained(
                     base_model_path,
                     torch_dtype=dtype,
@@ -77,9 +82,9 @@ class ModelMerger:
             )
             
             # Save tokenizer
-            if modelUsageType == "chat":
+            if model_usage_type == "chat":
                 tokenizer = AutoTokenizer.from_pretrained(lora_adapter_path)
-            elif modelUsageType == "vision-language":
+            elif model_usage_type == "vision-language":
                 tokenizer = AutoProcessor.from_pretrained(lora_adapter_path)
             
             tokenizer.save_pretrained(save_path)
@@ -87,7 +92,7 @@ class ModelMerger:
                 "status": "success",
                 "message": f"Model successfully merged and saved to {save_path}",
                 "dtype_used": str(dtype),
-                "model_type": modelUsageType
+                "model_type": model_usage_type
             }
 
         except Exception as e:
@@ -95,3 +100,57 @@ class ModelMerger:
                 "status": "error",
                 "message": str(e)
             }
+
+if __name__ == "__main__":
+    import sys
+    import json
+    import argparse
+
+    parser = argparse.ArgumentParser(description='Merge Models ')
+    
+    # 定义命令行参数          
+    parser.add_argument('--train_id', type=str, required=True, help='训练ID')
+    parser.add_argument('--seq', type=str, default='1', help='序列号')
+    parser.add_argument('--save_path', type=str, required=True, help='保存路径')
+    parser.add_argument('--base_path', type=str, required=True, help='基础模型路径')
+    parser.add_argument('--adapter_path', type=str, required=True, help='lora路径')
+    parser.add_argument('--dtype_str', type=str, default='', help='')
+    parser.add_argument('--model_usage_type', type=str, default='',  help='类型')
+    
+    known_args, unknown_args = parser.parse_known_args()
+    print("Known args:", known_args)
+    print("Unknown args:", unknown_args)
+    args = known_args
+    
+    try:
+        
+        # 执行部署
+        result = ModelMerger.merge_models(
+            train_id = args.train_id,
+            seq=args.seq,
+            base_model_path = args.base_path,
+            lora_adapter_path = args.adapter_path,
+            save_path = args.save_path,
+            dtype_str=args.dtype_str,
+            model_usage_type=args.model_usage_type,
+        )
+        
+        # 输出结果
+        #print(json.dumps(result))
+        
+        # 根据结果设置退出码
+        if result.get('status') == 'success':
+            print(json.dumps(result))
+            sys.exit(0)
+        else:
+            print(json.dumps(result))
+            sys.exit(1)
+            
+    except Exception as e:
+        error_result = {
+            "status": "error",
+            "message": f"Script execution failed: {str(e)}"
+        }
+        print(json.dumps(error_result))
+        sys.exit(1)
+

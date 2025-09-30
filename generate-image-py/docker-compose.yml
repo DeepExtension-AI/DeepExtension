@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  flux-app:
+    image: flux-app:latest
+    container_name: flux-docker-app
+    ports:
+      - "${APP_PORT:-5050}:5050"
+    volumes:
+      # 挂载模型文件夹到宿主机
+      - ./flux_models:/app/flux_models
+      # 挂载生成图片文件夹到宿主机
+      - ./generated_images:/app/generated_images
+      # 可选：挂载配置文件
+      - ./models_config.yaml:/app/models_config.yaml:ro
+    environment:
+      - CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-0}
+      - PYTHONPATH=/app
+      - FLASK_ENV=${FLASK_ENV:-production}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - TORCH_CUDA_ALLOC_CONF=${TORCH_CUDA_ALLOC_CONF:-max_split_size_mb:512}
+    env_file:
+      - .env
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5050/health || exit 1"]
+      interval: ${HEALTH_CHECK_INTERVAL:-30s}
+      timeout: ${HEALTH_CHECK_TIMEOUT:-10s}
+      retries: ${HEALTH_CHECK_RETRIES:-3}
+      start_period: ${HEALTH_CHECK_START_PERIOD:-60s}

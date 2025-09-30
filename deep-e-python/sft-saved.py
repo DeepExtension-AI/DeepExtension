@@ -295,6 +295,11 @@ def training():
         model.save_pretrained(OUTPUT_DIR)     # Save LoRA weights
         tokenizer.save_pretrained(OUTPUT_DIR) # Save tokenizer configuration
 
+        merged_model = model.merge_and_unload()
+
+        # 保存合并后的完整模型
+        merged_model.save_pretrained(os.path.join(OUTPUT_DIR, "saved"))
+        tokenizer.save_pretrained(os.path.join(OUTPUT_DIR, "saved"))
         print("=====================6. Training Completed ========================")
         write_log(LevelEnum.INFO, LogEnum.SaveTrainedModelSuccess, OUTPUT_DIR, args.train_id, args.seq, None)
     except Exception as e:
