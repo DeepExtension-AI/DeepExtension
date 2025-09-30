@@ -33,7 +33,7 @@ cd "$ORIGINAL_DIR" || exit
 
 echo "Starting container..."
 
-docker run -d --name "$CONTAINER_NAME" --gpus all -p 5051:5050 \
+docker run -d --restart=always --name "$CONTAINER_NAME" --gpus all -p 5051:5050 \
   -v ./deep-e-sd-series/flux_models:/app/flux_models \
   -v ./imageGeneration:/app/generated_images \
   -v ./deep-e-sd-series/models_config.yaml:/app/models_config.yaml:rw \
